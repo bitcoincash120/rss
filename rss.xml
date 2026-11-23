@@ -8,7 +8,46 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>ru</language>
-    <lastBuildDate>Mon, 23 Nov 2026 12:08:19 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 12:18:09 +0000</lastBuildDate>
+    <item>
+      <title>Библиотека выдала читателям зонтики от солнечных зайчиков</title>
+      <link>https://bitcoincash120.github.io/rss/#post-10</link>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-10.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;В солнечный зал поставили корзину с зонтиками. Книги больше не бликуют, а библиотекарь наконец дочитал абзац до конца.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-10.jpg" alt=""/></p><p>В солнечный зал поставили корзину с зонтиками. Книги больше не бликуют, а библиотекарь наконец дочитал абзац до конца.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-10</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-10.jpg" length="59229" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 16:15:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-10.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-10.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>В порту пришвартовался корабль из чистого мармелада</title>
+      <link>https://bitcoincash120.github.io/rss/#post-9</link>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-9.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Экипаж уверяет, что корпус не тает даже в шторм. Чайки уже оставили заявку на экскурсию по палубе.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-9.jpg" alt=""/></p><p>Экипаж уверяет, что корпус не тает даже в шторм. Чайки уже оставили заявку на экскурсию по палубе.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-9</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-9.jpg" length="107670" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 16:05:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-9.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-9.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Учёные научили кактусы считать до десяти</title>
+      <link>https://bitcoincash120.github.io/rss/#post-8</link>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-8.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Пока получается только иголками. На цифре семь кактус обычно просит воды и теряет счёт.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-8.jpg" alt=""/></p><p>Пока получается только иголками. На цифре семь кактус обычно просит воды и теряет счёт.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-8</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-8.jpg" length="54431" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:55:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-8.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-8.jpg"/>
+      </media:group>
+    </item>
     <item>
       <title>Робот-бариста открыл кофейню посреди пустыни</title>
       <link>https://bitcoincash120.github.io/rss/#post-7</link>
