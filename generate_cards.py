@@ -3,13 +3,14 @@
 
 from __future__ import annotations
 
+import argparse
 import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from posts_md import ROOT, format_datetime_ru, load_posts
+from posts_md import ROOT, clamp_style, format_datetime_ru, load_posts
 
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
@@ -26,38 +27,50 @@ def esc(text: str) -> str:
     )
 
 
+def card_copy(post: dict) -> list[str]:
+    cards = [str(text or "").strip() for text in list(post.get("cards") or [])]
+    while len(cards) < 3:
+        cards.append("")
+    fallback = str(post.get("description") or "").strip()
+    if not cards[1]:
+        cards[1] = fallback
+    if not cards[2]:
+        cards[2] = fallback
+    return cards[:3]
+
+
 def deck_markdown(post: dict) -> str:
     title = esc(post["title"])
-    body = esc(post["description"])
+    copy = [esc(text) for text in card_copy(post)]
     when = esc(format_datetime_ru(post) or "Черновик")
     total = post.get("slides") or 3
+    style = clamp_style(post.get("style"))
+    hero_body = f"\n\n{copy[0]}" if copy[0] else ""
     slides = [
-        f"""<!-- _class: hero -->
+        f"""<!-- _class: hero {style} -->
 
-## {when}
+<div class="when">{when}</div>
 
-# {title}
+# {title}{hero_body}
 
-### Карточка 1 из {total}""",
-        f"""<!-- _class: quote -->
+<div class="num">Карточка 1 из {total}</div>""",
+        f"""<!-- _class: quote {style} -->
 
-## {when}
+<div class="when">{when}</div>
 
-{body}
+{copy[1]}
 
-### Карточка 2 из {total}""",
+<div class="num">Карточка 2 из {total}</div>""",
     ]
     if total >= 3:
         slides.append(
-            f"""<!-- _class: compact -->
+            f"""<!-- _class: compact {style} -->
 
-## {when}
+<div class="when">{when}</div>
 
-# {title}
+{copy[2]}
 
-{body}
-
-### Карточка 3 из {total}"""
+<div class="num">Карточка 3 из {total}</div>"""
         )
     return "---\nmarp: true\ntheme: cards\npaginate: false\n---\n\n" + "\n\n---\n\n".join(slides) + "\n"
 
@@ -100,6 +113,7 @@ def render_deck(md_path: Path) -> None:
         "88",
         "--image-scale",
         "1",
+        "--html",
         "--allow-local-files",
         "-o",
         str(OUT_DIR / f"{md_path.stem}.jpg"),
@@ -107,6 +121,19 @@ def render_deck(md_path: Path) -> None:
     if os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"):
         cmd.append("--no-sandbox")
     subprocess.run(cmd, cwd=ROOT, env=env, check=True)
+
+
+def expected_images(post: dict) -> list[Path]:
+    count = post.get("slides") or 3
+    names = [f"{post['id']}.jpg", f"{post['id']}-2.jpg", f"{post['id']}-3.jpg"]
+    return [IMAGES_DIR / name for name in names[:count]]
+
+
+def already_rendered(post: dict) -> list[Path] | None:
+    paths = expected_images(post)
+    if paths and all(path.is_file() for path in paths):
+        return paths
+    return None
 
 
 def publish_images(post_id: str, count: int) -> list[Path]:
@@ -128,7 +155,11 @@ def publish_images(post_id: str, count: int) -> list[Path]:
     return targets
 
 
-def render_one(post: dict) -> list[Path]:
+def render_one(post: dict, *, force: bool = False) -> list[Path]:
+    if not force:
+        existing = already_rendered(post)
+        if existing:
+            return existing
     CARDS_DIR.mkdir(exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     md_path = OUT_DIR / f"{post['id']}.md"
@@ -138,15 +169,23 @@ def render_one(post: dict) -> list[Path]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Пересобрать карточки даже если JPEG уже есть",
+    )
+    args = parser.parse_args()
     posts = load_posts()
     CARDS_DIR.mkdir(exist_ok=True)
-    if OUT_DIR.exists():
-        shutil.rmtree(OUT_DIR)
-    OUT_DIR.mkdir()
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for post in posts:
+        if not args.force and already_rendered(post):
+            print(f"skip {post['path'].name}")
+            continue
         print(f"rendering {post['path'].name}")
-        paths = render_one(post)
+        paths = render_one(post, force=True)
         print(" -> " + ", ".join(p.name for p in paths))
 
     return 0

@@ -61,6 +61,8 @@ h1 {
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
   flex: none;
 }
@@ -329,9 +331,19 @@ h1 {
   font-size: 16px;
 }
 
+.download-row {
+  margin: 12px 0 0;
+}
+
+button.ghost:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
 .sheet input[type="text"],
 .sheet input[type="password"],
-.sheet textarea {
+.sheet textarea,
+.sheet select {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--line);
@@ -341,9 +353,19 @@ h1 {
   font-size: 15px;
 }
 
+.sheet select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+    linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
 .sheet textarea {
   resize: vertical;
-  min-height: 92px;
+  min-height: 72px;
   line-height: 1.4;
 }
 
@@ -401,94 +423,327 @@ h1 {
 
 .mock-wrap {
   width: 220px;
-  height: 220px;
+  height: calc(220px * 1350 / 1080);
   overflow: hidden;
   border: 1px solid var(--line);
   background: #0d0b09;
 }
 
+.mock-wrap:has(.paper),
+.mock-wrap:has(.studio) {
+  height: 220px;
+}
+
 .mock {
   width: 1080px;
-  height: 1080px;
+  height: 1350px;
   box-sizing: border-box;
-  padding: 88px;
+  padding: 168px 88px;
   transform: scale(calc(220 / 1080));
   transform-origin: top left;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  color: #f4efe6;
-  background: radial-gradient(1200px 800px at 20% 0%, #2a231c 0%, #14110e 55%, #0d0b09 100%);
-  font-family: Georgia, "Iowan Old Style", serif;
+  justify-content: center;
+  position: relative;
+  background: #f8f5ef;
+  color: #162d32;
+  font-family: Arial, sans-serif;
+  font-size: 42px;
+  line-height: 1.3;
+  --accent: #a63e2d;
 }
 
 .mock h1,
-.mock h2,
-.mock h3,
 .mock p {
   margin: 0;
 }
 
-.mock h2 {
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+.mock .when {
+  position: absolute;
+  top: 56px;
+  left: 88px;
+  right: 88px;
+  z-index: 2;
+  font-family: Arial, sans-serif;
   font-size: 28px;
-  letter-spacing: 0.08em;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
   text-transform: none;
-  color: #e8b86d;
-  font-weight: 600;
+  color: var(--accent);
+  font-weight: 700;
+  margin: 0;
 }
 
 .mock h1 {
-  font-size: 72px;
-  line-height: 1.12;
+  font-size: 100px;
+  line-height: 1.04;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.045em;
+  margin: 0 0 52px;
+  color: inherit;
 }
 
 .mock p {
   font-size: 42px;
-  line-height: 1.35;
-  color: #efe7d8;
+  line-height: 1.3;
+  margin: 0 0 34px;
+  color: inherit;
 }
 
-.mock h3 {
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+.mock .num {
+  position: absolute;
+  bottom: 56px;
+  left: 88px;
+  right: 88px;
+  z-index: 2;
+  font-family: Arial, sans-serif;
   font-size: 24px;
+  line-height: 1.2;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #b9a48a;
-  font-weight: 500;
+  color: #5c6e6f;
+  font-weight: 600;
+  margin: 0;
+}
+
+.mock.hero {
+  background: #162d32;
+  color: #fff;
+  --accent: #ffac92;
+}
+
+.mock.hero .when {
+  color: #ffac92;
 }
 
 .mock.hero h1 {
-  font-size: 84px;
+  font-size: 100px;
+  color: #fff;
+}
+
+.mock.hero p {
+  max-width: 720px;
+  font-size: 42px;
+  color: #d3dfdc;
+}
+
+.mock.hero .num {
+  color: #d3dfdc;
 }
 
 .mock.quote {
   justify-content: center;
-  gap: 48px;
+  gap: 0;
 }
 
 .mock.quote p {
-  font-size: 46px;
+  font-size: 42px;
+  border-top: 2px solid #c8ceca;
+  padding-top: 26px;
+  margin: 0;
 }
 
 .mock.quote p::before {
+  content: none;
+}
+
+.mock.compact {
+  background: #e3efe9;
+}
+
+.mock.compact .num {
+  color: #227363;
+}
+
+.mock.compact p {
+  margin: 24px 0 0;
+  padding: 30px 38px;
+  border: 0;
+  border-left: 8px solid #227363;
+  background: #fff;
+  color: #162d32;
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+.mock.paper,
+.mock.studio {
+  height: 1080px;
+  padding: 176px 88px;
+}
+
+.mock.paper {
+  color: #1c1610;
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+  box-shadow: inset 0 16px 0 #9a3412;
+  font-family: Georgia, "Iowan Old Style", serif;
+}
+
+.mock.paper h1,
+.mock.paper p {
+  margin: 0;
+}
+
+.mock.paper .when {
+  top: 88px;
+  color: #9a3412;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.mock.paper h1 {
+  font-size: 84px;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: #1c1610;
+}
+
+.mock.paper p {
+  font-size: 42px;
+  line-height: 1.35;
+  color: #3f3428;
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  max-width: none;
+  background: transparent;
+}
+
+.mock.paper .num {
+  bottom: 88px;
+  color: #6b5a48;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-weight: 500;
+}
+
+.mock.paper.hero {
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+  color: #1c1610;
+  box-shadow: inset 0 16px 0 #9a3412;
+}
+
+.mock.paper.hero h1 {
+  font-size: 84px;
+  color: #1c1610;
+}
+
+.mock.paper.hero p,
+.mock.paper.compact p {
+  font-size: 36px;
+  color: #4a3d31;
+}
+
+.mock.paper.compact {
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+}
+
+.mock.paper.compact .num {
+  color: #6b5a48;
+}
+
+.mock.paper.quote p::before {
   content: "“";
   display: block;
   font-size: 120px;
   line-height: 0.6;
-  color: #e8b86d;
+  color: #9a3412;
   margin-bottom: 24px;
 }
 
-.mock.compact h1 {
-  font-size: 58px;
+.mock.studio {
+  color: #f8fafc;
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+  box-shadow: inset 18px 0 0 #2dd4bf;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  padding-left: 106px;
 }
 
-.mock.compact p {
+.mock.studio h1,
+.mock.studio p {
+  margin: 0;
+}
+
+.mock.studio .when,
+.mock.studio .num {
+  left: 106px;
+}
+
+.mock.studio h1 {
+  font-size: 84px;
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+  color: #f8fafc;
+}
+
+.mock.studio .when {
+  top: 88px;
+  color: #2dd4bf;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.mock.studio p {
+  font-size: 42px;
+  line-height: 1.35;
+  color: #e2e8f0;
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  max-width: none;
+  background: transparent;
+}
+
+.mock.studio .num {
+  bottom: 88px;
+  color: #fb7185;
+  font-weight: 500;
+}
+
+.mock.studio.hero {
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+  color: #f8fafc;
+  box-shadow: inset 18px 0 0 #2dd4bf;
+}
+
+.mock.studio.hero h1 {
+  font-size: 84px;
+  color: #f8fafc;
+}
+
+.mock.studio.hero p,
+.mock.studio.compact p {
   font-size: 36px;
-  color: #d9cbb8;
+  color: #cbd5e1;
+}
+
+.mock.studio.compact {
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+}
+
+.mock.studio.quote p::before {
+  content: "“";
+  display: block;
+  font-size: 120px;
+  line-height: 0.6;
+  color: #2dd4bf;
+  margin-bottom: 24px;
 }
 
 @media (max-width: 640px) {

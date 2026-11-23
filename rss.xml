@@ -8,14 +8,14 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>ru</language>
-    <lastBuildDate>Mon, 23 Nov 2026 13:58:05 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 15:36:34 +0000</lastBuildDate>
     <item>
       <title>Ночной трамвай начал развозить горячий шоколад</title>
       <link>https://bitcoincash120.github.io/rss/#post-01</link>
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 21:30&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-01.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-01-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 21:30</p><p><img src="https://bitcoincash120.github.io/rss/images/post-01.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-01-2.jpg" alt=""/></p><p>На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.</p>]]></content:encoded>
       <guid isPermaLink="false">post-01</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-01.jpg" length="59304" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-01.jpg" length="63254" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 17:30:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-01.jpg" type="image/jpeg" medium="image"/>
@@ -29,7 +29,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 21:22&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-02.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-02-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-02-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 21:22</p><p><img src="https://bitcoincash120.github.io/rss/images/post-02.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-02-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-02-3.jpg" alt=""/></p><p>Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.</p>]]></content:encoded>
       <guid isPermaLink="false">post-02</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-02.jpg" length="66888" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-02.jpg" length="70729" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 17:22:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-02.jpg" type="image/jpeg" medium="image"/>
@@ -44,7 +44,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 21:14&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-03.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-03-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-03-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Пока получается только иголками. На цифре семь кактус обычно просит воды и теряет счёт.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 21:14</p><p><img src="https://bitcoincash120.github.io/rss/images/post-03.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-03-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-03-3.jpg" alt=""/></p><p>Пока получается только иголками. На цифре семь кактус обычно просит воды и теряет счёт.</p>]]></content:encoded>
       <guid isPermaLink="false">post-03</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-03.jpg" length="50096" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-03.jpg" length="53682" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 17:14:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-03.jpg" type="image/jpeg" medium="image"/>
@@ -59,7 +59,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 21:06&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-04.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-04-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Экипаж уверяет, что корпус не тает даже в шторм. Чайки уже оставили заявку на экскурсию по палубе.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 21:06</p><p><img src="https://bitcoincash120.github.io/rss/images/post-04.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-04-2.jpg" alt=""/></p><p>Экипаж уверяет, что корпус не тает даже в шторм. Чайки уже оставили заявку на экскурсию по палубе.</p>]]></content:encoded>
       <guid isPermaLink="false">post-04</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-04.jpg" length="62591" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-04.jpg" length="66430" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 17:06:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-04.jpg" type="image/jpeg" medium="image"/>
@@ -73,7 +73,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:58&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-05.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-05-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-05-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;В солнечный зал поставили корзину с зонтиками. Книги больше не бликуют, а библиотекарь наконец дочитал абзац до конца.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:58</p><p><img src="https://bitcoincash120.github.io/rss/images/post-05.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-05-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-05-3.jpg" alt=""/></p><p>В солнечный зал поставили корзину с зонтиками. Книги больше не бликуют, а библиотекарь наконец дочитал абзац до конца.</p>]]></content:encoded>
       <guid isPermaLink="false">post-05</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-05.jpg" length="67912" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-05.jpg" length="71974" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:58:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-05.jpg" type="image/jpeg" medium="image"/>
@@ -88,7 +88,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:50&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-06.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-06-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-06-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Метеорологи спорят, это циклон или просто очень пушистый кучевой. Жители уже дали ему имя Барсик.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:50</p><p><img src="https://bitcoincash120.github.io/rss/images/post-06.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-06-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-06-3.jpg" alt=""/></p><p>Метеорологи спорят, это циклон или просто очень пушистый кучевой. Жители уже дали ему имя Барсик.</p>]]></content:encoded>
       <guid isPermaLink="false">post-06</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-06.jpg" length="60818" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-06.jpg" length="64816" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:50:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-06.jpg" type="image/jpeg" medium="image"/>
@@ -103,7 +103,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:42&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-07.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-07-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Финал длился 41 розыгрыш. Победитель получил медаль и целый пакет крошек с площади.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:42</p><p><img src="https://bitcoincash120.github.io/rss/images/post-07.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-07-2.jpg" alt=""/></p><p>Финал длился 41 розыгрыш. Победитель получил медаль и целый пакет крошек с площади.</p>]]></content:encoded>
       <guid isPermaLink="false">post-07</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-07.jpg" length="65382" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-07.jpg" length="69319" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:42:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-07.jpg" type="image/jpeg" medium="image"/>
@@ -117,7 +117,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:34&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-08.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-08-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-08-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Астрономы сначала приняли объект за обломок зонда, но потом разглядели носик, крышку и лёгкий пар.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:34</p><p><img src="https://bitcoincash120.github.io/rss/images/post-08.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-08-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-08-3.jpg" alt=""/></p><p>Астрономы сначала приняли объект за обломок зонда, но потом разглядели носик, крышку и лёгкий пар.</p>]]></content:encoded>
       <guid isPermaLink="false">post-08</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-08.jpg" length="54550" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-08.jpg" length="58523" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:34:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-08.jpg" type="image/jpeg" medium="image"/>
@@ -132,7 +132,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:26&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-09.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-09-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-09-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Автомат с тремя руками варит эспрессо из росы и обещает скидку всем, кто дошёл пешком.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:26</p><p><img src="https://bitcoincash120.github.io/rss/images/post-09.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-09-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-09-3.jpg" alt=""/></p><p>Автомат с тремя руками варит эспрессо из росы и обещает скидку всем, кто дошёл пешком.</p>]]></content:encoded>
       <guid isPermaLink="false">post-09</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-09.jpg" length="57709" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-09.jpg" length="61712" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:26:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-09.jpg" type="image/jpeg" medium="image"/>
@@ -147,7 +147,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 20:18&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-10.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-10-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Путешественники утверждают: если приложить ухо к коре, слышно про свеклу, чеснок и точный момент для сметаны.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 20:18</p><p><img src="https://bitcoincash120.github.io/rss/images/post-10.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-10-2.jpg" alt=""/></p><p>Путешественники утверждают: если приложить ухо к коре, слышно про свеклу, чеснок и точный момент для сметаны.</p>]]></content:encoded>
       <guid isPermaLink="false">post-10</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-10.jpg" length="52213" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-10.jpg" length="56088" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:18:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-10.jpg" type="image/jpeg" medium="image"/>
@@ -156,12 +156,202 @@
       </media:group>
     </item>
     <item>
+      <title>!3 ящик научился отвечать на письма</title>
+      <link>https://bitcoincash120.github.io/rss/#post-29</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:36&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-29.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-29-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-29-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;К утру в щели торчат черновики с вежливым «уже думаю».&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:36</p><p><img src="https://bitcoincash120.github.io/rss/images/post-29.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-29-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-29-3.jpg" alt=""/></p><p>К утру в щели торчат черновики с вежливым «уже думаю».</p>]]></content:encoded>
+      <guid isPermaLink="false">post-29</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-29.jpg" length="64300" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:36:32 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-29.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-29-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-29-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-29.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>!4Кондуктор объявил остановку «для рыб»</title>
+      <link>https://bitcoincash120.github.io/rss/#post-28</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:35&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-28.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-28-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Следующая — как обычно.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:35</p><p><img src="https://bitcoincash120.github.io/rss/images/post-28.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-28-2.jpg" alt=""/></p><p>Следующая — как обычно.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-28</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-28.jpg" length="72498" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:35:28 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-28.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-28-2.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-28.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>6Новый пост тест</title>
+      <link>https://bitcoincash120.github.io/rss/#post-27</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:34&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-27.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-27-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-27-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Карточка 2&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:34</p><p><img src="https://bitcoincash120.github.io/rss/images/post-27.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-27-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-27-3.jpg" alt=""/></p><p>Карточка 2</p>]]></content:encoded>
+      <guid isPermaLink="false">post-27</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-27.jpg" length="42941" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:34:22 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-27.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-27-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-27-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-27.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>88888</title>
+      <link>https://bitcoincash120.github.io/rss/#post-26</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:27&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-26.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-26-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-26-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;88888&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:27</p><p><img src="https://bitcoincash120.github.io/rss/images/post-26.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-26-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-26-3.jpg" alt=""/></p><p>88888</p>]]></content:encoded>
+      <guid isPermaLink="false">post-26</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-26.jpg" length="33434" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:27:41 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-26.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-26-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-26-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-26.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>5Лестница во двор ведёт сразу к утру</title>
+      <link>https://bitcoincash120.github.io/rss/#post-25</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:27&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-25.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-25-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-25-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;На пятой уже пахнет тостами.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:27</p><p><img src="https://bitcoincash120.github.io/rss/images/post-25.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-25-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-25-3.jpg" alt=""/></p><p>На пятой уже пахнет тостами.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-25</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-25.jpg" length="67511" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:27:04 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-25.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-25-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-25-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-25.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>!1В чайной появился самовар, который поёт колыбельные</title>
+      <link>https://bitcoincash120.github.io/rss/#post-24</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:08&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-24.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-24-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-24-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Чай остывает ровно к первому храпу.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:08</p><p><img src="https://bitcoincash120.github.io/rss/images/post-24.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-24-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-24-3.jpg" alt=""/></p><p>Чай остывает ровно к первому храпу.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-24</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-24.jpg" length="85669" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:08:39 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-24.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-24-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-24-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-24.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>777777</title>
+      <link>https://bitcoincash120.github.io/rss/#post-23</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 19:05&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-23.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-23-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-23-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;77777&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 19:05</p><p><img src="https://bitcoincash120.github.io/rss/images/post-23.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-23-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-23-3.jpg" alt=""/></p><p>77777</p>]]></content:encoded>
+      <guid isPermaLink="false">post-23</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-23.jpg" length="27383" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:05:46 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-23.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-23-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-23-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-23.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>На крыше мэрии вырос зонт размером с сад</title>
+      <link>https://bitcoincash120.github.io/rss/#post-22</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 18:33&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-22.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-22-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Под ним идут дожди только для цветов. Садовник носит лейку на всякий случай.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 18:33</p><p><img src="https://bitcoincash120.github.io/rss/images/post-22.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-22-2.jpg" alt=""/></p><p>Под ним идут дожди только для цветов. Садовник носит лейку на всякий случай.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-22</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-22.jpg" length="62777" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:33:24 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-22.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-22-2.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-22.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Музей выдал посетителям носки, чтобы картины не мёрзли</title>
+      <link>https://bitcoincash120.github.io/rss/#post-21</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 18:02&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-21.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-21-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Экскурсовод шепчет: особенно зябнет натюрморт с селёдкой. Гардероб теперь пахнет маслом и шерстью.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 18:02</p><p><img src="https://bitcoincash120.github.io/rss/images/post-21.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-21-2.jpg" alt=""/></p><p>Экскурсовод шепчет: особенно зябнет натюрморт с селёдкой. Гардероб теперь пахнет маслом и шерстью.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-21</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-21.jpg" length="71735" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:02:57 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-21.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-21-2.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-21.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Река в центре города потекла вспять, чтобы вернуть уток</title>
+      <link>https://bitcoincash120.github.io/rss/#post-20</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 18:02&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-20.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-20-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-20-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 18:02</p><p><img src="https://bitcoincash120.github.io/rss/images/post-20.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-20-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-20-3.jpg" alt=""/></p><p>Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».</p>]]></content:encoded>
+      <guid isPermaLink="false">post-20</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-20.jpg" length="69453" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:02:30 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-20.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-20-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-20-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-20.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Скворцы сложили на проводах слово «доброе утро»</title>
+      <link>https://bitcoincash120.github.io/rss/#post-19</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 18:02&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-19.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-19-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 18:02</p><p><img src="https://bitcoincash120.github.io/rss/images/post-19.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-19-2.jpg" alt=""/></p><p>Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-19</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-19.jpg" length="72665" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:02:14 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-19.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-19-2.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-19.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Скворцы сложили на проводах слово «доброе утро»</title>
+      <link>https://bitcoincash120.github.io/rss/#post-18</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 18:01&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-18.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-18-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 18:01</p><p><img src="https://bitcoincash120.github.io/rss/images/post-18.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-18-2.jpg" alt=""/></p><p>Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-18</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-18.jpg" length="72540" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:01:55 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-18.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-18-2.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-18.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Река в центре города потекла вспять, чтобы вернуть уток</title>
+      <link>https://bitcoincash120.github.io/rss/#post-17</link>
+      <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:59&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-17.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-17-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-17-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:59</p><p><img src="https://bitcoincash120.github.io/rss/images/post-17.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-17-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-17-3.jpg" alt=""/></p><p>Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».</p>]]></content:encoded>
+      <guid isPermaLink="false">post-17</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-17.jpg" length="69422" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 13:59:25 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-17.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-17-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-17-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-17.jpg"/>
+      </media:group>
+    </item>
+    <item>
       <title>Самокат научился выбирать самый поэтичный маршрут</title>
       <link>https://bitcoincash120.github.io/rss/#post-16</link>
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:55&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-16.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-16-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Он сворачивает к фонтанам и читает таблички вслух. Пассажир добирается дольше, зато с рифмой.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:55</p><p><img src="https://bitcoincash120.github.io/rss/images/post-16.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-16-2.jpg" alt=""/></p><p>Он сворачивает к фонтанам и читает таблички вслух. Пассажир добирается дольше, зато с рифмой.</p>]]></content:encoded>
       <guid isPermaLink="false">post-16</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-16.jpg" length="62915" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-16.jpg" length="66703" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:55:37 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-16.jpg" type="image/jpeg" medium="image"/>
@@ -175,7 +365,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:52&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-15.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-15-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-15-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Экскурсовод шепчет: особенно зябнет натюрморт с селёдкой. Гардероб теперь пахнет маслом и шерстью.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:52</p><p><img src="https://bitcoincash120.github.io/rss/images/post-15.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-15-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-15-3.jpg" alt=""/></p><p>Экскурсовод шепчет: особенно зябнет натюрморт с селёдкой. Гардероб теперь пахнет маслом и шерстью.</p>]]></content:encoded>
       <guid isPermaLink="false">post-15</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-15.jpg" length="65667" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-15.jpg" length="69501" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:52:48 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-15.jpg" type="image/jpeg" medium="image"/>
@@ -190,7 +380,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:52&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-14.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-14-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Двери открываются в комнату с запахом какао и старых карт. Консьерж просит не опаздывать вниз.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:52</p><p><img src="https://bitcoincash120.github.io/rss/images/post-14.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-14-2.jpg" alt=""/></p><p>Двери открываются в комнату с запахом какао и старых карт. Консьерж просит не опаздывать вниз.</p>]]></content:encoded>
       <guid isPermaLink="false">post-14</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-14.jpg" length="55049" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-14.jpg" length="58877" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:52:34 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-14.jpg" type="image/jpeg" medium="image"/>
@@ -204,7 +394,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:52&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-13.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-13-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-13-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Под куполом снова светит то утро, когда вы не забыли ключи. Метеорологи просят не раскрывать его в июле.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:52</p><p><img src="https://bitcoincash120.github.io/rss/images/post-13.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-13-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-13-3.jpg" alt=""/></p><p>Под куполом снова светит то утро, когда вы не забыли ключи. Метеорологи просят не раскрывать его в июле.</p>]]></content:encoded>
       <guid isPermaLink="false">post-13</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-13.jpg" length="72182" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-13.jpg" length="76081" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:52:22 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-13.jpg" type="image/jpeg" medium="image"/>
@@ -219,7 +409,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:52&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Мэр благодарит механизм за эмпатию. Пассажиры электричек просят распространить опыт на вокзал.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:52</p><p><img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-12-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-12-3.jpg" alt=""/></p><p>Мэр благодарит механизм за эмпатию. Пассажиры электричек просят распространить опыт на вокзал.</p>]]></content:encoded>
       <guid isPermaLink="false">post-12</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-12.jpg" length="69664" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-12.jpg" length="73538" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:52:10 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-12.jpg" type="image/jpeg" medium="image"/>
@@ -234,7 +424,7 @@
       <description>&lt;p&gt;Опубликовано: 23 ноября 2026, 17:49&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>Опубликовано: 23 ноября 2026, 17:49</p><p><img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/></p><p>Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».</p>]]></content:encoded>
       <guid isPermaLink="false">post-11</guid>
-      <enclosure url="https://bitcoincash120.github.io/rss/images/post-11.jpg" length="61500" type="image/jpeg"/>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-11.jpg" length="65214" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 13:49:16 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-11.jpg" type="image/jpeg" medium="image"/>

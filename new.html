@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Новый пост</title>
-  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="site.css?v=when">
 </head>
 <body>
   <main class="wrap">
@@ -18,7 +18,7 @@
           <a class="rss" href="rss.xml">RSS</a>
         </div>
       </div>
-      <p class="lede">Случайный пост берётся из Google Таблицы: колонки «Заголовок», «Текст» и необязательно «Карточки» (2 или 3). Если таблица пустая, используется запасной список.</p>
+      <p class="lede">Случайный пост берётся только из Google Таблицы. Колонки «Карточка 1», «Карточка 2» и «Карточка 3» задают текст каждой JPEG-карточки отдельно. Строки со статусом «импортирован» пропускаются; после создания поста в таблицу пишутся статус и ссылка.</p>
     </header>
 
     <form id="post-form" class="sheet" autocomplete="off">
@@ -28,8 +28,16 @@
           <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
         </tr>
         <tr>
-          <th><label for="description">Текст</label></th>
-          <td><textarea id="description" name="description" rows="4" maxlength="420" required placeholder="Два-три предложения для анонса"></textarea></td>
+          <th><label for="card1">Карточка 1</label></th>
+          <td><textarea id="card1" name="card1" rows="3" maxlength="280" placeholder="Текст первой карточки — под заголовком"></textarea></td>
+        </tr>
+        <tr>
+          <th><label for="card2">Карточка 2</label></th>
+          <td><textarea id="card2" name="card2" rows="3" maxlength="280" required placeholder="Текст второй карточки — цитата"></textarea></td>
+        </tr>
+        <tr id="card3-row">
+          <th><label for="card3">Карточка 3</label></th>
+          <td><textarea id="card3" name="card3" rows="3" maxlength="280" placeholder="Текст третьей карточки"></textarea></td>
         </tr>
         <tr>
           <th>Дата и время</th>
@@ -40,6 +48,16 @@
           <td class="choice">
             <label><input type="radio" name="slides" value="2"> 2</label>
             <label><input type="radio" name="slides" value="3" checked> 3</label>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="style">Стиль</label></th>
+          <td>
+            <select id="style" name="style">
+              <option value="night">Тема 1 — обложка, история, действие</option>
+              <option value="paper">Газета — светлая бумага и чернила</option>
+              <option value="studio">Плакат — крупный гротеск и цвет</option>
+            </select>
           </td>
         </tr>
         <tr>
@@ -71,6 +89,6 @@
       </table>
     </form>
   </main>
-  <script src="new.js"></script>
+  <script src="new.js?v=when"></script>
 </body>
 </html>

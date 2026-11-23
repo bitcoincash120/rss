@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from datetime import datetime, timedelta, timezone
 
 DISPLAY_TZ = timezone(timedelta(hours=4))
@@ -9,6 +10,13 @@ ROOT = Path(__file__).resolve().parent
 POSTS_DIR = ROOT / "posts"
 IMAGES_DIR = ROOT / "images"
 SITE_URL = "https://bitcoincash120.github.io/rss"
+STYLES = ("night", "paper", "studio")
+DEFAULT_STYLE = "night"
+
+
+def clamp_style(value: str | None) -> str:
+    name = str(value or "").strip().lower()
+    return name if name in STYLES else DEFAULT_STYLE
 
 MONTHS_RU = {
     1: "января",
@@ -46,17 +54,43 @@ def image_names(post_id: str) -> list[str]:
     return [name for name in names if (IMAGES_DIR / name).is_file()]
 
 
+CARD_HEADING = re.compile(r"^#{2,3}\s*(\d+)\s*$")
+
+
+def split_body(body: str, fallback_title: str = "") -> tuple[str, str, list[str]]:
+    title = fallback_title
+    lead: list[str] = []
+    buckets: dict[int, list[str]] = {}
+    current: int | None = None
+    found_title = False
+    for raw in body.splitlines():
+        line = raw.rstrip()
+        stripped = line.strip()
+        if not found_title and stripped.startswith("# "):
+            title = stripped[2:].strip()
+            found_title = True
+            continue
+        match = CARD_HEADING.match(stripped)
+        if match:
+            current = int(match.group(1))
+            buckets.setdefault(current, [])
+            continue
+        if not stripped:
+            continue
+        if current is not None:
+            buckets[current].append(stripped)
+        else:
+            lead.append(stripped)
+    cards = [" ".join(buckets.get(index, [])).strip() for index in (1, 2, 3)]
+    description = " ".join(lead).strip()
+    if not description:
+        description = next((text for text in (cards[1], cards[0], cards[2]) if text), "")
+    return title, description, cards
+
+
 def parse_post(path: Path) -> dict:
     meta, body = parse_frontmatter(path.read_text(encoding="utf-8"))
-    lines = [line.rstrip() for line in body.splitlines()]
-    title = path.stem
-    rest: list[str] = []
-    for line in lines:
-        if line.startswith("# "):
-            title = line[2:].strip()
-        elif line.strip():
-            rest.append(line.strip())
-    description = " ".join(rest).strip()
+    title, description, cards = split_body(body, path.stem)
     post_id = meta.get("id") or path.stem
     date = meta.get("date") or ""
     try:
@@ -72,12 +106,14 @@ def parse_post(path: Path) -> dict:
         "id": post_id,
         "title": title,
         "description": description,
+        "cards": cards,
         "date": date,
         "parsed_date": parsed_date,
         "link": meta.get("link") or f"{SITE_URL}/#{post_id}",
         "images": [f"{SITE_URL}/images/{name}" for name in image_names(post_id)],
         "image_files": image_names(post_id),
         "slides": slides,
+        "style": clamp_style(meta.get("style") or meta.get("theme")),
         "path": path,
     }
 

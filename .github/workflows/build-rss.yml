@@ -50,7 +50,7 @@ jobs:
           test -s index.html
           test -s new.html
           mkdir -p _site/images
-          cp rss.xml index.html new.html new.js site.css _site/
+          cp rss.xml index.html new.html new.js feed.js site.css _site/
           cp images/* _site/images/
 
       - uses: actions/upload-pages-artifact@v4

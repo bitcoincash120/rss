@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import html
-from pathlib import Path
 
 from posts_md import ROOT, format_datetime_ru, load_posts
 
@@ -62,6 +61,44 @@ def row_html(post: dict, index: int) -> str:
     """
 
 
+def card_rows_html(post: dict) -> str:
+    cards = list(post.get("cards") or [])
+    while len(cards) < 3:
+        cards.append("")
+    rows = []
+    for index, text in enumerate(cards, 1):
+        if not text:
+            continue
+        rows.append(
+            f"""
+          <tr>
+            <th>Карточка {index}</th>
+            <td>{html.escape(text)}</td>
+          </tr>"""
+        )
+    if not rows and post.get("description"):
+        rows.append(
+            f"""
+          <tr>
+            <th>Текст</th>
+            <td>{html.escape(post["description"])}</td>
+          </tr>"""
+        )
+    return "".join(rows)
+
+
+def download_button_html(post: dict) -> str:
+    files = post.get("image_files") or []
+    if not files:
+        return ""
+    names = html.escape(",".join(files), quote=True)
+    zip_name = html.escape(post["id"], quote=True)
+    return (
+        f'<p class="download-row"><button type="button" class="ghost" data-zip="{names}" '
+        f'data-zip-name="{zip_name}">Скачать карточки</button></p>'
+    )
+
+
 def preview_html(post: dict) -> str:
     when = format_datetime_ru(post) or "—"
     return f"""
@@ -77,13 +114,10 @@ def preview_html(post: dict) -> str:
             <th>Заголовок</th>
             <td>{html.escape(post["title"])}</td>
           </tr>
-          <tr>
-            <th>Текст</th>
-            <td>{html.escape(post["description"])}</td>
-          </tr>
+          {card_rows_html(post)}
           <tr>
             <th>Карточки</th>
-            <td>{carousel_html(post)}</td>
+            <td>{carousel_html(post)}{download_button_html(post)}</td>
           </tr>
         </table>
       </div>
@@ -135,6 +169,7 @@ def main() -> None:
         <h1>Свежие публикации</h1>
         <div class="hero-actions">
           <a class="ghost" href="new.html">Новый пост</a>
+          <button type="button" class="ghost" id="download-all">Скачать все картинки</button>
           <a class="rss" href="rss.xml">RSS</a>
         </div>
       </div>
@@ -143,62 +178,7 @@ def main() -> None:
     {table}
   </main>
   {previews}
-  <script>
-    const openPreview = (id) => {{
-      const dialog = document.getElementById(id);
-      if (dialog && typeof dialog.showModal === "function") {{
-        dialog.showModal();
-        history.replaceState(null, "", "#" + id);
-      }}
-    }};
-    const closePreview = (dialog) => {{
-      dialog.close();
-      if (location.hash.slice(1) === dialog.id) history.replaceState(null, "", location.pathname);
-    }};
-    document.querySelectorAll("[data-open]").forEach((row) => {{
-      const open = () => openPreview(row.dataset.open);
-      row.addEventListener("click", open);
-      row.addEventListener("keydown", (event) => {{
-        if (event.key === "Enter" || event.key === " ") {{
-          event.preventDefault();
-          open();
-        }}
-      }});
-    }});
-    document.querySelectorAll("dialog.preview").forEach((dialog) => {{
-      dialog.querySelector("[data-close]")?.addEventListener("click", () => closePreview(dialog));
-      dialog.addEventListener("click", (event) => {{
-        if (event.target === dialog) closePreview(dialog);
-      }});
-    }});
-    if (location.hash) openPreview(location.hash.slice(1));
-    document.querySelectorAll("[data-carousel]").forEach((stage) => {{
-      const slides = [...stage.querySelectorAll("img")];
-      const dots = [...stage.querySelectorAll("[data-go]")];
-      const count = stage.querySelector("[data-count]");
-      if (slides.length < 2) return;
-      let i = 0;
-      const show = (next) => {{
-        i = (next + slides.length) % slides.length;
-        slides.forEach((img, idx) => img.classList.toggle("is-on", idx === i));
-        dots.forEach((dot, idx) => dot.classList.toggle("is-on", idx === i));
-        if (count) count.textContent = String(i + 1);
-      }};
-      show(0);
-      stage.querySelectorAll("[data-dir]").forEach((btn) => {{
-        btn.addEventListener("click", (event) => {{
-          event.stopPropagation();
-          show(i + Number(btn.dataset.dir));
-        }});
-      }});
-      dots.forEach((dot) => {{
-        dot.addEventListener("click", (event) => {{
-          event.stopPropagation();
-          show(Number(dot.dataset.go));
-        }});
-      }});
-    }});
-  </script>
+  <script src="feed.js"></script>
 </body>
 </html>
 """

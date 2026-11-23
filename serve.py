@@ -24,6 +24,17 @@ def reload_builders() -> None:
     importlib.reload(generate_rss)
 
 
+def request_origin(handler: SimpleHTTPRequestHandler, payload: dict) -> str:
+    origin = str(payload.get("origin") or "").strip().rstrip("/")
+    if origin:
+        return origin
+    header = (handler.headers.get("Origin") or "").strip().rstrip("/")
+    if header:
+        return header
+    host = handler.headers.get("Host") or "127.0.0.1:3000"
+    return f"http://{host}"
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -44,21 +55,47 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self) -> None:
-        if self.path.rstrip("/") != "/api/posts":
-            self.send_error(404)
-            return
+        path = self.path.rstrip("/")
         length = int(self.headers.get("Content-Length") or 0)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
+        except json.JSONDecodeError:
+            self._json(400, {"error": "Некорректный JSON"})
+            return
+        if path == "/api/ideas/imported":
+            try:
+                importlib.reload(sheet_ideas)
+                marked = sheet_ideas.mark_imported(
+                    int(payload.get("row") or 0),
+                    payload.get("url") or "",
+                )
+            except Exception as exc:  # noqa: BLE001
+                self._json(502, {"ok": False, "error": str(exc)})
+                return
+            self._json(200 if marked.get("ok") else 502, marked)
+            return
+        if path != "/api/posts":
+            self.send_error(404)
+            return
+        try:
             reload_builders()
             post = generate_post.create_post(
                 payload.get("title") or "",
                 payload.get("description") or "",
                 payload.get("slides"),
                 payload.get("date"),
+                cards=payload.get("cards"),
+                style=payload.get("style"),
             )
             generate_site.main()
             generate_rss.main()
+            sheet_marked = None
+            row = payload.get("row")
+            if row:
+                importlib.reload(sheet_ideas)
+                post_url = sheet_ideas.post_url(post["id"], request_origin(self, payload))
+                sheet_marked = sheet_ideas.mark_imported(int(row), post_url)
+                print("sheet_marked", sheet_marked)
         except ValueError as exc:
             self._json(400, {"error": str(exc)})
             return
@@ -73,6 +110,12 @@ class Handler(SimpleHTTPRequestHandler):
                 "url": f"/#{post['id']}",
                 "images": post.get("image_files") or [],
                 "cards_error": post.get("cards_error"),
+                "sheet_marked": bool(sheet_marked and sheet_marked.get("ok")),
+                "sheet_error": None
+                if sheet_marked and sheet_marked.get("ok")
+                else (sheet_marked or {}).get("error")
+                if row
+                else "Нет номера строки таблицы",
             },
         )
 
@@ -89,8 +132,8 @@ def main() -> None:
     reload_builders()
     generate_site.main()
     generate_rss.main()
-    server = ThreadingHTTPServer(("127.0.0.1", 8770), Handler)
-    print("http://127.0.0.1:8770/")
+    server = ThreadingHTTPServer(("127.0.0.1", 3000), Handler)
+    print("http://127.0.0.1:3000/")
     server.serve_forever()
 
 

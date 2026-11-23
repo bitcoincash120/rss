@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from generate_cards import render_one
-from posts_md import POSTS_DIR, parse_post
+from posts_md import POSTS_DIR, clamp_style, parse_post
 
 
 def next_post_id() -> str:
@@ -28,20 +28,38 @@ def clamp_slides(value: int | str | None) -> int:
         return 3
 
 
+def normalize_cards(cards: list[str] | None, description: str) -> list[str]:
+    out = [""] * 3
+    for index, text in enumerate(list(cards or [])[:3]):
+        out[index] = str(text or "").strip()
+    if not any(out) and description:
+        out[1] = description
+    return out
+
+
 def write_markdown(
     post_id: str,
     title: str,
     description: str,
     slides: int,
     date: str | None = None,
+    cards: list[str] | None = None,
+    style: str | None = None,
 ) -> Path:
     POSTS_DIR.mkdir(exist_ok=True)
     when = date or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     path = POSTS_DIR / f"{post_id}.md"
-    path.write_text(
-        f"---\ndate: {when}\nslides: {slides}\n---\n\n# {title.strip()}\n\n{description.strip()}\n",
-        encoding="utf-8",
-    )
+    parts = [
+        f"---\ndate: {when}\nslides: {slides}\nstyle: {clamp_style(style)}\n---\n\n# {title.strip()}\n"
+    ]
+    copy = normalize_cards(cards, description)
+    if any(copy):
+        for index, text in enumerate(copy, 1):
+            if text and (index <= slides):
+                parts.append(f"\n## {index}\n\n{text}\n")
+    elif description.strip():
+        parts.append(f"\n{description.strip()}\n")
+    path.write_text("".join(parts), encoding="utf-8")
     return path
 
 
@@ -51,16 +69,19 @@ def create_post(
     slides: int | str | None = 3,
     date: str | None = None,
     render: bool = True,
+    cards: list[str] | None = None,
+    style: str | None = None,
 ) -> dict:
     title = (title or "").strip()
-    description = (description or "").strip()
+    copy = normalize_cards(cards, (description or "").strip())
+    description = (description or "").strip() or next((text for text in (copy[1], copy[0], copy[2]) if text), "")
     if not title:
         raise ValueError("Нужен заголовок")
     if not description:
         raise ValueError("Нужен текст")
     slides_n = clamp_slides(slides)
     post_id = next_post_id()
-    path = write_markdown(post_id, title, description, slides_n, date)
+    path = write_markdown(post_id, title, description, slides_n, date, copy, style)
     post = parse_post(path)
     if render:
         try:
@@ -76,10 +97,20 @@ def create_post(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--title", required=True)
-    parser.add_argument("--description", required=True)
+    parser.add_argument("--description", default="")
     parser.add_argument("--slides", type=int, default=3)
+    parser.add_argument("--card1", default="")
+    parser.add_argument("--card2", default="")
+    parser.add_argument("--card3", default="")
+    parser.add_argument("--style", default="night")
     args = parser.parse_args()
-    post = create_post(args.title, args.description, args.slides)
+    post = create_post(
+        args.title,
+        args.description,
+        args.slides,
+        cards=[args.card1, args.card2, args.card3],
+        style=args.style,
+    )
     print(f"wrote {post['path'].name}")
 
 

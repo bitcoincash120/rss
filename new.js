@@ -1,21 +1,3 @@
-const IDEAS = [
-  ["В метро начали продавать билеты с запахом свежего хлеба", "Контролёры говорят, что безбилетников теперь выдаёт аппетит. Кассы просят не облизывать QR-код."],
-  ["Фонари на набережной научились шептать комплименты", "Прохожие останавливаются на третьем столбе и краснеют. Городские службы уточняют: это не реклама, а вежливость."],
-  ["В зоопарке пингвин открыл шахматный кружок", "Первый турнир завершился ничьей и ведром рыбы. Дети утверждают, что ферзь у него холодный."],
-  ["Почтовый голубь доставил открытку раньше, чем её написали", "Адресат ещё выбирал марку, а птица уже ждала на подоконнике. Почта рассматривает это как новый тариф."],
-  ["В парке зацвела скамейка и зовёт присесть на варенье", "Садовники спорят, поливать её или намазывать тосты. Вечером вокруг собираются осы и романтики."],
-  ["Часы на площади начали отставать специально, чтобы все успевали", "Мэр благодарит механизм за эмпатию. Пассажиры электричек просят распространить опыт на вокзал."],
-  ["Найден зонтик, который возвращает вчерашнюю хорошую погоду", "Под куполом снова светит то утро, когда вы не забыли ключи. Метеорологи просят не раскрывать его в июле."],
-  ["Коты двора подписали договор о тишине после десяти", "Мыши получили час форума, но обязаны ходить на цыпочках. Дворник заверяет документ лапкой."],
-  ["В булочной появился круассан, который рассказывает сказки", "Если отломить рожок, слышно про дракона из корицы. Очередь просит историю без изюма."],
-  ["Река в центре города потекла вспять, чтобы вернуть уток", "Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно»."],
-  ["Музей выдал посетителям носки, чтобы картины не мёрзли", "Экскурсовод шепчет: особенно зябнет натюрморт с селёдкой. Гардероб теперь пахнет маслом и шерстью."],
-  ["На чердаке завелась луна размером с блюдце", "Она всходит из коробки с проводами и просит не включать люстру. Соседи уже делают фото для календаря."],
-  ["Самокат научился выбирать самый поэтичный маршрут", "Он сворачивает к фонтанам и читает таблички вслух. Пассажир добирается дольше, зато с рифмой."],
-  ["В лифте появился этаж, которого нет на кнопках", "Двери открываются в комнату с запахом какао и старых карт. Консьерж просит не опаздывать вниз."],
-  ["Скворцы сложили на проводах слово «доброе утро»", "Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам."],
-];
-
 const SHEET = {
   id: "19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI",
   gid: "0",
@@ -25,19 +7,34 @@ const SHEET = {
 const TITLE_KEYS = ["заголовок", "title", "headline", "тема", "name"];
 const TEXT_KEYS = ["текст", "text", "описание", "анонс", "description", "body"];
 const SLIDE_KEYS = ["карточки", "slides", "фото", "photos", "slide"];
+const STATUS_KEYS = ["статус", "status", "state"];
+const CARD1_KEYS = ["карточка 1", "карточка1", "card 1", "card1", "текст 1", "slide 1"];
+const CARD2_KEYS = ["карточка 2", "карточка2", "card 2", "card2", "текст 2", "slide 2"];
+const CARD3_KEYS = ["карточка 3", "карточка3", "card 3", "card3", "текст 3", "slide 3"];
+const IMPORTED_MARKS = new Set(["импортирован", "imported", "готово", "published", "опубликован"]);
+const siteBase = () => {
+  const dir = location.pathname.replace(/[^/]+$/, "") || "/";
+  return `${location.origin}${dir}`.replace(/\/$/, "");
+};
+window.SHEET_WEBHOOK =
+  window.SHEET_WEBHOOK ||
+  "https://script.google.com/macros/s/AKfycbz4rHUVVCe3imLSysN1EaQAxT5bm-WEVr9wwR6B9rN926tLP07wrCj8dKMFyxJ_UbDb/exec";
 
-let ideas = IDEAS.map(([title, description]) => ({ title, description }));
-let ideaSource = "local";
+let ideas = [];
+let currentIdea = null;
 
 const form = document.getElementById("post-form");
 const title = document.getElementById("title");
-const description = document.getElementById("description");
+const card1 = document.getElementById("card1");
+const card2 = document.getElementById("card2");
+const card3 = document.getElementById("card3");
 const token = document.getElementById("token");
 const statusEl = document.getElementById("status");
 const mocks = document.getElementById("mocks");
 const markdownEl = document.getElementById("markdown");
 const publishedAt = document.getElementById("published-at");
 const randomBtn = document.getElementById("random");
+const styleEl = document.getElementById("style");
 
 const repoFromLocation = () => {
   const host = location.hostname;
@@ -48,9 +45,16 @@ const repoFromLocation = () => {
   return { owner: "bitcoincash120", repo: "rss" };
 };
 
+const isLocal = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
+
 const slidesValue = () => {
   const checked = form.querySelector('input[name="slides"]:checked');
   return Number(checked ? checked.value : 3);
+};
+
+const styleValue = () => {
+  const value = styleEl && styleEl.value;
+  return value === "paper" || value === "studio" ? value : "night";
 };
 
 const MONTHS_RU = [
@@ -79,19 +83,32 @@ const formatDatetimeRu = (iso) => {
   return `${local.getUTCDate()} ${MONTHS_RU[local.getUTCMonth()]} ${local.getUTCFullYear()}, ${hours}:${minutes}`;
 };
 
+const cardValues = () => [card1.value.trim(), card2.value.trim(), card3.value.trim()];
+
+const descriptionValue = () => {
+  const [first, second, third] = cardValues();
+  return second || first || third;
+};
+
 const markdown = () => {
   const slides = slidesValue();
-  return `---\ndate: ${nowIso()}\nslides: ${slides}\n---\n\n# ${title.value.trim()}\n\n${description.value.trim()}\n`;
+  const parts = [`---\ndate: ${nowIso()}\nslides: ${slides}\nstyle: ${styleValue()}\n---\n\n# ${title.value.trim()}\n`];
+  cardValues().forEach((text, index) => {
+    if (text && index < slides) {
+      parts.push(`\n## ${index + 1}\n\n${text}\n`);
+    }
+  });
+  return parts.join("");
 };
 
 const mockCard = (kind, kicker, heading, body, index, total) => {
-  const headingTag = kind === "quote" ? "" : `<h1>${escapeHtml(heading)}</h1>`;
-  const bodyTag = kind === "hero" ? "" : `<p>${escapeHtml(body)}</p>`;
-  return `<div class="mock-wrap"><article class="mock ${kind}">
-    <h2>${escapeHtml(kicker)}</h2>
+  const headingTag = kind === "hero" ? `<h1>${escapeHtml(heading)}</h1>` : "";
+  const bodyTag = body ? `<p>${escapeHtml(body)}</p>` : "";
+  return `<div class="mock-wrap"><article class="mock ${kind} ${styleValue()}">
+    <div class="when">${escapeHtml(kicker)}</div>
     ${headingTag}
     ${bodyTag}
-    <h3>Карточка ${index} из ${total}</h3>
+    <div class="num">Карточка ${index} из ${total}</div>
   </article></div>`;
 };
 
@@ -104,16 +121,18 @@ const escapeHtml = (value) =>
 
 const renderPreview = () => {
   const heading = title.value.trim() || "Заголовок появится здесь";
-  const body = description.value.trim() || "Текст анонса появится здесь.";
+  const [first, second, third] = cardValues();
   const total = slidesValue();
   const iso = nowIso();
   const when = formatDatetimeRu(iso);
   const cards = [
-    mockCard("hero", when, heading, body, 1, total),
-    mockCard("quote", when, heading, body, 2, total),
+    mockCard("hero", when, heading, first, 1, total),
+    mockCard("quote", when, heading, second || "Текст второй карточки появится здесь.", 2, total),
   ];
   if (total >= 3) {
-    cards.push(mockCard("compact", when, heading, body, 3, total));
+    cards.push(
+      mockCard("compact", when, heading, third || second || "Текст третьей карточки появится здесь.", 3, total)
+    );
   }
   mocks.innerHTML = cards.join("");
   markdownEl.textContent = markdown();
@@ -135,30 +154,50 @@ const cellText = (cell) => {
 };
 
 const colIndex = (labels, keys, fallback) => {
-  const index = labels.findIndex((label) => keys.includes(label));
+  const index = labels.findIndex((label) => {
+    const name = String(label || "").trim().toLowerCase();
+    return keys.some((key) => name === key || name.startsWith(`${key} `) || name.startsWith(`${key}\n`));
+  });
   return index >= 0 ? index : fallback;
 };
 
-const rowIdea = (values, titleI, textI, slideI) => {
-  const heading = (values[titleI] || "").trim();
-  const body = (values[textI] || "").trim();
+const isImported = (status) => IMPORTED_MARKS.has(String(status || "").trim().toLowerCase());
+
+const valueAt = (values, index) =>
+  index >= 0 && index < values.length ? String(values[index] || "").trim() : "";
+
+const rowIdea = (values, cols, row) => {
+  const heading = valueAt(values, cols.title);
+  const legacy = valueAt(values, cols.text);
+  const cards = [
+    valueAt(values, cols.card1),
+    valueAt(values, cols.card2) || legacy,
+    valueAt(values, cols.card3),
+  ];
+  const body = cards[1] || cards[0] || cards[2] || legacy;
   if (!heading || !body) return null;
-  if (TITLE_KEYS.includes(heading.toLowerCase()) || TEXT_KEYS.includes(body.toLowerCase())) {
-    return null;
-  }
-  const idea = { title: heading, description: body };
-  const raw = String(values[slideI] || "").trim();
+  if (TITLE_KEYS.includes(heading.toLowerCase())) return null;
+  if (isImported(valueAt(values, cols.status))) return null;
+  const idea = { title: heading, description: body, cards, row };
+  const raw = valueAt(values, cols.slide);
   if (raw === "2" || raw === "3") idea.slides = Number(raw);
+  else idea.slides = cards[2] ? 3 : 2;
   return idea;
 };
 
 const parseGvizTable = (table) => {
   const labels = (table.cols || []).map((col) => String(col.label || "").trim().toLowerCase());
-  const titleI = colIndex(labels, TITLE_KEYS, 0);
-  const textI = colIndex(labels, TEXT_KEYS, 1);
-  const slideI = colIndex(labels, SLIDE_KEYS, 2);
+  const cols = {
+    title: colIndex(labels, TITLE_KEYS, 0),
+    text: colIndex(labels, TEXT_KEYS, -1),
+    slide: colIndex(labels, SLIDE_KEYS, -1),
+    status: colIndex(labels, STATUS_KEYS, 3),
+    card1: colIndex(labels, CARD1_KEYS, -1),
+    card2: colIndex(labels, CARD2_KEYS, -1),
+    card3: colIndex(labels, CARD3_KEYS, -1),
+  };
   return (table.rows || [])
-    .map((row) => rowIdea((row.c || []).map(cellText), titleI, textI, slideI))
+    .map((row, index) => rowIdea((row.c || []).map(cellText), cols, index + 2))
     .filter(Boolean);
 };
 
@@ -183,7 +222,7 @@ const loadSheetJsonp = () =>
       resolve(parseGvizTable(payload.table || {}));
     };
     const script = document.createElement("script");
-    script.src = `https://docs.google.com/spreadsheets/d/${SHEET.id}/gviz/tq?gid=${SHEET.gid}&tqx=${encodeURIComponent(`out:json;responseHandler:${name}`)}`;
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET.id}/gviz/tq?gid=${SHEET.gid}&headers=1&tqx=${encodeURIComponent(`out:json;responseHandler:${name}`)}&_=${Date.now()}`;
     script.onerror = () => {
       cleanup();
       reject(new Error("Нет доступа к Google Таблице"));
@@ -196,45 +235,71 @@ const loadSheetLocal = async () => {
   if (!res.ok) throw new Error("local sheet");
   const data = await res.json();
   if (!Array.isArray(data.ideas)) throw new Error("local sheet");
-  return data.ideas;
+  return data.ideas.filter((idea) => !idea.imported);
 };
 
 const loadIdeas = async () => {
   try {
     const fromApi = await loadSheetLocal();
-    if (fromApi.length) {
-      ideas = fromApi;
-      ideaSource = "sheet";
-      return;
-    }
+    ideas = fromApi;
+    return;
   } catch (_error) {
     /* GitHub Pages has no local API; try the sheet directly. */
   }
-  const fromSheet = await loadSheetJsonp();
-  if (fromSheet.length) {
-    ideas = fromSheet;
-    ideaSource = "sheet";
-  }
+  ideas = await loadSheetJsonp();
 };
 
-const fillRandom = () => {
-  if (!ideas.length) {
-    setStatus("Нет черновиков: добавьте строки в Google Таблицу.", "err");
-    return;
-  }
-  const idea = ideas[Math.floor(Math.random() * ideas.length)];
+const applyIdea = (idea) => {
+  const copy = idea.cards || ["", idea.description || "", ""];
   title.value = idea.title;
-  description.value = idea.description;
+  card1.value = copy[0] || "";
+  card2.value = copy[1] || idea.description || "";
+  card3.value = copy[2] || "";
   const two = form.querySelector('input[name="slides"][value="2"]');
   const three = form.querySelector('input[name="slides"][value="3"]');
   if (idea.slides === 2) two.checked = true;
   else if (idea.slides === 3) three.checked = true;
-  else (Math.random() < 0.4 ? two : three).checked = true;
+  else (copy[2] ? three : two).checked = true;
   renderPreview();
-  if (ideaSource === "sheet") {
-    setStatus(`Случайный пост из Google Таблицы (${ideas.length}). Можно править и создавать.`);
-  } else {
-    setStatus("Таблица пустая или недоступна, взят запасной список. Добавьте строки: Заголовок, Текст, Карточки.");
+};
+
+const clearIdea = () => {
+  currentIdea = null;
+  title.value = "";
+  card1.value = "";
+  card2.value = "";
+  card3.value = "";
+  renderPreview();
+};
+
+const pickRandom = () => {
+  if (!ideas.length) {
+    clearIdea();
+    setStatus("Нет черновиков в Google Таблице. Добавьте строки со статусом не «импортирован».", "err");
+    return;
+  }
+  let pool = ideas;
+  if (currentIdea && ideas.length > 1) {
+    pool = ideas.filter((idea) => idea.row !== currentIdea.row);
+    if (!pool.length) pool = ideas;
+  }
+  currentIdea = pool[Math.floor(Math.random() * pool.length)];
+  applyIdea(currentIdea);
+  setStatus(`Случайный пост из Google Таблицы, строка ${currentIdea.row} (${ideas.length} доступно).`);
+};
+
+const fillRandom = async () => {
+  randomBtn.disabled = true;
+  setStatus("Загружаю Google Таблицу…");
+  try {
+    await loadIdeas();
+    pickRandom();
+  } catch (error) {
+    ideas = [];
+    clearIdea();
+    setStatus(error.message || "Не удалось прочитать Google Таблицу.", "err");
+  } finally {
+    randomBtn.disabled = false;
   }
 };
 
@@ -245,6 +310,51 @@ const utf8ToBase64 = (text) => {
     binary += String.fromCharCode(byte);
   });
   return btoa(binary);
+};
+
+const publicPostUrl = (postId) => `${siteBase()}/#${postId}`;
+
+const markSheetRow = async (row, url) => {
+  if (!row) return { ok: false, error: "no row" };
+  if (isLocal()) {
+    const res = await fetch("api/ideas/imported", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ row, url, status: "импортирован" }),
+    });
+    return res.json().catch(() => ({ ok: false }));
+  }
+  const webhook = window.SHEET_WEBHOOK;
+  if (!webhook) return { ok: false, error: "no webhook" };
+  return new Promise((resolve) => {
+    const name = `__mark${Date.now()}`;
+    const timer = setTimeout(() => {
+      cleanup();
+      resolve({ ok: false, error: "timeout" });
+    }, 10000);
+    const cleanup = () => {
+      clearTimeout(timer);
+      delete window[name];
+      script.remove();
+    };
+    window[name] = (payload) => {
+      cleanup();
+      resolve(payload || { ok: true });
+    };
+    const script = document.createElement("script");
+    const params = new URLSearchParams({
+      row: String(row),
+      url,
+      status: "импортирован",
+      callback: name,
+    });
+    script.src = `${webhook}${webhook.includes("?") ? "&" : "?"}${params}`;
+    script.onerror = () => {
+      cleanup();
+      resolve({ ok: false, error: "webhook" });
+    };
+    document.head.appendChild(script);
+  });
 };
 
 const createLocal = async (payload) => {
@@ -306,35 +416,61 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = {
     title: title.value.trim(),
-    description: description.value.trim(),
+    description: descriptionValue(),
+    cards: cardValues(),
     slides: slidesValue(),
     date: nowIso(),
+    row: currentIdea && currentIdea.row,
+    origin: siteBase(),
+    style: styleValue(),
   };
   if (!payload.title || !payload.description) {
-    setStatus("Заполните заголовок и текст.", "err");
+    setStatus("Заполните заголовок и текст карточек.", "err");
     return;
   }
   const submit = form.querySelector('button[type="submit"]');
   submit.disabled = true;
   setStatus("Создаю пост…");
   try {
+    let created;
     try {
-      const created = await createLocal(payload);
-      setStatus(`Готово: ${created.id}. Карточки уже в ленте.`, "ok");
-      location.href = created.url || "./";
-      return;
-    } catch (localError) {
+      created = await createLocal(payload);
+    } catch (_localError) {
       const secret = token.value.trim();
       if (!secret) {
         throw new Error(
           "Локальный сервер недоступен. Запустите python3 serve.py или вставьте токен GitHub."
         );
       }
-      const created = await createOnGitHub(payload, secret);
+      created = await createOnGitHub(payload, secret);
+      const marked = await markSheetRow(payload.row, publicPostUrl(created.id));
+      if (marked && marked.ok) {
+        ideas = ideas.filter((idea) => idea.row !== payload.row);
+        currentIdea = null;
+      }
       setStatus(
         `Файл ${created.id}.md записан. Карточки появятся после сборки GitHub Pages.`,
         "ok"
       );
+      return;
+    }
+    if (!created.sheet_marked && payload.row) {
+      const marked = await markSheetRow(payload.row, publicPostUrl(created.id));
+      created.sheet_marked = Boolean(marked && marked.ok);
+      created.sheet_error = marked && marked.error;
+    }
+    if (created.sheet_marked) {
+      ideas = ideas.filter((idea) => idea.row !== payload.row);
+      currentIdea = null;
+    }
+    const sheetNote = created.sheet_marked
+      ? " Строка в таблице помечена как импортированная."
+      : created.sheet_error
+        ? ` Пост создан, но таблица не обновилась: ${created.sheet_error}`
+        : " Пост создан, но статус в таблице не обновился.";
+    setStatus(`Готово: ${created.id}. Карточки уже в ленте.${sheetNote}`, created.sheet_marked ? "ok" : "err");
+    if (created.sheet_marked) {
+      location.href = created.url || "./";
     }
   } catch (error) {
     setStatus(error.message || "Не получилось создать пост.", "err");
@@ -350,11 +486,4 @@ token.addEventListener("input", () => {
   else sessionStorage.removeItem("gh-token");
 });
 
-setStatus("Загружаю Google Таблицу…");
-loadIdeas()
-  .catch(() => {
-    ideaSource = "local";
-  })
-  .finally(() => {
-    fillRandom();
-  });
+fillRandom();

@@ -4,16 +4,20 @@
  */
 
 section {
-  width: 1080px;
-  height: 1080px;
   box-sizing: border-box;
-  padding: 88px;
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  color: #f4efe6;
-  background: radial-gradient(1200px 800px at 20% 0%, #2a231c 0%, #14110e 55%, #0d0b09 100%);
+  width: 1080px;
+  height: 1350px;
+  padding: 168px 88px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  position: relative;
+  background: #f8f5ef;
+  color: #162d32;
+  font-family: Arial, sans-serif;
+  font-size: 42px;
+  line-height: 1.3;
+  --accent: #a63e2d;
 }
 
 section::after {
@@ -23,68 +27,312 @@ section::after {
 h1,
 h2,
 h3,
-p {
+p,
+.when,
+.num {
   margin: 0;
 }
 
-h2 {
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+.when {
+  position: absolute;
+  top: 56px;
+  left: 88px;
+  right: 88px;
+  z-index: 2;
+  font-family: Arial, sans-serif;
   font-size: 28px;
-  letter-spacing: 0.08em;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
   text-transform: none;
-  color: #e8b86d;
-  font-weight: 600;
+  color: var(--accent);
+  font-weight: 700;
+  margin: 0;
 }
 
 h1 {
-  font-size: 72px;
-  line-height: 1.12;
+  font-size: 100px;
+  line-height: 1.04;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.045em;
+  margin: 0 0 52px;
+  color: inherit;
 }
 
 p {
   font-size: 42px;
-  line-height: 1.35;
-  color: #efe7d8;
+  line-height: 1.3;
+  margin: 0 0 34px;
+  color: inherit;
 }
 
-h3 {
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+.num {
+  position: absolute;
+  bottom: 56px;
+  left: 88px;
+  right: 88px;
+  z-index: 2;
+  font-family: Arial, sans-serif;
   font-size: 24px;
+  line-height: 1.2;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #b9a48a;
-  font-weight: 500;
+  color: #5c6e6f;
+  font-weight: 600;
+  margin: 0;
+}
+
+section strong {
+  color: var(--accent);
+}
+
+section.hero {
+  background: #162d32;
+  color: #fff;
+  --accent: #ffac92;
+}
+
+section.hero .when {
+  color: #ffac92;
 }
 
 section.hero h1 {
-  font-size: 84px;
+  font-size: 100px;
+  color: #fff;
+}
+
+section.hero p {
+  max-width: 720px;
+  font-size: 42px;
+  color: #d3dfdc;
+}
+
+section.hero .num {
+  color: #d3dfdc;
 }
 
 section.quote {
   justify-content: center;
-  gap: 48px;
+  gap: 0;
 }
 
 section.quote p {
-  font-size: 46px;
+  font-size: 42px;
+  border-top: 2px solid #c8ceca;
+  padding-top: 26px;
+  margin: 0;
 }
 
 section.quote p::before {
+  content: none;
+}
+
+section.compact {
+  background: #e3efe9;
+}
+
+section.compact .num {
+  color: #227363;
+}
+
+section.compact p {
+  margin: 24px 0 0;
+  padding: 30px 38px;
+  border: 0;
+  border-left: 8px solid #227363;
+  background: #fff;
+  color: #162d32;
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+section.paper,
+section.studio {
+  width: 1080px;
+  height: 1080px;
+  padding: 176px 88px;
+  --accent: initial;
+}
+
+section.paper {
+  color: #1c1610;
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+  box-shadow: inset 0 16px 0 #9a3412;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+section.paper h1,
+section.paper p {
+  margin: 0;
+  font-family: inherit;
+}
+
+section.paper .when {
+  top: 88px;
+  color: #9a3412;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+section.paper h1 {
+  font-size: 84px;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: #1c1610;
+}
+
+section.paper p {
+  font-size: 42px;
+  line-height: 1.35;
+  color: #3f3428;
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  max-width: none;
+  background: transparent;
+}
+
+section.paper .num {
+  bottom: 88px;
+  color: #6b5a48;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-weight: 500;
+}
+
+section.paper.hero {
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+  color: #1c1610;
+  box-shadow: inset 0 16px 0 #9a3412;
+}
+
+section.paper.hero h1 {
+  font-size: 84px;
+  color: #1c1610;
+}
+
+section.paper.hero p,
+section.paper.compact p {
+  font-size: 36px;
+  color: #4a3d31;
+}
+
+section.paper.compact {
+  background:
+    linear-gradient(180deg, rgba(154, 52, 18, 0.08), transparent 18%),
+    linear-gradient(180deg, #f7f0e3 0%, #eee2cc 100%);
+}
+
+section.paper.compact .num {
+  color: #6b5a48;
+}
+
+section.paper.quote p::before {
   content: "“";
   display: block;
   font-size: 120px;
   line-height: 0.6;
-  color: #e8b86d;
+  color: #9a3412;
   margin-bottom: 24px;
+  border: 0;
+  padding: 0;
 }
 
-section.compact h1 {
-  font-size: 58px;
+section.studio {
+  color: #f8fafc;
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+  box-shadow: inset 18px 0 0 #2dd4bf;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  padding-left: 106px;
 }
 
-section.compact p {
+section.studio h1,
+section.studio p {
+  margin: 0;
+  font-family: inherit;
+}
+
+section.studio .when,
+section.studio .num {
+  left: 106px;
+}
+
+section.studio h1 {
+  font-size: 84px;
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+  color: #f8fafc;
+}
+
+section.studio .when {
+  top: 88px;
+  color: #2dd4bf;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+section.studio p {
+  font-size: 42px;
+  line-height: 1.35;
+  color: #e2e8f0;
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  max-width: none;
+  background: transparent;
+}
+
+section.studio .num {
+  bottom: 88px;
+  color: #fb7185;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+section.studio.hero {
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+  color: #f8fafc;
+  box-shadow: inset 18px 0 0 #2dd4bf;
+}
+
+section.studio.hero h1 {
+  font-size: 84px;
+  color: #f8fafc;
+}
+
+section.studio.hero p,
+section.studio.compact p {
   font-size: 36px;
-  color: #d9cbb8;
+  color: #cbd5e1;
+}
+
+section.studio.compact {
+  background:
+    radial-gradient(900px 700px at 88% -10%, #3b1d73 0%, transparent 55%),
+    linear-gradient(160deg, #07111f 0%, #12081f 52%, #03060c 100%);
+}
+
+section.studio.compact .num {
+  color: #fb7185;
+}
+
+section.studio.quote p::before {
+  content: "“";
+  display: block;
+  font-size: 120px;
+  line-height: 0.6;
+  color: #2dd4bf;
+  margin-bottom: 24px;
 }
