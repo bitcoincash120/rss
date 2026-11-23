@@ -1,0 +1,90 @@
+/*
+ * @theme cards
+ * @auto-scaling true
+ */
+
+section {
+  width: 1080px;
+  height: 1080px;
+  box-sizing: border-box;
+  padding: 88px;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  color: #f4efe6;
+  background: radial-gradient(1200px 800px at 20% 0%, #2a231c 0%, #14110e 55%, #0d0b09 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+section::after {
+  content: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #e8b86d;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 72px;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+p {
+  font-size: 42px;
+  line-height: 1.35;
+  color: #efe7d8;
+}
+
+h3 {
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9a48a;
+  font-weight: 500;
+}
+
+section.hero h1 {
+  font-size: 84px;
+}
+
+section.quote {
+  justify-content: center;
+  gap: 48px;
+}
+
+section.quote p {
+  font-size: 46px;
+}
+
+section.quote p::before {
+  content: "“";
+  display: block;
+  font-size: 120px;
+  line-height: 0.6;
+  color: #e8b86d;
+  margin-bottom: 24px;
+}
+
+section.compact h1 {
+  font-size: 58px;
+}
+
+section.compact p {
+  font-size: 36px;
+  color: #d9cbb8;
+}
