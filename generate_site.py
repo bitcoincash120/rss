@@ -43,7 +43,7 @@ def carousel_html(post: dict) -> str:
     return f'<div class="stage" data-carousel>{"".join(slides)}{nav}</div>'
 
 
-def row_html(post: dict) -> str:
+def row_html(post: dict, index: int) -> str:
     when = format_date_ru(post) or "—"
     thumb = ""
     if post["image_files"]:
@@ -52,6 +52,7 @@ def row_html(post: dict) -> str:
     post_id = html.escape(post["id"], quote=True)
     return f"""
     <tr class="row" data-open="{post_id}" tabindex="0" role="button">
+      <td class="col-num">{index}</td>
       <td class="col-thumb">{thumb}</td>
       <td class="col-date"><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
       <td class="col-title">{html.escape(post["title"])}</td>
@@ -62,30 +63,37 @@ def row_html(post: dict) -> str:
 
 
 def preview_html(post: dict) -> str:
-    when = format_date_ru(post)
-    time_tag = (
-        f'<time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time>'
-        if when
-        else ""
-    )
+    when = format_date_ru(post) or "—"
     return f"""
     <dialog class="preview" id="{html.escape(post["id"], quote=True)}">
-      <article class="card">
+      <div class="sheet">
         <button type="button" class="close" data-close aria-label="Закрыть">×</button>
-        {carousel_html(post)}
-        <div class="body">
-          {time_tag}
-          <h2>{html.escape(post["title"])}</h2>
-          <p>{html.escape(post["description"])}</p>
-        </div>
-      </article>
+        <table>
+          <tr>
+            <th>Дата</th>
+            <td><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
+          </tr>
+          <tr>
+            <th>Заголовок</th>
+            <td>{html.escape(post["title"])}</td>
+          </tr>
+          <tr>
+            <th>Текст</th>
+            <td>{html.escape(post["description"])}</td>
+          </tr>
+          <tr>
+            <th>Карточки</th>
+            <td>{carousel_html(post)}</td>
+          </tr>
+        </table>
+      </div>
     </dialog>
     """
 
 
 def main() -> None:
     posts = load_posts()
-    rows = "\n".join(row_html(post) for post in posts)
+    rows = "\n".join(row_html(post, i) for i, post in enumerate(posts, 1))
     previews = "\n".join(preview_html(post) for post in posts)
     table = (
         f"""
@@ -93,6 +101,7 @@ def main() -> None:
       <table class="feed">
         <thead>
           <tr>
+            <th>№</th>
             <th>Карточка</th>
             <th>Дата</th>
             <th>Заголовок</th>
@@ -126,7 +135,7 @@ def main() -> None:
         <h1>Свежие публикации</h1>
         <a class="rss" href="rss.xml">RSS</a>
       </div>
-      <p class="lede">Таблица всех постов. Нажмите строку, чтобы открыть полный текст и картинки.</p>
+      <p class="lede">Все посты в таблице. Нажмите строку, чтобы открыть полный пост.</p>
     </header>
     {table}
   </main>
