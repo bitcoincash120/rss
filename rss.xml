@@ -8,30 +8,34 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>ru</language>
-    <lastBuildDate>Mon, 23 Nov 2026 12:22:14 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 12:23:50 +0000</lastBuildDate>
     <item>
       <title>Ночной трамвай начал развозить горячий шоколад</title>
       <link>https://bitcoincash120.github.io/rss/#post-12</link>
-      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.&lt;/p&gt;</description>
-      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/></p><p>На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.</p>]]></content:encoded>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-12-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-12.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-12-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-12-3.jpg" alt=""/></p><p>На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.</p>]]></content:encoded>
       <guid isPermaLink="false">post-12</guid>
       <enclosure url="https://bitcoincash120.github.io/rss/images/post-12.jpg" length="65060" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:20:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-12.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-12-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-12-3.jpg" type="image/jpeg" medium="image"/>
         <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-12.jpg"/>
       </media:group>
     </item>
     <item>
       <title>На чердаке нашли карту, которая показывает только пекарни</title>
       <link>https://bitcoincash120.github.io/rss/#post-11</link>
-      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.&lt;/p&gt;</description>
-      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/></p><p>Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.</p>]]></content:encoded>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/></p><p>Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.</p>]]></content:encoded>
       <guid isPermaLink="false">post-11</guid>
       <enclosure url="https://bitcoincash120.github.io/rss/images/post-11.jpg" length="137678" type="image/jpeg"/>
       <pubDate>Mon, 23 Nov 2026 16:18:00 +0000</pubDate>
       <media:group>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-11.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" type="image/jpeg" medium="image"/>
         <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-11.jpg"/>
       </media:group>
     </item>

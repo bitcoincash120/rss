@@ -3,7 +3,11 @@
     "id": "post-12",
     "title": "Ночной трамвай начал развозить горячий шоколад",
     "link": "https://bitcoincash120.github.io/rss/#post-12",
-    "image": "https://bitcoincash120.github.io/rss/images/post-12.jpg",
+    "images": [
+      "https://bitcoincash120.github.io/rss/images/post-12.jpg",
+      "https://bitcoincash120.github.io/rss/images/post-12-2.jpg",
+      "https://bitcoincash120.github.io/rss/images/post-12-3.jpg"
+    ],
     "description": "На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.",
     "date": "2026-11-23T16:20:00+00:00"
   },
@@ -11,7 +15,11 @@
     "id": "post-11",
     "title": "На чердаке нашли карту, которая показывает только пекарни",
     "link": "https://bitcoincash120.github.io/rss/#post-11",
-    "image": "https://bitcoincash120.github.io/rss/images/post-11.jpg",
+    "images": [
+      "https://bitcoincash120.github.io/rss/images/post-11.jpg",
+      "https://bitcoincash120.github.io/rss/images/post-11-2.jpg",
+      "https://bitcoincash120.github.io/rss/images/post-11-3.jpg"
+    ],
     "description": "Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.",
     "date": "2026-11-23T16:18:00+00:00"
   }

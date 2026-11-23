@@ -7,7 +7,6 @@ from feedgen.feed import FeedGenerator
 SITE_URL = "https://bitcoincash120.github.io/rss"
 
 
-
 def image_mime(url: str) -> str:
     lower = url.lower()
     if lower.endswith(".png"):
@@ -25,6 +24,13 @@ def enclosure_length(url: str) -> str:
     if local.is_file():
         return str(local.stat().st_size)
     return "0"
+
+
+def post_images(post: dict) -> list[str]:
+    images = list(post.get("images") or [])
+    if not images and post.get("image"):
+        images.append(post["image"])
+    return images
 
 
 fg = FeedGenerator()
@@ -47,17 +53,23 @@ for post in reversed(posts):
     fe.pubDate(post["date"])
 
     description = post["description"]
-    image = post.get("image")
-    if image:
+    images = post_images(post)
+    if images:
         safe_text = html.escape(description)
-        safe_image = html.escape(image, quote=True)
-        body = f'<p><img src="{safe_image}" alt=""/></p><p>{safe_text}</p>'
-        mime = image_mime(image)
+        img_tags = "".join(
+            f'<p><img src="{html.escape(url, quote=True)}" alt=""/></p>'
+            for url in images
+        )
+        body = f"{img_tags}<p>{safe_text}</p>"
         fe.description(body)
         fe.content(body, type="CDATA")
-        fe.enclosure(image, enclosure_length(image), mime)
-        fe.media.thumbnail({"url": image})
-        fe.media.content({"url": image, "medium": "image", "type": mime})
+        first = images[0]
+        fe.enclosure(first, enclosure_length(first), image_mime(first))
+        fe.media.thumbnail({"url": first})
+        for url in images:
+            fe.media.content(
+                {"url": url, "medium": "image", "type": image_mime(url)}
+            )
     else:
         fe.description(description)
 
