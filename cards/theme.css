@@ -30,8 +30,8 @@ p {
 h2 {
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   font-size: 28px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-transform: none;
   color: #e8b86d;
   font-weight: 600;
 }

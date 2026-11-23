@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from posts_md import ROOT, load_posts
+from posts_md import ROOT, format_datetime_ru, load_posts
 
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
@@ -29,18 +29,19 @@ def esc(text: str) -> str:
 def deck_markdown(post: dict) -> str:
     title = esc(post["title"])
     body = esc(post["description"])
+    when = esc(format_datetime_ru(post) or "Черновик")
     total = post.get("slides") or 3
     slides = [
         f"""<!-- _class: hero -->
 
-## Лента
+## {when}
 
 # {title}
 
 ### Карточка 1 из {total}""",
         f"""<!-- _class: quote -->
 
-## Анонс
+## {when}
 
 {body}
 
@@ -50,7 +51,7 @@ def deck_markdown(post: dict) -> str:
         slides.append(
             f"""<!-- _class: compact -->
 
-## Коротко
+## {when}
 
 # {title}
 
@@ -144,10 +145,6 @@ def main() -> int:
     OUT_DIR.mkdir()
 
     for post in posts:
-        expected = post.get("slides") or 3
-        if len(post["image_files"]) >= expected:
-            print(f"skip {post['path'].name}")
-            continue
         print(f"rendering {post['path'].name}")
         paths = render_one(post)
         print(" -> " + ", ".join(p.name for p in paths))

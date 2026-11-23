@@ -156,22 +156,11 @@ h1 {
 }
 
 .col-date {
-  width: 168px;
-  white-space: nowrap;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.col-date time {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.col-date .clock {
+  width: 210px;
   color: var(--gold);
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
+  line-height: 1.35;
 }
 
 .col-title {
@@ -443,8 +432,8 @@ h1 {
 .mock h2 {
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   font-size: 28px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-transform: none;
   color: #e8b86d;
   font-weight: 600;
 }

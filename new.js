@@ -60,10 +60,10 @@ const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");
 const formatDatetimeRu = (iso) => {
   const parsed = new Date(iso);
   if (Number.isNaN(parsed.getTime())) return "";
-  const hours = String(parsed.getUTCHours()).padStart(2, "0");
-  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
-  const seconds = String(parsed.getUTCSeconds()).padStart(2, "0");
-  return `${parsed.getUTCDate()} ${MONTHS_RU[parsed.getUTCMonth()]} ${parsed.getUTCFullYear()}, ${hours}:${minutes}:${seconds}`;
+  const local = new Date(parsed.getTime() + 4 * 60 * 60 * 1000);
+  const hours = String(local.getUTCHours()).padStart(2, "0");
+  const minutes = String(local.getUTCMinutes()).padStart(2, "0");
+  return `${local.getUTCDate()} ${MONTHS_RU[local.getUTCMonth()]} ${local.getUTCFullYear()}, ${hours}:${minutes}`;
 };
 
 const markdown = () => {
@@ -93,19 +93,20 @@ const renderPreview = () => {
   const heading = title.value.trim() || "Заголовок появится здесь";
   const body = description.value.trim() || "Текст анонса появится здесь.";
   const total = slidesValue();
+  const iso = nowIso();
+  const when = formatDatetimeRu(iso);
   const cards = [
-    mockCard("hero", "Лента", heading, body, 1, total),
-    mockCard("quote", "Анонс", heading, body, 2, total),
+    mockCard("hero", when, heading, body, 1, total),
+    mockCard("quote", when, heading, body, 2, total),
   ];
   if (total >= 3) {
-    cards.push(mockCard("compact", "Коротко", heading, body, 3, total));
+    cards.push(mockCard("compact", when, heading, body, 3, total));
   }
-  const iso = nowIso();
   mocks.innerHTML = cards.join("");
   markdownEl.textContent = markdown();
   if (publishedAt) {
     publishedAt.dateTime = iso;
-    publishedAt.textContent = formatDatetimeRu(iso);
+    publishedAt.textContent = when;
   }
 };
 

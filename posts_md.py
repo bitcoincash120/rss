@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+
+DISPLAY_TZ = timezone(timedelta(hours=4))
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -90,18 +92,27 @@ def load_posts() -> list[dict]:
     return posts
 
 
-def format_date_ru(post: dict) -> str:
+def display_date(post: dict) -> datetime | None:
     parsed = post.get("parsed_date")
+    if not parsed:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(DISPLAY_TZ)
+
+
+def format_date_ru(post: dict) -> str:
+    parsed = display_date(post)
     if not parsed:
         return ""
     return f"{parsed.day} {MONTHS_RU[parsed.month]} {parsed.year}"
 
 
 def format_time_ru(post: dict) -> str:
-    parsed = post.get("parsed_date")
+    parsed = display_date(post)
     if not parsed:
         return ""
-    return f"{parsed.hour:02d}:{parsed.minute:02d}:{parsed.second:02d}"
+    return f"{parsed.hour:02d}:{parsed.minute:02d}"
 
 
 def format_datetime_ru(post: dict) -> str:
