@@ -5,6 +5,7 @@ from feedgen.feed import FeedGenerator
 SITE_URL = "https://bitcoincash120.github.io/rss"
 
 
+
 def image_mime(url: str) -> str:
     lower = url.lower()
     if lower.endswith(".png"):
