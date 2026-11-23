@@ -1,5 +1,7 @@
 import html
 import json
+from pathlib import Path
+from urllib.parse import urlparse
 from feedgen.feed import FeedGenerator
 
 SITE_URL = "https://bitcoincash120.github.io/rss"
@@ -15,6 +17,14 @@ def image_mime(url: str) -> str:
     if lower.endswith(".gif"):
         return "image/gif"
     return "image/jpeg"
+
+
+def enclosure_length(url: str) -> str:
+    name = Path(urlparse(url).path).name
+    local = Path("images") / name
+    if local.is_file():
+        return str(local.stat().st_size)
+    return "0"
 
 
 fg = FeedGenerator()
@@ -45,7 +55,7 @@ for post in reversed(posts):
         mime = image_mime(image)
         fe.description(body)
         fe.content(body, type="CDATA")
-        fe.enclosure(image, "0", mime)
+        fe.enclosure(image, enclosure_length(image), mime)
         fe.media.thumbnail({"url": image})
         fe.media.content({"url": image, "medium": "image", "type": mime})
     else:
