@@ -1,10 +1,10 @@
 import html
-import json
 from pathlib import Path
 from urllib.parse import urlparse
+
 from feedgen.feed import FeedGenerator
 
-SITE_URL = "https://bitcoincash120.github.io/rss"
+from posts_md import SITE_URL, load_posts
 
 
 def image_mime(url: str) -> str:
@@ -26,13 +26,6 @@ def enclosure_length(url: str) -> str:
     return "0"
 
 
-def post_images(post: dict) -> list[str]:
-    images = list(post.get("images") or [])
-    if not images and post.get("image"):
-        images.append(post["image"])
-    return images
-
-
 fg = FeedGenerator()
 fg.load_extension("media", atom=False)
 fg.id(f"{SITE_URL}/rss.xml")
@@ -42,18 +35,16 @@ fg.link(href=f"{SITE_URL}/rss.xml", rel="self")
 fg.description("Свежие публикации и обновления")
 fg.language("ru")
 
-with open("posts.json", "r", encoding="utf-8") as f:
-    posts = json.load(f)
-
-for post in reversed(posts):
+for post in reversed(load_posts()):
     fe = fg.add_entry()
     fe.id(post["id"])
     fe.title(post["title"])
     fe.link(href=post["link"])
-    fe.pubDate(post["date"])
+    if post["date"]:
+        fe.pubDate(post["date"])
 
     description = post["description"]
-    images = post_images(post)
+    images = post["images"]
     if images:
         safe_text = html.escape(description)
         img_tags = "".join(

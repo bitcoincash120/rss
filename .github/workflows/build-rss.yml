@@ -33,9 +33,11 @@ jobs:
         run: |
           python -m pip install feedgen
           python generate_rss.py
+          python generate_site.py
           test -s rss.xml
+          test -s index.html
           mkdir -p _site/images
-          cp rss.xml _site/rss.xml
+          cp rss.xml index.html site.css _site/
           cp images/* _site/images/
 
       - uses: actions/upload-pages-artifact@v4

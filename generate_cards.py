@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
-"""Build Marp decks from posts.json and render JPEG cards."""
+"""Build Marp decks from markdown posts and render JPEG cards."""
 
 from __future__ import annotations
 
-import json
 import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+from posts_md import ROOT, load_posts
+
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
 IMAGES_DIR = ROOT / "images"
-POSTS_PATH = ROOT / "posts.json"
 THEME_PATH = CARDS_DIR / "theme.css"
 
 
@@ -110,7 +109,7 @@ def publish_images(post_id: str) -> list[Path]:
 
 
 def main() -> int:
-    posts = json.loads(POSTS_PATH.read_text(encoding="utf-8"))
+    posts = load_posts()
     CARDS_DIR.mkdir(exist_ok=True)
     if OUT_DIR.exists():
         shutil.rmtree(OUT_DIR)
@@ -118,9 +117,9 @@ def main() -> int:
 
     for post in posts:
         post_id = post["id"]
-        md_path = CARDS_DIR / f"{post_id}.md"
+        md_path = OUT_DIR / f"{post_id}.md"
         md_path.write_text(deck_markdown(post), encoding="utf-8")
-        print(f"rendering {md_path.name}")
+        print(f"rendering {post['path'].name}")
         render_deck(md_path)
         paths = publish_images(post_id)
         print(" -> " + ", ".join(p.name for p in paths))

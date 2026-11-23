@@ -2,7 +2,8 @@
   "name": "github-rss",
   "private": true,
   "scripts": {
-    "cards": "python3 generate_cards.py"
+    "cards": "python3 generate_cards.py",
+    "site": "python3 generate_site.py && python3 generate_rss.py"
   },
   "devDependencies": {
     "@marp-team/marp-cli": "^4.2.3"

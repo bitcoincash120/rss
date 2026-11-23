@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Моя RSS-лента</title>
+  <link rel="alternate" type="application/rss+xml" href="rss.xml">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <p class="kicker">Лента</p>
+      <div class="hero-row">
+        <h1>Свежие публикации</h1>
+        <a class="rss" href="rss.xml">RSS</a>
+      </div>
+      <p class="lede">Посты написаны в markdown. Здесь они выглядят как карточки, в RSS уходит та же лента.</p>
+    </header>
+    <section class="feed">
+      
+    <article class="card" id="post-12">
+      <div class="stage" data-carousel><img class="is-on" src="images/post-12.jpg" alt="Ночной трамвай начал развозить горячий шоколад"><img src="images/post-12-2.jpg" alt="Ночной трамвай начал развозить горячий шоколад"><img src="images/post-12-3.jpg" alt="Ночной трамвай начал развозить горячий шоколад">
+        <button type="button" class="nav prev" data-dir="-1" aria-label="Предыдущая карточка">‹</button>
+        <button type="button" class="nav next" data-dir="1" aria-label="Следующая карточка">›</button>
+        <div class="dots"><button type="button" class="dot is-on" data-go="0" aria-label="Карточка 1"></button><button type="button" class="dot" data-go="1" aria-label="Карточка 2"></button><button type="button" class="dot" data-go="2" aria-label="Карточка 3"></button></div>
+        <p class="count"><span data-count>1</span> / 3</p>
+        </div>
+      <div class="body">
+        <time datetime="2026-11-23T16:20:00+00:00">23 ноября 2026</time>
+        <h2>Ночной трамвай начал развозить горячий шоколад</h2>
+        <p>На конечной остановке выдают кружку с собой. Кондуктор предупреждает: если прольёте, следующая станция будет скользкой.</p>
+      </div>
+    </article>
+    
+
+    <article class="card" id="post-11">
+      <div class="stage" data-carousel><img class="is-on" src="images/post-11.jpg" alt="На чердаке нашли карту, которая показывает только пекарни"><img src="images/post-11-2.jpg" alt="На чердаке нашли карту, которая показывает только пекарни"><img src="images/post-11-3.jpg" alt="На чердаке нашли карту, которая показывает только пекарни">
+        <button type="button" class="nav prev" data-dir="-1" aria-label="Предыдущая карточка">‹</button>
+        <button type="button" class="nav next" data-dir="1" aria-label="Следующая карточка">›</button>
+        <div class="dots"><button type="button" class="dot is-on" data-go="0" aria-label="Карточка 1"></button><button type="button" class="dot" data-go="1" aria-label="Карточка 2"></button><button type="button" class="dot" data-go="2" aria-label="Карточка 3"></button></div>
+        <p class="count"><span data-count>1</span> / 3</p>
+        </div>
+      <div class="body">
+        <time datetime="2026-11-23T16:18:00+00:00">23 ноября 2026</time>
+        <h2>На чердаке нашли карту, которая показывает только пекарни</h2>
+        <p>Стрелка компаса упрямо тянется к круассанам. Историки спорят, это навигация или просто очень голодная бумага.</p>
+      </div>
+    </article>
+    
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll("[data-carousel]").forEach((stage) => {
+      const slides = [...stage.querySelectorAll("img")];
+      const dots = [...stage.querySelectorAll("[data-go]")];
+      const count = stage.querySelector("[data-count]");
+      if (slides.length < 2) return;
+      let i = 0;
+      const show = (next) => {
+        i = (next + slides.length) % slides.length;
+        slides.forEach((img, idx) => img.classList.toggle("is-on", idx === i));
+        dots.forEach((dot, idx) => dot.classList.toggle("is-on", idx === i));
+        if (count) count.textContent = String(i + 1);
+      };
+      show(0);
+      stage.querySelectorAll("[data-dir]").forEach((btn) => {
+        btn.addEventListener("click", () => show(i + Number(btn.dataset.dir)));
+      });
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => show(Number(dot.dataset.go)));
+      });
+    });
+  </script>
+</body>
+</html>
