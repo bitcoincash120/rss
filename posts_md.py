@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -64,6 +64,8 @@ def parse_post(path: Path) -> dict:
     parsed_date = None
     if date:
         parsed_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
+        if parsed_date.tzinfo is None:
+            parsed_date = parsed_date.replace(tzinfo=timezone.utc)
     return {
         "id": post_id,
         "title": title,
@@ -80,7 +82,11 @@ def parse_post(path: Path) -> dict:
 
 def load_posts() -> list[dict]:
     posts = [parse_post(path) for path in POSTS_DIR.glob("*.md")]
-    posts.sort(key=lambda post: post["date"] or post["id"], reverse=True)
+    epoch = datetime.min.replace(tzinfo=timezone.utc)
+    posts.sort(
+        key=lambda post: (post["parsed_date"] or epoch, post["id"]),
+        reverse=True,
+    )
     return posts
 
 
@@ -89,3 +95,18 @@ def format_date_ru(post: dict) -> str:
     if not parsed:
         return ""
     return f"{parsed.day} {MONTHS_RU[parsed.month]} {parsed.year}"
+
+
+def format_time_ru(post: dict) -> str:
+    parsed = post.get("parsed_date")
+    if not parsed:
+        return ""
+    return f"{parsed.hour:02d}:{parsed.minute:02d}:{parsed.second:02d}"
+
+
+def format_datetime_ru(post: dict) -> str:
+    day = format_date_ru(post)
+    clock = format_time_ru(post)
+    if day and clock:
+        return f"{day}, {clock}"
+    return day or clock

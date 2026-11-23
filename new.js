@@ -23,6 +23,7 @@ const token = document.getElementById("token");
 const statusEl = document.getElementById("status");
 const mocks = document.getElementById("mocks");
 const markdownEl = document.getElementById("markdown");
+const publishedAt = document.getElementById("published-at");
 const randomBtn = document.getElementById("random");
 
 const repoFromLocation = () => {
@@ -39,7 +40,31 @@ const slidesValue = () => {
   return Number(checked ? checked.value : 3);
 };
 
+const MONTHS_RU = [
+  "января",
+  "февраля",
+  "марта",
+  "апреля",
+  "мая",
+  "июня",
+  "июля",
+  "августа",
+  "сентября",
+  "октября",
+  "ноября",
+  "декабря",
+];
+
 const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");
+
+const formatDatetimeRu = (iso) => {
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const hours = String(parsed.getUTCHours()).padStart(2, "0");
+  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(parsed.getUTCSeconds()).padStart(2, "0");
+  return `${parsed.getUTCDate()} ${MONTHS_RU[parsed.getUTCMonth()]} ${parsed.getUTCFullYear()}, ${hours}:${minutes}:${seconds}`;
+};
 
 const markdown = () => {
   const slides = slidesValue();
@@ -75,8 +100,13 @@ const renderPreview = () => {
   if (total >= 3) {
     cards.push(mockCard("compact", "Коротко", heading, body, 3, total));
   }
+  const iso = nowIso();
   mocks.innerHTML = cards.join("");
   markdownEl.textContent = markdown();
+  if (publishedAt) {
+    publishedAt.dateTime = iso;
+    publishedAt.textContent = formatDatetimeRu(iso);
+  }
 };
 
 const setStatus = (text, kind) => {

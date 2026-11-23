@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from feedgen.feed import FeedGenerator
 
-from posts_md import SITE_URL, load_posts
+from posts_md import SITE_URL, format_datetime_ru, load_posts
 
 
 def image_mime(url: str) -> str:
@@ -46,13 +46,15 @@ def main() -> None:
 
         description = post["description"]
         images = post["images"]
+        when = format_datetime_ru(post)
+        stamp = f"<p>Опубликовано: {html.escape(when)}</p>" if when else ""
         if images:
             safe_text = html.escape(description)
             img_tags = "".join(
                 f'<p><img src="{html.escape(url, quote=True)}" alt=""/></p>'
                 for url in images
             )
-            body = f"{img_tags}<p>{safe_text}</p>"
+            body = f"{stamp}{img_tags}<p>{safe_text}</p>"
             fe.description(body)
             fe.content(body, type="CDATA")
             first = images[0]
@@ -63,7 +65,7 @@ def main() -> None:
                     {"url": url, "medium": "image", "type": image_mime(url)}
                 )
         else:
-            fe.description(description)
+            fe.description(f"{when + '. ' if when else ''}{description}")
 
     fg.rss_file("rss.xml", pretty=True)
 

@@ -156,10 +156,22 @@ h1 {
 }
 
 .col-date {
-  width: 150px;
+  width: 168px;
   white-space: nowrap;
   color: var(--muted);
   font-size: 13px;
+}
+
+.col-date time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.col-date .clock {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
 .col-title {

@@ -6,7 +6,7 @@ from __future__ import annotations
 import html
 from pathlib import Path
 
-from posts_md import ROOT, format_date_ru, load_posts
+from posts_md import ROOT, format_date_ru, format_datetime_ru, format_time_ru, load_posts
 
 OUT = ROOT / "index.html"
 
@@ -44,17 +44,19 @@ def carousel_html(post: dict) -> str:
 
 
 def row_html(post: dict, index: int) -> str:
-    when = format_date_ru(post) or "—"
+    day = format_date_ru(post) or "—"
+    clock = format_time_ru(post)
     thumb = ""
     if post["image_files"]:
         src = html.escape(post["image_files"][0], quote=True)
         thumb = f'<img src="images/{src}" alt="">'
     post_id = html.escape(post["id"], quote=True)
+    time_html = f'<span class="clock">{html.escape(clock)}</span>' if clock else ""
     return f"""
     <tr class="row" data-open="{post_id}" tabindex="0" role="button">
       <td class="col-num">{index}</td>
       <td class="col-thumb">{thumb}</td>
-      <td class="col-date"><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
+      <td class="col-date"><time datetime="{html.escape(post["date"], quote=True)}"><span class="day">{html.escape(day)}</span>{time_html}</time></td>
       <td class="col-title">{html.escape(post["title"])}</td>
       <td class="col-excerpt">{html.escape(excerpt(post["description"]))}</td>
       <td class="col-count">{len(post["image_files"])}</td>
@@ -63,14 +65,14 @@ def row_html(post: dict, index: int) -> str:
 
 
 def preview_html(post: dict) -> str:
-    when = format_date_ru(post) or "—"
+    when = format_datetime_ru(post) or "—"
     return f"""
     <dialog class="preview" id="{html.escape(post["id"], quote=True)}">
       <div class="sheet">
         <button type="button" class="close" data-close aria-label="Закрыть">×</button>
         <table>
           <tr>
-            <th>Дата</th>
+            <th>Дата и время</th>
             <td><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
           </tr>
           <tr>
@@ -103,7 +105,7 @@ def main() -> None:
           <tr>
             <th>№</th>
             <th>Карточка</th>
-            <th>Дата</th>
+            <th>Дата и время</th>
             <th>Заголовок</th>
             <th>Анонс</th>
             <th>Фото</th>
