@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+  <channel>
+    <title>Моя RSS-лента</title>
+    <link>https://bitcoincash120.github.io/rss/rss.xml</link>
+    <description>Свежие публикации и обновления</description>
+    <atom:link href="https://bitcoincash120.github.io/rss/rss.xml" rel="self"/>
+    <docs>http://www.rssboard.org/rss-specification</docs>
+    <generator>python-feedgen</generator>
+    <language>ru</language>
+    <lastBuildDate>Mon, 23 Nov 2026 11:40:08 +0000</lastBuildDate>
+    <item>
+      <title>Робот-бариста открыл кофейню посреди пустыни</title>
+      <link>https://bitcoincash120.github.io/rss/#post-7</link>
+      <description>&lt;p&gt;&lt;img src="https://picsum.photos/id/1015/1200/630" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Автомат с тремя руками варит эспрессо из росы и обещает скидку всем, кто дошёл пешком.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://picsum.photos/id/1015/1200/630" alt=""/></p><p>Автомат с тремя руками варит эспрессо из росы и обещает скидку всем, кто дошёл пешком.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-7</guid>
+      <enclosure url="https://picsum.photos/id/1015/1200/630" length="0" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 15:40:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://picsum.photos/id/1015/1200/630" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://picsum.photos/id/1015/1200/630"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Облако в форме кота зависло над городом на три часа</title>
+      <link>https://bitcoincash120.github.io/rss/#post-6</link>
+      <description>&lt;p&gt;&lt;img src="https://picsum.photos/id/1016/1200/630" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Метеорологи спорят, это циклон или просто очень пушистый кучевой. Жители уже дали ему имя Барсик.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://picsum.photos/id/1016/1200/630" alt=""/></p><p>Метеорологи спорят, это циклон или просто очень пушистый кучевой. Жители уже дали ему имя Барсик.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-6</guid>
+      <enclosure url="https://picsum.photos/id/1016/1200/630" length="0" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 14:22:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://picsum.photos/id/1016/1200/630" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://picsum.photos/id/1016/1200/630"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Найден лес, который шепчет рецепты борща</title>
+      <link>https://bitcoincash120.github.io/rss/#post-5</link>
+      <description>&lt;p&gt;&lt;img src="https://picsum.photos/id/1018/1200/630" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Путешественники утверждают: если приложить ухо к коре, слышно про свеклу, чеснок и точный момент для сметаны.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://picsum.photos/id/1018/1200/630" alt=""/></p><p>Путешественники утверждают: если приложить ухо к коре, слышно про свеклу, чеснок и точный момент для сметаны.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-5</guid>
+      <enclosure url="https://picsum.photos/id/1018/1200/630" length="0" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 13:11:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://picsum.photos/id/1018/1200/630" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://picsum.photos/id/1018/1200/630"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Городские голуби выиграли турнир по настольному теннису</title>
+      <link>https://bitcoincash120.github.io/rss/#post-4</link>
+      <description>&lt;p&gt;&lt;img src="https://picsum.photos/id/1025/1200/630" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Финал длился 41 розыгрыш. Победитель получил медаль и целый пакет крошек с площади.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://picsum.photos/id/1025/1200/630" alt=""/></p><p>Финал длился 41 розыгрыш. Победитель получил медаль и целый пакет крошек с площади.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-4</guid>
+      <enclosure url="https://picsum.photos/id/1025/1200/630" length="0" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 12:47:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://picsum.photos/id/1025/1200/630" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://picsum.photos/id/1025/1200/630"/>
+      </media:group>
+    </item>
+    <item>
+      <title>На орбите Марса заметили летающий чайник</title>
+      <link>https://bitcoincash120.github.io/rss/#post-3</link>
+      <description>&lt;p&gt;&lt;img src="https://picsum.photos/id/1036/1200/630" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Астрономы сначала приняли объект за обломок зонда, но потом разглядели носик, крышку и лёгкий пар.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://picsum.photos/id/1036/1200/630" alt=""/></p><p>Астрономы сначала приняли объект за обломок зонда, но потом разглядели носик, крышку и лёгкий пар.</p>]]></content:encoded>
+      <guid isPermaLink="false">post-3</guid>
+      <enclosure url="https://picsum.photos/id/1036/1200/630" length="0" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 12:18:00 +0000</pubDate>
+      <media:group>
+        <media:content url="https://picsum.photos/id/1036/1200/630" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://picsum.photos/id/1036/1200/630"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Вторая новость</title>
+      <link>https://bitcoincash120.github.io/rss/#post-2</link>
+      <description>Полный текст или анонс второй публикации.</description>
+      <guid isPermaLink="false">post-2</guid>
+      <pubDate>Mon, 23 Nov 2026 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Первый запуск RSS на GitHub Pages</title>
+      <link>https://bitcoincash120.github.io/rss/#post-1</link>
+      <description>Тестовая запись для проверки работы ленты.</description>
+      <guid isPermaLink="false">post-1</guid>
+      <pubDate>Sun, 22 Nov 2026 10:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
