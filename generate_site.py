@@ -11,6 +11,12 @@ from posts_md import ROOT, format_date_ru, load_posts
 OUT = ROOT / "index.html"
 
 
+def excerpt(text: str, limit: int = 88) -> str:
+    if len(text) <= limit:
+        return text
+    return text[: limit - 1].rsplit(" ", 1)[0] + "…"
+
+
 def carousel_html(post: dict) -> str:
     files = post["image_files"]
     if not files:
@@ -22,23 +28,40 @@ def carousel_html(post: dict) -> str:
         slides.append(
             f'<img{on} src="images/{html.escape(name, quote=True)}" alt="{title}">'
         )
-    slides = "".join(slides)
-    dots = "".join(
-        f'<button type="button" class="dot{" is-on" if i == 0 else ""}" data-go="{i}" aria-label="Карточка {i + 1}"></button>'
-        for i in range(len(files))
-    )
     nav = ""
     if len(files) > 1:
+        dots = "".join(
+            f'<button type="button" class="dot{" is-on" if i == 0 else ""}" data-go="{i}" aria-label="Карточка {i + 1}"></button>'
+            for i in range(len(files))
+        )
         nav = f"""
         <button type="button" class="nav prev" data-dir="-1" aria-label="Предыдущая карточка">‹</button>
         <button type="button" class="nav next" data-dir="1" aria-label="Следующая карточка">›</button>
         <div class="dots">{dots}</div>
         <p class="count"><span data-count>1</span> / {len(files)}</p>
         """
-    return f'<div class="stage" data-carousel>{slides}{nav}</div>'
+    return f'<div class="stage" data-carousel>{"".join(slides)}{nav}</div>'
 
 
-def post_html(post: dict) -> str:
+def row_html(post: dict) -> str:
+    when = format_date_ru(post) or "—"
+    thumb = ""
+    if post["image_files"]:
+        src = html.escape(post["image_files"][0], quote=True)
+        thumb = f'<img src="images/{src}" alt="">'
+    post_id = html.escape(post["id"], quote=True)
+    return f"""
+    <tr class="row" data-open="{post_id}" tabindex="0" role="button">
+      <td class="col-thumb">{thumb}</td>
+      <td class="col-date"><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
+      <td class="col-title">{html.escape(post["title"])}</td>
+      <td class="col-excerpt">{html.escape(excerpt(post["description"]))}</td>
+      <td class="col-count">{len(post["image_files"])}</td>
+    </tr>
+    """
+
+
+def preview_html(post: dict) -> str:
     when = format_date_ru(post)
     time_tag = (
         f'<time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time>'
@@ -46,21 +69,45 @@ def post_html(post: dict) -> str:
         else ""
     )
     return f"""
-    <article class="card" id="{html.escape(post["id"], quote=True)}">
-      {carousel_html(post)}
-      <div class="body">
-        {time_tag}
-        <h2>{html.escape(post["title"])}</h2>
-        <p>{html.escape(post["description"])}</p>
-      </div>
-    </article>
+    <dialog class="preview" id="{html.escape(post["id"], quote=True)}">
+      <article class="card">
+        <button type="button" class="close" data-close aria-label="Закрыть">×</button>
+        {carousel_html(post)}
+        <div class="body">
+          {time_tag}
+          <h2>{html.escape(post["title"])}</h2>
+          <p>{html.escape(post["description"])}</p>
+        </div>
+      </article>
+    </dialog>
     """
 
 
 def main() -> None:
     posts = load_posts()
-    items = "\n".join(post_html(post) for post in posts) or (
-        '<p class="empty">Добавьте файл в папку posts, чтобы он появился здесь.</p>'
+    rows = "\n".join(row_html(post) for post in posts)
+    previews = "\n".join(preview_html(post) for post in posts)
+    table = (
+        f"""
+    <div class="table-wrap">
+      <table class="feed">
+        <thead>
+          <tr>
+            <th>Карточка</th>
+            <th>Дата</th>
+            <th>Заголовок</th>
+            <th>Анонс</th>
+            <th>Фото</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
+    </div>
+    """
+        if posts
+        else '<p class="empty">Добавьте файл в папку posts, чтобы он появился здесь.</p>'
     )
     page = f"""<!DOCTYPE html>
 <html lang="ru">
@@ -79,13 +126,40 @@ def main() -> None:
         <h1>Свежие публикации</h1>
         <a class="rss" href="rss.xml">RSS</a>
       </div>
-      <p class="lede">Посты написаны в markdown. Здесь они выглядят как карточки, в RSS уходит та же лента.</p>
+      <p class="lede">Таблица всех постов. Нажмите строку, чтобы открыть полный текст и картинки.</p>
     </header>
-    <section class="feed">
-      {items}
-    </section>
+    {table}
   </main>
+  {previews}
   <script>
+    const openPreview = (id) => {{
+      const dialog = document.getElementById(id);
+      if (dialog && typeof dialog.showModal === "function") {{
+        dialog.showModal();
+        history.replaceState(null, "", "#" + id);
+      }}
+    }};
+    const closePreview = (dialog) => {{
+      dialog.close();
+      if (location.hash.slice(1) === dialog.id) history.replaceState(null, "", location.pathname);
+    }};
+    document.querySelectorAll("[data-open]").forEach((row) => {{
+      const open = () => openPreview(row.dataset.open);
+      row.addEventListener("click", open);
+      row.addEventListener("keydown", (event) => {{
+        if (event.key === "Enter" || event.key === " ") {{
+          event.preventDefault();
+          open();
+        }}
+      }});
+    }});
+    document.querySelectorAll("dialog.preview").forEach((dialog) => {{
+      dialog.querySelector("[data-close]")?.addEventListener("click", () => closePreview(dialog));
+      dialog.addEventListener("click", (event) => {{
+        if (event.target === dialog) closePreview(dialog);
+      }});
+    }});
+    if (location.hash) openPreview(location.hash.slice(1));
     document.querySelectorAll("[data-carousel]").forEach((stage) => {{
       const slides = [...stage.querySelectorAll("img")];
       const dots = [...stage.querySelectorAll("[data-go]")];
@@ -100,10 +174,16 @@ def main() -> None:
       }};
       show(0);
       stage.querySelectorAll("[data-dir]").forEach((btn) => {{
-        btn.addEventListener("click", () => show(i + Number(btn.dataset.dir)));
+        btn.addEventListener("click", (event) => {{
+          event.stopPropagation();
+          show(i + Number(btn.dataset.dir));
+        }});
       }});
       dots.forEach((dot) => {{
-        dot.addEventListener("click", () => show(Number(dot.dataset.go)));
+        dot.addEventListener("click", (event) => {{
+          event.stopPropagation();
+          show(Number(dot.dataset.go));
+        }});
       }});
     }});
   </script>

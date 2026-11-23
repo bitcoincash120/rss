@@ -57,6 +57,10 @@ def parse_post(path: Path) -> dict:
     description = " ".join(rest).strip()
     post_id = meta.get("id") or path.stem
     date = meta.get("date") or ""
+    try:
+        slides = max(2, min(3, int(meta.get("slides") or 3)))
+    except ValueError:
+        slides = 3
     parsed_date = None
     if date:
         parsed_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
@@ -69,6 +73,7 @@ def parse_post(path: Path) -> dict:
         "link": meta.get("link") or f"{SITE_URL}/#{post_id}",
         "images": [f"{SITE_URL}/images/{name}" for name in image_names(post_id)],
         "image_files": image_names(post_id),
+        "slides": slides,
         "path": path,
     }
 

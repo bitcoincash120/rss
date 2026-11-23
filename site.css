@@ -26,13 +26,13 @@ body {
 }
 
 .wrap {
-  width: min(720px, calc(100% - 40px));
+  width: min(1080px, calc(100% - 40px));
   margin: 0 auto;
   padding: 48px 0 88px;
 }
 
 .hero {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
 }
@@ -62,7 +62,7 @@ h1 {
 }
 
 .lede {
-  max-width: 34ch;
+  max-width: 42ch;
   margin: 18px 0 0;
   color: var(--muted);
   font-size: 18px;
@@ -83,17 +83,124 @@ h1 {
   border-radius: 999px;
 }
 
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+}
+
 .feed {
-  display: grid;
-  gap: 32px;
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.feed th,
+.feed td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.feed th {
+  color: var(--gold);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover,
+.row:focus {
+  outline: none;
+  background: rgba(232, 184, 109, 0.08);
+}
+
+.row td {
+  border-top: 1px solid var(--line);
+}
+
+.col-thumb {
+  width: 92px;
+}
+
+.col-thumb img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #111;
+}
+
+.col-date {
+  width: 150px;
+  white-space: nowrap;
+  color: var(--muted);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+.col-title {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.col-excerpt {
+  color: #d9cbb8;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.col-count {
+  width: 64px;
+  text-align: center;
+  color: var(--gold);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+.preview {
+  width: min(640px, calc(100% - 24px));
+  max-height: 92vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: auto;
+}
+
+.preview::backdrop {
+  background: rgba(8, 6, 5, 0.72);
 }
 
 .card {
+  position: relative;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(13, 11, 9, 0.55);
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .stage {
@@ -217,7 +324,7 @@ h2 {
 
 @media (max-width: 640px) {
   .wrap {
-    width: min(100% - 24px, 720px);
+    width: min(100% - 24px, 1080px);
     padding-top: 28px;
   }
 

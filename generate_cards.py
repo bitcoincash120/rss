@@ -29,33 +29,26 @@ def esc(text: str) -> str:
 def deck_markdown(post: dict) -> str:
     title = esc(post["title"])
     body = esc(post["description"])
-    return f"""---
-marp: true
-theme: cards
-paginate: false
----
-
-<!-- _class: hero -->
+    total = post.get("slides") or 3
+    slides = [
+        f"""<!-- _class: hero -->
 
 ## Лента
 
 # {title}
 
-### Карточка 1 из 3
-
----
-
-<!-- _class: quote -->
+### Карточка 1 из {total}""",
+        f"""<!-- _class: quote -->
 
 ## Анонс
 
 {body}
 
-### Карточка 2 из 3
-
----
-
-<!-- _class: compact -->
+### Карточка 2 из {total}""",
+    ]
+    if total >= 3:
+        slides.append(
+            f"""<!-- _class: compact -->
 
 ## Коротко
 
@@ -63,8 +56,9 @@ paginate: false
 
 {body}
 
-### Карточка 3 из 3
-"""
+### Карточка 3 из {total}"""
+        )
+    return "---\nmarp: true\ntheme: cards\npaginate: false\n---\n\n" + "\n\n---\n\n".join(slides) + "\n"
 
 
 def render_deck(md_path: Path) -> None:
@@ -91,20 +85,22 @@ def render_deck(md_path: Path) -> None:
     subprocess.run(cmd, cwd=ROOT, env=env, check=True)
 
 
-def publish_images(post_id: str) -> list[Path]:
+def publish_images(post_id: str, count: int) -> list[Path]:
     produced = sorted(OUT_DIR.glob(f"{post_id}.*.jpg")) + sorted(
         OUT_DIR.glob(f"{post_id}.*.jpeg")
     )
-    if len(produced) < 3:
-        raise RuntimeError(f"{post_id}: expected 3 cards, got {len(produced)}")
+    if len(produced) < count:
+        raise RuntimeError(f"{post_id}: expected {count} cards, got {len(produced)}")
     IMAGES_DIR.mkdir(exist_ok=True)
-    targets = [
-        IMAGES_DIR / f"{post_id}.jpg",
-        IMAGES_DIR / f"{post_id}-2.jpg",
-        IMAGES_DIR / f"{post_id}-3.jpg",
-    ]
-    for src, dest in zip(produced[:3], targets):
+    names = [f"{post_id}.jpg", f"{post_id}-2.jpg", f"{post_id}-3.jpg"]
+    targets = []
+    for src, name in zip(produced[:count], names[:count]):
+        dest = IMAGES_DIR / name
         shutil.copyfile(src, dest)
+        targets.append(dest)
+    leftover = IMAGES_DIR / f"{post_id}-3.jpg"
+    if count < 3 and leftover.exists():
+        leftover.unlink()
     return targets
 
 
@@ -121,7 +117,7 @@ def main() -> int:
         md_path.write_text(deck_markdown(post), encoding="utf-8")
         print(f"rendering {post['path'].name}")
         render_deck(md_path)
-        paths = publish_images(post_id)
+        paths = publish_images(post_id, post.get("slides") or 3)
         print(" -> " + ", ".join(p.name for p in paths))
 
     return 0
