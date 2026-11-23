@@ -8,7 +8,7 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>ru</language>
-    <lastBuildDate>Mon, 23 Nov 2026 13:41:47 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 13:49:19 +0000</lastBuildDate>
     <item>
       <title>Ночной трамвай начал развозить горячий шоколад</title>
       <link>https://bitcoincash120.github.io/rss/#post-01</link>
@@ -153,6 +153,21 @@
         <media:content url="https://bitcoincash120.github.io/rss/images/post-10.jpg" type="image/jpeg" medium="image"/>
         <media:content url="https://bitcoincash120.github.io/rss/images/post-10-2.jpg" type="image/jpeg" medium="image"/>
         <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-10.jpg"/>
+      </media:group>
+    </item>
+    <item>
+      <title>Река в центре города потекла вспять, чтобы вернуть уток</title>
+      <link>https://bitcoincash120.github.io/rss/#post-11</link>
+      <description>&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;&lt;img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/&gt;&lt;/p&gt;&lt;p&gt;Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="https://bitcoincash120.github.io/rss/images/post-11.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" alt=""/></p><p><img src="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" alt=""/></p><p>Утки были на экскурсии и заблудились у моста. Лодочники уже продают билеты «туда и сразу обратно».</p>]]></content:encoded>
+      <guid isPermaLink="false">post-11</guid>
+      <enclosure url="https://bitcoincash120.github.io/rss/images/post-11.jpg" length="61500" type="image/jpeg"/>
+      <pubDate>Mon, 23 Nov 2026 13:49:16 +0000</pubDate>
+      <media:group>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-11.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-11-2.jpg" type="image/jpeg" medium="image"/>
+        <media:content url="https://bitcoincash120.github.io/rss/images/post-11-3.jpg" type="image/jpeg" medium="image"/>
+        <media:thumbnail url="https://bitcoincash120.github.io/rss/images/post-11.jpg"/>
       </media:group>
     </item>
   </channel>

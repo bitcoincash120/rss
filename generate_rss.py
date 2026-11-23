@@ -26,42 +26,47 @@ def enclosure_length(url: str) -> str:
     return "0"
 
 
-fg = FeedGenerator()
-fg.load_extension("media", atom=False)
-fg.id(f"{SITE_URL}/rss.xml")
-fg.title("Моя RSS-лента")
-fg.link(href=SITE_URL, rel="alternate")
-fg.link(href=f"{SITE_URL}/rss.xml", rel="self")
-fg.description("Свежие публикации и обновления")
-fg.language("ru")
+def main() -> None:
+    fg = FeedGenerator()
+    fg.load_extension("media", atom=False)
+    fg.id(f"{SITE_URL}/rss.xml")
+    fg.title("Моя RSS-лента")
+    fg.link(href=SITE_URL, rel="alternate")
+    fg.link(href=f"{SITE_URL}/rss.xml", rel="self")
+    fg.description("Свежие публикации и обновления")
+    fg.language("ru")
 
-for post in reversed(load_posts()):
-    fe = fg.add_entry()
-    fe.id(post["id"])
-    fe.title(post["title"])
-    fe.link(href=post["link"])
-    if post["date"]:
-        fe.pubDate(post["date"])
+    for post in reversed(load_posts()):
+        fe = fg.add_entry()
+        fe.id(post["id"])
+        fe.title(post["title"])
+        fe.link(href=post["link"])
+        if post["date"]:
+            fe.pubDate(post["date"])
 
-    description = post["description"]
-    images = post["images"]
-    if images:
-        safe_text = html.escape(description)
-        img_tags = "".join(
-            f'<p><img src="{html.escape(url, quote=True)}" alt=""/></p>'
-            for url in images
-        )
-        body = f"{img_tags}<p>{safe_text}</p>"
-        fe.description(body)
-        fe.content(body, type="CDATA")
-        first = images[0]
-        fe.enclosure(first, enclosure_length(first), image_mime(first))
-        fe.media.thumbnail({"url": first})
-        for url in images:
-            fe.media.content(
-                {"url": url, "medium": "image", "type": image_mime(url)}
+        description = post["description"]
+        images = post["images"]
+        if images:
+            safe_text = html.escape(description)
+            img_tags = "".join(
+                f'<p><img src="{html.escape(url, quote=True)}" alt=""/></p>'
+                for url in images
             )
-    else:
-        fe.description(description)
+            body = f"{img_tags}<p>{safe_text}</p>"
+            fe.description(body)
+            fe.content(body, type="CDATA")
+            first = images[0]
+            fe.enclosure(first, enclosure_length(first), image_mime(first))
+            fe.media.thumbnail({"url": first})
+            for url in images:
+                fe.media.content(
+                    {"url": url, "medium": "image", "type": image_mime(url)}
+                )
+        else:
+            fe.description(description)
 
-fg.rss_file("rss.xml", pretty=True)
+    fg.rss_file("rss.xml", pretty=True)
+
+
+if __name__ == "__main__":
+    main()

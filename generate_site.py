@@ -133,7 +133,10 @@ def main() -> None:
       <p class="kicker">Лента</p>
       <div class="hero-row">
         <h1>Свежие публикации</h1>
-        <a class="rss" href="rss.xml">RSS</a>
+        <div class="hero-actions">
+          <a class="ghost" href="new.html">Новый пост</a>
+          <a class="rss" href="rss.xml">RSS</a>
+        </div>
       </div>
       <p class="lede">Все посты в таблице. Нажмите строку, чтобы открыть полный пост.</p>
     </header>

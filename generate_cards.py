@@ -61,12 +61,33 @@ def deck_markdown(post: dict) -> str:
     return "---\nmarp: true\ntheme: cards\npaginate: false\n---\n\n" + "\n\n---\n\n".join(slides) + "\n"
 
 
+def chrome_path() -> str | None:
+    env_path = os.environ.get("CHROME_PATH")
+    if env_path:
+        return env_path
+    for candidate in (
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/usr/bin/google-chrome",
+        "/usr/bin/chromium-browser",
+        "/usr/bin/chromium",
+    ):
+        if Path(candidate).exists():
+            return candidate
+    return None
+
+
+def marp_bin() -> Path:
+    return ROOT / "node_modules" / ".bin" / "marp"
+
+
 def render_deck(md_path: Path) -> None:
-    chrome = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
     env = os.environ.copy()
-    if chrome.exists():
-        env["CHROME_PATH"] = str(chrome)
-    marp = ROOT / "node_modules" / ".bin" / "marp"
+    chrome = chrome_path()
+    if chrome:
+        env["CHROME_PATH"] = chrome
+    marp = marp_bin()
+    if not marp.exists():
+        raise FileNotFoundError("Marp CLI is not installed. Run npm install.")
     cmd = [
         str(marp),
         str(md_path),
@@ -82,6 +103,8 @@ def render_deck(md_path: Path) -> None:
         "-o",
         str(OUT_DIR / f"{md_path.stem}.jpg"),
     ]
+    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"):
+        cmd.append("--no-sandbox")
     subprocess.run(cmd, cwd=ROOT, env=env, check=True)
 
 
@@ -104,6 +127,15 @@ def publish_images(post_id: str, count: int) -> list[Path]:
     return targets
 
 
+def render_one(post: dict) -> list[Path]:
+    CARDS_DIR.mkdir(exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    md_path = OUT_DIR / f"{post['id']}.md"
+    md_path.write_text(deck_markdown(post), encoding="utf-8")
+    render_deck(md_path)
+    return publish_images(post["id"], post.get("slides") or 3)
+
+
 def main() -> int:
     posts = load_posts()
     CARDS_DIR.mkdir(exist_ok=True)
@@ -112,12 +144,12 @@ def main() -> int:
     OUT_DIR.mkdir()
 
     for post in posts:
-        post_id = post["id"]
-        md_path = OUT_DIR / f"{post_id}.md"
-        md_path.write_text(deck_markdown(post), encoding="utf-8")
+        expected = post.get("slides") or 3
+        if len(post["image_files"]) >= expected:
+            print(f"skip {post['path'].name}")
+            continue
         print(f"rendering {post['path'].name}")
-        render_deck(md_path)
-        paths = publish_images(post_id, post.get("slides") or 3)
+        paths = render_one(post)
         print(" -> " + ", ".join(p.name for p in paths))
 
     return 0

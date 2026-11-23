@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Новый пост</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <p class="kicker">Генератор</p>
+      <div class="hero-row">
+        <h1>Новый пост</h1>
+        <div class="hero-actions">
+          <a class="ghost" href="./">К ленте</a>
+          <a class="rss" href="rss.xml">RSS</a>
+        </div>
+      </div>
+      <p class="lede">Заполните таблицу или нажмите «Случайный пост». Предпросмотр карточек обновляется сразу.</p>
+    </header>
+
+    <form id="post-form" class="sheet" autocomplete="off">
+      <table>
+        <tr>
+          <th><label for="title">Заголовок</label></th>
+          <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
+        </tr>
+        <tr>
+          <th><label for="description">Текст</label></th>
+          <td><textarea id="description" name="description" rows="4" maxlength="420" required placeholder="Два-три предложения для анонса"></textarea></td>
+        </tr>
+        <tr>
+          <th>Карточки</th>
+          <td class="choice">
+            <label><input type="radio" name="slides" value="2"> 2</label>
+            <label><input type="radio" name="slides" value="3" checked> 3</label>
+          </td>
+        </tr>
+        <tr>
+          <th>Токен GitHub</th>
+          <td>
+            <input id="token" name="token" type="password" autocomplete="off" placeholder="Нужен только на GitHub Pages, чтобы записать файл в репозиторий">
+          </td>
+        </tr>
+        <tr>
+          <th>Действия</th>
+          <td>
+            <div class="actions">
+              <button type="button" class="ghost" id="random">Случайный пост</button>
+              <button type="submit" class="rss">Создать пост</button>
+            </div>
+            <p class="status" id="status" role="status"></p>
+          </td>
+        </tr>
+        <tr>
+          <th>Предпросмотр</th>
+          <td>
+            <div class="mocks" id="mocks"></div>
+          </td>
+        </tr>
+        <tr>
+          <th>Markdown</th>
+          <td><pre class="md-out" id="markdown"></pre></td>
+        </tr>
+      </table>
+    </form>
+  </main>
+  <script src="new.js"></script>
+</body>
+</html>
