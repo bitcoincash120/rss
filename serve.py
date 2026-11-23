@@ -3,13 +3,25 @@
 
 from __future__ import annotations
 
+import importlib
 import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-from generate_post import create_post
-from generate_rss import main as generate_rss
-from generate_site import main as generate_site
+import generate_cards
+import generate_post
+import generate_rss
+import generate_site
+import posts_md
+import sheet_ideas
 from posts_md import ROOT
+
+
+def reload_builders() -> None:
+    importlib.reload(posts_md)
+    importlib.reload(generate_cards)
+    importlib.reload(generate_post)
+    importlib.reload(generate_site)
+    importlib.reload(generate_rss)
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -20,6 +32,17 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    def do_GET(self) -> None:
+        if self.path.split("?", 1)[0].rstrip("/") == "/api/ideas":
+            try:
+                importlib.reload(sheet_ideas)
+                ideas = sheet_ideas.fetch_ideas()
+                self._json(200, {"ideas": ideas, "source": "sheet", "url": sheet_ideas.SHEET_URL})
+            except Exception as exc:  # noqa: BLE001
+                self._json(502, {"error": str(exc), "ideas": [], "url": sheet_ideas.SHEET_URL})
+            return
+        super().do_GET()
+
     def do_POST(self) -> None:
         if self.path.rstrip("/") != "/api/posts":
             self.send_error(404)
@@ -27,14 +50,15 @@ class Handler(SimpleHTTPRequestHandler):
         length = int(self.headers.get("Content-Length") or 0)
         try:
             payload = json.loads(self.rfile.read(length) or b"{}")
-            post = create_post(
+            reload_builders()
+            post = generate_post.create_post(
                 payload.get("title") or "",
                 payload.get("description") or "",
                 payload.get("slides"),
                 payload.get("date"),
             )
-            generate_site()
-            generate_rss()
+            generate_site.main()
+            generate_rss.main()
         except ValueError as exc:
             self._json(400, {"error": str(exc)})
             return
@@ -60,15 +84,13 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def log_message(self, format: str, *args) -> None:
-        super().log_message(format, *args)
-
 
 def main() -> None:
-    generate_site()
-    generate_rss()
+    reload_builders()
+    generate_site.main()
+    generate_rss.main()
     server = ThreadingHTTPServer(("127.0.0.1", 8770), Handler)
-    print("http://127.0.0.1:8770/new.html")
+    print("http://127.0.0.1:8770/")
     server.serve_forever()
 
 

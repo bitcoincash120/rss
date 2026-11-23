@@ -16,6 +16,19 @@ const IDEAS = [
   ["Скворцы сложили на проводах слово «доброе утро»", "Автобус №12 теперь отправляется только после прочтения. Водитель кивает птицам, как коллегам."],
 ];
 
+const SHEET = {
+  id: "19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI",
+  gid: "0",
+  url: "https://docs.google.com/spreadsheets/d/19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI/edit?gid=0#gid=0",
+};
+
+const TITLE_KEYS = ["заголовок", "title", "headline", "тема", "name"];
+const TEXT_KEYS = ["текст", "text", "описание", "анонс", "description", "body"];
+const SLIDE_KEYS = ["карточки", "slides", "фото", "photos", "slide"];
+
+let ideas = IDEAS.map(([title, description]) => ({ title, description }));
+let ideaSource = "local";
+
 const form = document.getElementById("post-form");
 const title = document.getElementById("title");
 const description = document.getElementById("description");
@@ -115,15 +128,114 @@ const setStatus = (text, kind) => {
   statusEl.className = `status${kind ? " " + kind : ""}`;
 };
 
+const cellText = (cell) => {
+  if (!cell) return "";
+  const value = cell.f != null ? cell.f : cell.v;
+  return value == null ? "" : String(value).trim();
+};
+
+const colIndex = (labels, keys, fallback) => {
+  const index = labels.findIndex((label) => keys.includes(label));
+  return index >= 0 ? index : fallback;
+};
+
+const rowIdea = (values, titleI, textI, slideI) => {
+  const heading = (values[titleI] || "").trim();
+  const body = (values[textI] || "").trim();
+  if (!heading || !body) return null;
+  if (TITLE_KEYS.includes(heading.toLowerCase()) || TEXT_KEYS.includes(body.toLowerCase())) {
+    return null;
+  }
+  const idea = { title: heading, description: body };
+  const raw = String(values[slideI] || "").trim();
+  if (raw === "2" || raw === "3") idea.slides = Number(raw);
+  return idea;
+};
+
+const parseGvizTable = (table) => {
+  const labels = (table.cols || []).map((col) => String(col.label || "").trim().toLowerCase());
+  const titleI = colIndex(labels, TITLE_KEYS, 0);
+  const textI = colIndex(labels, TEXT_KEYS, 1);
+  const slideI = colIndex(labels, SLIDE_KEYS, 2);
+  return (table.rows || [])
+    .map((row) => rowIdea((row.c || []).map(cellText), titleI, textI, slideI))
+    .filter(Boolean);
+};
+
+const loadSheetJsonp = () =>
+  new Promise((resolve, reject) => {
+    const name = `__sheet${Date.now()}`;
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error("Таблица не ответила"));
+    }, 8000);
+    const cleanup = () => {
+      clearTimeout(timer);
+      delete window[name];
+      script.remove();
+    };
+    window[name] = (payload) => {
+      cleanup();
+      if (!payload || payload.status !== "ok") {
+        reject(new Error("Не удалось прочитать таблицу"));
+        return;
+      }
+      resolve(parseGvizTable(payload.table || {}));
+    };
+    const script = document.createElement("script");
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET.id}/gviz/tq?gid=${SHEET.gid}&tqx=${encodeURIComponent(`out:json;responseHandler:${name}`)}`;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Нет доступа к Google Таблице"));
+    };
+    document.head.appendChild(script);
+  });
+
+const loadSheetLocal = async () => {
+  const res = await fetch("api/ideas", { cache: "no-store" });
+  if (!res.ok) throw new Error("local sheet");
+  const data = await res.json();
+  if (!Array.isArray(data.ideas)) throw new Error("local sheet");
+  return data.ideas;
+};
+
+const loadIdeas = async () => {
+  try {
+    const fromApi = await loadSheetLocal();
+    if (fromApi.length) {
+      ideas = fromApi;
+      ideaSource = "sheet";
+      return;
+    }
+  } catch (_error) {
+    /* GitHub Pages has no local API; try the sheet directly. */
+  }
+  const fromSheet = await loadSheetJsonp();
+  if (fromSheet.length) {
+    ideas = fromSheet;
+    ideaSource = "sheet";
+  }
+};
+
 const fillRandom = () => {
-  const idea = IDEAS[Math.floor(Math.random() * IDEAS.length)];
-  title.value = idea[0];
-  description.value = idea[1];
+  if (!ideas.length) {
+    setStatus("Нет черновиков: добавьте строки в Google Таблицу.", "err");
+    return;
+  }
+  const idea = ideas[Math.floor(Math.random() * ideas.length)];
+  title.value = idea.title;
+  description.value = idea.description;
   const two = form.querySelector('input[name="slides"][value="2"]');
   const three = form.querySelector('input[name="slides"][value="3"]');
-  (Math.random() < 0.4 ? two : three).checked = true;
+  if (idea.slides === 2) two.checked = true;
+  else if (idea.slides === 3) three.checked = true;
+  else (Math.random() < 0.4 ? two : three).checked = true;
   renderPreview();
-  setStatus("Случайный текст подставлен. Можно править и создавать пост.");
+  if (ideaSource === "sheet") {
+    setStatus(`Случайный пост из Google Таблицы (${ideas.length}). Можно править и создавать.`);
+  } else {
+    setStatus("Таблица пустая или недоступна, взят запасной список. Добавьте строки: Заголовок, Текст, Карточки.");
+  }
 };
 
 const utf8ToBase64 = (text) => {
@@ -238,4 +350,11 @@ token.addEventListener("input", () => {
   else sessionStorage.removeItem("gh-token");
 });
 
-fillRandom();
+setStatus("Загружаю Google Таблицу…");
+loadIdeas()
+  .catch(() => {
+    ideaSource = "local";
+  })
+  .finally(() => {
+    fillRandom();
+  });
