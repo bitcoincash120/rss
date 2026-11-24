@@ -8,12 +8,39 @@ const selectAll = document.getElementById("select-all");
 const logEl = document.getElementById("import-log");
 const progressEl = document.getElementById("progress");
 const progressFill = progressEl ? progressEl.querySelector("span") : null;
+const styleEl = document.getElementById("style");
 const previewDialog = document.getElementById("import-preview");
 const previewBody = document.getElementById("import-preview-body");
 
 let ideas = [];
 let busy = false;
 let openPreviewRow = 0;
+let previewRun = 0;
+
+const STYLE_KEY = "import-style";
+const randomEl = document.getElementById("random-style");
+const STYLE_CODES = styleEl ? [...styleEl.options].map((option) => option.value) : ["blue"];
+const randomOn = () => Boolean(randomEl && randomEl.checked);
+const baseStyle = () => (styleEl && styleEl.value) || "blue";
+const pickRandomStyle = () => STYLE_CODES[Math.floor(Math.random() * STYLE_CODES.length)] || "blue";
+const styleFor = (idea) => (randomOn() ? (idea && idea.randomStyle) || baseStyle() : baseStyle());
+const currentStyle = baseStyle;
+
+const assignRandomStyles = () => {
+  ideas.forEach((idea) => {
+    idea.randomStyle = pickRandomStyle();
+  });
+};
+
+const paintStyleBadges = () => {
+  document.querySelectorAll("#import-body tr[data-row]").forEach((tr) => {
+    const badge = tr.querySelector("[data-style-badge]");
+    if (!badge) return;
+    const idea = ideaByRow(tr.dataset.row);
+    badge.hidden = !randomOn();
+    badge.textContent = randomOn() ? styleFor(idea) : "";
+  });
+};
 
 const escapeHtml = (value) =>
   String(value || "")
@@ -63,6 +90,8 @@ const syncUi = () => {
   if (importBtn) {
     importBtn.disabled = busy || !scheduleEl.value || !selected.length;
   }
+  if (styleEl) styleEl.disabled = busy || randomOn();
+  if (randomEl) randomEl.disabled = busy;
 };
 
 const appendLog = (text, kind) => {
@@ -136,17 +165,8 @@ const carouselMarkup = (images, title) => {
 
 const fillPreviewDialog = (idea, images) => {
   if (!previewBody) return;
-  const cards = (idea.cards || [])
-    .filter(Boolean)
-    .map(
-      (text, index) =>
-        `<tr><th>Карточка ${index + 1}</th><td>${escapeHtml(text)}</td></tr>`
-    )
-    .join("");
   previewBody.innerHTML = `
-    <tr><th>Строка</th><td>${escapeHtml(idea.row)}</td></tr>
     <tr><th>Заголовок</th><td>${escapeHtml(idea.title)}</td></tr>
-    ${cards}
     <tr><th>Карточки</th><td>${carouselMarkup(images || [], idea.title)}</td></tr>
   `;
   const stage = previewBody.querySelector("[data-carousel]");
@@ -162,14 +182,20 @@ const openPreview = async (row) => {
   const idea = ideaByRow(row);
   if (!idea || !previewDialog || typeof previewDialog.showModal !== "function") return;
   openPreviewRow = Number(idea.row);
-  fillPreviewDialog(idea, idea.images || []);
+  fillPreviewDialog(idea, idea.imagesStyle === styleFor(idea) ? idea.images || [] : []);
   if (!previewDialog.open) previewDialog.showModal();
-  if (idea.images) return;
+  const style = styleFor(idea);
+  if (idea.images && idea.imagesStyle === style) return;
+  fillPreviewDialog(idea, []);
   try {
-    const res = await fetch(`api/import/preview?row=${idea.row}`, { cache: "no-store" });
+    const res = await fetch(
+      `api/import/preview?row=${idea.row}&style=${encodeURIComponent(style)}`,
+      { cache: "no-store" }
+    );
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || "Не собрались карточки");
     idea.images = data.images || [];
+    idea.imagesStyle = style;
     paintPreview(idea.row, idea.images);
     if (openPreviewRow === Number(idea.row)) fillPreviewDialog(idea, idea.images);
   } catch (error) {
@@ -210,7 +236,7 @@ const rowHtml = (idea, index) => {
     </td>
     <td class="col-num">${index}</td>
     <td class="col-thumb"><div class="import-ph" data-preview>Карточки…</div></td>
-    <td class="col-title">${escapeHtml(title)}</td>
+    <td class="col-title">${escapeHtml(title)} <code class="style-badge" data-style-badge hidden></code></td>
     <td class="col-count">${slides}</td>
     <td class="col-num">${idea.row}</td>
   `;
@@ -234,10 +260,10 @@ const fillTable = (list) => {
 };
 
 const paintPreview = (row, images) => {
-  const cell = document.querySelector(`tr[data-row="${row}"] [data-preview]`);
+  const cell = document.querySelector(`tr[data-row="${row}"] .col-thumb`);
   if (!cell) return;
   if (!images.length) {
-    cell.textContent = "Нет карточек";
+    cell.innerHTML = '<div class="import-ph">Нет карточек</div>';
     return;
   }
   const nav =
@@ -256,21 +282,42 @@ const paintPreview = (row, images) => {
           `<img${idx === 0 ? ' class="is-on"' : ""} src="${src}" alt="">`
       )
       .join("") + nav;
-  cell.replaceWith(stage);
+  cell.innerHTML = "";
+  cell.appendChild(stage);
   bindCarousel(stage);
 };
 
+const placeholderHtml = (text) => `<div class="import-ph">${escapeHtml(text)}</div>`;
+
 const loadPreviews = async (list) => {
+  const run = ++previewRun;
+  paintStyleBadges();
+  list.forEach((idea) => {
+    const cell = document.querySelector(`tr[data-row="${idea.row}"] .col-thumb`);
+    if (cell && idea.imagesStyle !== styleFor(idea)) cell.innerHTML = placeholderHtml("Карточки…");
+  });
   for (const idea of list) {
+    if (run !== previewRun) return;
+    const style = styleFor(idea);
+    if (idea.imagesStyle === style && idea.images) {
+      paintPreview(idea.row, idea.images);
+      continue;
+    }
     try {
-      const res = await fetch(`api/import/preview?row=${idea.row}`, { cache: "no-store" });
+      const res = await fetch(
+        `api/import/preview?row=${idea.row}&style=${encodeURIComponent(style)}`,
+        { cache: "no-store" }
+      );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Не собрались карточки");
+      if (run !== previewRun) return;
       idea.images = data.images || [];
+      idea.imagesStyle = style;
       paintPreview(idea.row, idea.images);
     } catch (error) {
-      const cell = document.querySelector(`tr[data-row="${idea.row}"] [data-preview]`);
-      if (cell) cell.textContent = error.message || "Нет карточек";
+      if (run !== previewRun) return;
+      const cell = document.querySelector(`tr[data-row="${idea.row}"] .col-thumb`);
+      if (cell) cell.innerHTML = placeholderHtml(error.message || "Нет карточек");
     }
   }
 };
@@ -317,6 +364,7 @@ const loadIdeas = async () => {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Не удалось прочитать Google Таблицу");
   ideas = data.ideas || [];
+  if (randomOn()) assignRandomStyles();
   fillTable(ideas);
   setStatus(
     ideas.length
@@ -379,7 +427,11 @@ form.addEventListener("submit", async (event) => {
         schedule_name: scheduleName,
         rows,
         origin: siteBase(),
-        style: "findoc",
+        style: baseStyle(),
+        random_style: randomOn(),
+        styles: Object.fromEntries(
+          rows.map((row) => [String(row), styleFor(ideaByRow(row))])
+        ),
       }),
     });
     if (!res.ok) {
@@ -424,6 +476,46 @@ if (selectAll) {
 
 if (scheduleEl) {
   scheduleEl.addEventListener("change", syncUi);
+}
+
+if (styleEl) {
+  const styleCode = document.getElementById("style-code");
+  const showStyleCode = () => {
+    if (styleCode) styleCode.textContent = randomOn() ? "случайный" : styleEl.value;
+  };
+  const saved = localStorage.getItem(STYLE_KEY);
+  if (saved && [...styleEl.options].some((option) => option.value === saved)) styleEl.value = saved;
+  showStyleCode();
+  styleEl.addEventListener("change", () => {
+    localStorage.setItem(STYLE_KEY, styleEl.value);
+    showStyleCode();
+    if (ideas.length) {
+      setStatus(`Тема ${styleEl.value}: пересобираю карточки…`);
+      loadPreviews(ideas).then(() => {
+        if (!busy) setStatus(`Черновиков в таблице: ${ideas.length}. Все выбраны.`);
+      });
+    }
+  });
+}
+
+if (randomEl) {
+  randomEl.addEventListener("change", () => {
+    if (randomOn()) assignRandomStyles();
+    const styleCode = document.getElementById("style-code");
+    if (styleCode) styleCode.textContent = randomOn() ? "случайный" : baseStyle();
+    syncUi();
+    paintStyleBadges();
+    if (ideas.length) {
+      setStatus(
+        randomOn()
+          ? "Случайный стиль: каждому посту выпал свой. Пересобираю карточки…"
+          : `Тема ${baseStyle()}: пересобираю карточки…`
+      );
+      loadPreviews(ideas).then(() => {
+        if (!busy) setStatus(`Черновиков в таблице: ${ideas.length}. Все выбраны.`);
+      });
+    }
+  });
 }
 
 if (previewDialog) {

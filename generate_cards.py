@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from posts_md import (
+    DEFAULT_STYLE,
     ROOT,
     card_image_name,
     clamp_style,
@@ -218,31 +219,33 @@ def publish_images(post_id: str, count: int) -> list[Path]:
     return targets
 
 
-def render_preview(idea: dict, *, force: bool = False) -> list[str]:
+def render_preview(idea: dict, *, style: str | None = None, force: bool = False) -> list[str]:
     row = int(idea.get("row") or 0)
     if row <= 0:
         raise ValueError("Нет номера строки таблицы")
-    dest = PREVIEWS_DIR / f"row-{row}"
+    skin = clamp_style(style)
+    folder = f"row-{row}-hq" if skin == DEFAULT_STYLE else f"row-{row}-hq-{skin}"
+    dest = PREVIEWS_DIR / folder
     dest.mkdir(parents=True, exist_ok=True)
     post = {
-        "id": f"draft-row-{row}",
+        "id": f"draft-row-{row}-{skin}",
         "title": idea.get("title") or "",
         "description": idea.get("description") or "",
         "cards": idea.get("cards") or [],
         "marp": idea.get("marp") or "",
         "slides": idea.get("slides") or 1,
-        "style": "findoc",
+        "style": skin,
     }
     count = slide_count(post)
     names = [f"{index}.jpg" for index in range(1, count + 1)]
     paths = [dest / name for name in names]
     if not force and paths and all(path.is_file() for path in paths):
-        return [f"previews/row-{row}/{name}" for name in names]
+        return [f"previews/{folder}/{name}" for name in names]
     CARDS_DIR.mkdir(exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     md_path = OUT_DIR / f"{post['id']}.md"
     md_path.write_text(deck_markdown(post), encoding="utf-8")
-    render_deck(md_path, image_scale="1")
+    render_deck(md_path, image_scale="3")
     produced = sorted(OUT_DIR.glob(f"{post['id']}.*.jpg")) + sorted(
         OUT_DIR.glob(f"{post['id']}.*.jpeg")
     )
@@ -250,7 +253,7 @@ def render_preview(idea: dict, *, force: bool = False) -> list[str]:
         raise RuntimeError(f"Строка {row}: ожидалось {count} карточек, собрано {len(produced)}")
     for index, src in enumerate(produced[:count], 1):
         shutil.copyfile(src, dest / f"{index}.jpg")
-    return [f"previews/row-{row}/{name}" for name in names]
+    return [f"previews/{folder}/{name}" for name in names]
 
 
 def render_one(post: dict, *, force: bool = False) -> list[Path]:

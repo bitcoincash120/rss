@@ -285,8 +285,8 @@ h1 {
 
 .stage {
   position: relative;
-  width: min(100%, 420px);
-  aspect-ratio: 1;
+  width: min(100%, 400px);
+  aspect-ratio: 4 / 5;
   background: #111;
   border: 1px solid var(--line);
 }
@@ -296,7 +296,7 @@ h1 {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   opacity: 0;
   pointer-events: none;
 }
@@ -840,7 +840,7 @@ button.ghost:disabled {
   --cta-ink: #f7f9fc;
   --display: Georgia, "PT Serif", serif;
   --body: Inter, Arial, sans-serif;
-  --hero: 28px;
+  --hero: 32px;
   --title: 22px;
   --copy: 12px;
   --cap: 10px;
@@ -853,7 +853,7 @@ button.ghost:disabled {
   gap: 0;
 }
 
-.mock.findoc {
+.mock.blue {
   --accent: #245bd6;
   --bg_top: #f7f9fc;
   --bg_deep: #17212e;
@@ -901,6 +901,119 @@ button.ghost:disabled {
   --display: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
   --body: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
   box-shadow: inset 6px 0 0 var(--accent);
+}
+
+.mock.black {
+  --accent: #f05a28;
+  --bg_top: #f3f0eb;
+  --bg_deep: #121212;
+  --text_muted: #77726b;
+  --line: #d6d2cb;
+  --track-dark: #3a3734;
+  --cta-ink: #ffffff;
+  --panel: #e6e2db;
+}
+
+.mock.orange {
+  --accent: #ec5b2b;
+  --bg_top: #fff6ec;
+  --bg_deep: #2a1409;
+  --text_muted: #8a5a44;
+  --line: #f0d8c3;
+  --track-dark: #c8441a;
+  --cta-ink: #fff6ec;
+  --panel: #fbe8d6;
+}
+
+.mock.carousel.orange.dark {
+  box-shadow: none;
+  background: #ec5b2b;
+  color: #fff6ec;
+  --accent: #ffd2a8;
+  --text_muted: #ffc9aa;
+  --line: #ffe0cb;
+}
+
+.mock.cream {
+  --accent: #ee5a24;
+  --bg_top: #f1efeb;
+  --bg_deep: #111111;
+  --text_muted: #77726b;
+  --line: #d6d2cb;
+  --track-dark: #cfcac2;
+  --cta-ink: #ffffff;
+  --panel: #e6e2db;
+}
+
+.mock.carousel.cream.dark {
+  background: var(--bg_top);
+  color: var(--bg_deep);
+  outline: 1px solid var(--line);
+}
+
+.mock.orange .track,
+.mock.orange .ruler {
+  background: var(--line) !important;
+}
+
+.mock.orange.dark .track,
+.mock.orange.dark .ruler {
+  background: var(--track-dark) !important;
+}
+
+.mock.black .track,
+.mock.black .ruler {
+  background: var(--line) !important;
+}
+
+.mock.black.dark .track,
+.mock.black.dark .ruler {
+  background: var(--track-dark) !important;
+}
+
+.mock.cream .track,
+.mock.cream .ruler {
+  background: var(--track-dark) !important;
+}
+
+.mock.black .fill,
+.mock.black .ruler i,
+.mock.orange .fill,
+.mock.orange .ruler i,
+.mock.cream .fill,
+.mock.cream .ruler i {
+  background: var(--accent) !important;
+}
+
+.mock.black .bar-row:first-child .fill,
+.mock.orange .bar-row:first-child .fill,
+.mock.cream .bar-row:first-child .fill {
+  background: var(--text_muted) !important;
+}
+
+.mock.black .cta-word,
+.mock.orange .cta-word,
+.mock.cream .cta-word {
+  color: var(--cta-ink);
+}
+
+.mock.black .hot,
+.mock.orange .hot,
+.mock.cream .hot,
+.mock.black .stat-card b[style],
+.mock.orange .stat-card b[style],
+.mock.cream .stat-card b[style] {
+  color: var(--accent) !important;
+}
+
+.mock.carousel.paper.dark {
+  box-shadow: none;
+  background: #e8601c;
+  color: #fff6ec;
+  --accent: #ffe2c2;
+  --text_muted: #ffd3b0;
+  --line: #ffe6d0;
+  --track-dark: #b8470f;
 }
 
 .mock.carousel.dark,
@@ -1194,6 +1307,14 @@ button.ghost:disabled {
   color: #9bb4e8;
 }
 
+.hint code {
+  padding: 1px 6px;
+  color: var(--gold);
+  background: var(--head);
+  border: 1px solid var(--line);
+  font-size: 12px;
+}
+
 .import-feed {
   min-width: 720px;
 }
@@ -1325,4 +1446,33 @@ button.ghost:disabled {
   .hero-row {
     flex-wrap: wrap;
   }
+}
+
+.style-badge {
+  margin-left: 8px;
+  padding: 1px 6px;
+  color: var(--gold);
+  background: var(--head);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.style-badge[hidden] {
+  display: none;
+}
+
+.mock.carousel.dark .hero + p {
+  color: var(--hero-sub, #fff);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mock.carousel.cream.dark .hero + p {
+  --hero-sub: #000;
+}
+
+.mock.carousel:has(.hero) .content {
+  justify-content: center;
 }

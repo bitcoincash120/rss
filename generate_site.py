@@ -68,30 +68,6 @@ def row_html(post: dict, index: int) -> str:
     """
 
 
-def card_rows_html(post: dict) -> str:
-    cards = list(post.get("cards") or [])
-    rows = []
-    for index, text in enumerate(cards, 1):
-        if not text:
-            continue
-        rows.append(
-            f"""
-          <tr>
-            <th>Карточка {index}</th>
-            <td>{html.escape(text)}</td>
-          </tr>"""
-        )
-    if not rows and post.get("description"):
-        rows.append(
-            f"""
-          <tr>
-            <th>Текст</th>
-            <td>{html.escape(post["description"])}</td>
-          </tr>"""
-        )
-    return "".join(rows)
-
-
 def download_button_html(post: dict) -> str:
     files = post.get("image_files") or []
     if not files:
@@ -105,25 +81,15 @@ def download_button_html(post: dict) -> str:
 
 
 def preview_html(post: dict) -> str:
-    when = format_added_short(post) or "—"
     return f"""
     <dialog class="preview" id="{html.escape(post["id"], quote=True)}">
       <div class="sheet">
         <button type="button" class="close" data-close aria-label="Закрыть">×</button>
         <table>
           <tr>
-            <th>Дата добавления</th>
-            <td><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
-          </tr>
-          <tr>
-            <th>Расписание</th>
-            <td>{cell_or_dash(post.get("hooppy_schedule"))}</td>
-          </tr>
-          <tr>
             <th>Заголовок</th>
             <td>{html.escape(post["title"])}</td>
           </tr>
-          {card_rows_html(post)}
           <tr>
             <th>Карточки</th>
             <td>{carousel_html(post)}{download_button_html(post)}</td>
@@ -180,7 +146,7 @@ def main() -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Моя RSS-лента</title>
   {rss_head_html()}
-  <link rel="stylesheet" href="site.css?v=import">
+  <link rel="stylesheet" href="site.css?v=import7">
 </head>
 <body>
   <main class="wrap">

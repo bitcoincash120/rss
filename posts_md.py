@@ -11,12 +11,14 @@ ROOT = Path(__file__).resolve().parent
 POSTS_DIR = ROOT / "posts"
 IMAGES_DIR = ROOT / "images"
 SITE_URL = "https://bitcoincash120.github.io/rss"
-STYLES = ("night", "paper", "studio", "findoc")
-DEFAULT_STYLE = "findoc"
+STYLES = ("night", "paper", "studio", "blue", "black", "orange", "cream")
+DEFAULT_STYLE = "blue"
+STYLE_ALIASES = {"findoc": "blue", "fin-doc": "blue"}
 
 
 def clamp_style(value: str | None) -> str:
     name = str(value or "").strip().lower()
+    name = STYLE_ALIASES.get(name, name)
     return name if name in STYLES else DEFAULT_STYLE
 
 MONTHS_RU = {
@@ -211,7 +213,7 @@ def parse_post(path: Path) -> dict:
             parsed_date = parsed_date.replace(tzinfo=timezone.utc)
     style_raw = meta.get("style") or meta.get("theme")
     if marp and not style_raw:
-        style_raw = "findoc"
+        style_raw = "blue"
     return {
         "id": post_id,
         "title": title,

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Импорт в Hooppy</title>
-  <link rel="stylesheet" href="site.css?v=import4">
+  <link rel="stylesheet" href="site.css?v=import14">
 </head>
 <body>
   <main class="wrap">
@@ -32,6 +32,25 @@
               <option value="">Выберите расписание</option>
             </select>
             <p class="hint" id="schedule-hint">По умолчанию расписание не выбрано. Токен задаётся в админке.</p>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="style">Тема</label></th>
+          <td>
+            <select id="style" name="style">
+              <option value="blue" selected>blue — Синяя аналитика</option>
+              <option value="night">night — Ночь, коралл и изумруд</option>
+              <option value="paper">paper — Бумага, охра и чернила</option>
+              <option value="studio">studio — Студия, неон и индиго</option>
+              <option value="black">black — Чёрный и оранжевый</option>
+              <option value="orange">orange — Оранжевый</option>
+              <option value="cream">cream — Молочный и оранжевый</option>
+            </select>
+            <label class="switch" for="random-style">
+              <input id="random-style" name="random_style" type="checkbox" checked>
+              <span>Случайный стиль</span>
+            </label>
+            <p class="hint">Код темы: <code id="style-code">случайный</code>. Оформление картинок для предпросмотра и импорта. При смене карточки пересобираются.</p>
           </td>
         </tr>
         <tr>
@@ -75,6 +94,6 @@
   </main>
   <script src="settings.js?v=admin"></script>
   <script src="hooppy-token.js?v=keep"></script>
-  <script src="import.js?v=import5"></script>
+  <script src="import.js?v=import12"></script>
 </body>
 </html>

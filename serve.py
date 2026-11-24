@@ -66,8 +66,9 @@ class Handler(SimpleHTTPRequestHandler):
                 if not idea:
                     self._json(404, {"ok": False, "error": f"Строка {row} не найдена или уже импортирована"})
                     return
-                images = generate_cards.render_preview(idea)
-                self._json(200, {"ok": True, "row": row, "images": images, "slides": len(images)})
+                style = (query.get("style") or ["blue"])[0]
+                images = generate_cards.render_preview(idea, style=style)
+                self._json(200, {"ok": True, "row": row, "style": style, "images": images, "slides": len(images)})
             except Exception as exc:  # noqa: BLE001
                 self._json(502, {"ok": False, "error": str(exc), "images": []})
             return
@@ -265,6 +266,7 @@ class Handler(SimpleHTTPRequestHandler):
             importlib.reload(sheet_ideas)
             ideas = {int(item.get("row") or 0): item for item in sheet_ideas.fetch_ideas()}
             schedule_name = str(payload.get("schedule_name") or "")
+            row_styles = payload.get("styles") if isinstance(payload.get("styles"), dict) else {}
             self._ndjson({"event": "start", "total": len(rows), "message": f"К импорту {len(rows)} постов."})
             ok = 0
             fail = 0
@@ -302,7 +304,7 @@ class Handler(SimpleHTTPRequestHandler):
                         idea.get("description") or "",
                         idea.get("slides"),
                         cards=idea.get("cards"),
-                        style=payload.get("style") or "findoc",
+                        style=row_styles.get(str(row)) or payload.get("style") or "blue",
                         marp=idea.get("marp"),
                     )
                     self._ndjson(

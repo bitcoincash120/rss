@@ -107,7 +107,7 @@ def write_markdown(
     when = date or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     path = POSTS_DIR / f"{post_id}.md"
     deck = normalize_marp_deck(marp or "")
-    style_name = clamp_style(style or ("findoc" if deck else None))
+    style_name = clamp_style(style or ("blue" if deck else None))
     meta = {
         "date": when,
         "slides": slides,

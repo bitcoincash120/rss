@@ -45,11 +45,11 @@ const repoFromLocation = () => {
 
 const isLocal = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
 
-const STYLES = ["night", "paper", "studio", "findoc"];
+const STYLES = ["night", "paper", "studio", "blue", "black", "orange", "cream"];
 
 const styleValue = () => {
   const value = styleEl && styleEl.value;
-  return STYLES.includes(value) ? value : "findoc";
+  return STYLES.includes(value) ? value : "blue";
 };
 
 const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");

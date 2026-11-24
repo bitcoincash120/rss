@@ -2,7 +2,7 @@
 /* @size carousel 320px 400px */
 /* @size reels 270px 480px */
 section {--accent:#245BD6;--bg_top:#F7F9FC;--bg_deep:#17212E;--text_muted:#526174;--line:#CBD3DE;
---sw:320px;--sh:400px;--rw:270px;--rh:480px;--pad:18px;--display:"PT Serif",Georgia,serif;--body:Inter,Arial,sans-serif;--hero:28px;--title:22px;--sub:14px;--copy:12px;--cap:10px}
+--sw:320px;--sh:400px;--rw:270px;--rh:480px;--pad:18px;--display:"PT Serif",Georgia,serif;--body:Inter,Arial,sans-serif;--hero:32px;--title:22px;--sub:14px;--copy:12px;--cap:10px}
 * {box-sizing:border-box}
 h1,h2,h3,p {margin:0}
 h1,h2,h3 {font-family:var(--display);line-height:1.12}
@@ -50,6 +50,9 @@ section {width:320px;height:400px;padding:0;display:block;}
 .opt-card .muted {display:block;margin:0 0 4px}
 .opt-card b {display:block;font:700 16px/1.2 var(--display)}
 article.slide {margin:0;}
+.slide:has(.hero) .content {justify-content:center}
+.dark .hero + p {color:var(--hero-sub,#FFFFFF);font-size:13px;font-weight:600}
+section.cream .dark .hero + p {--hero-sub:#000000}
 section.night {--accent:#FF8B6A;--bg_top:#E8F3EF;--bg_deep:#132428;--text_muted:#5E7F79;--line:#B5D0C8;--track-dark:#2A4548;--cta-ink:#132428;--panel:#D5E8E2}
 section.paper {--accent:#B45309;--bg_top:#F6EDE0;--bg_deep:#2C1810;--text_muted:#7A5C46;--line:#DCC7A8;--track-dark:#4A3224;--cta-ink:#F6EDE0;--panel:#EADCC8;--display:Palatino,"Palatino Linotype",Georgia,serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
 section.studio {--accent:#2DD4BF;--bg_top:#F4F1FF;--bg_deep:#12081F;--text_muted:#7C6A99;--line:#C9B8E6;--track-dark:#3B2A55;--cta-ink:#12081F;--panel:#E4DCF6;--display:"Avenir Next","Segoe UI",Inter,Arial,sans-serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
@@ -65,6 +68,25 @@ section.night .bar-row:first-child .fill,section.paper .bar-row:first-child .fil
 section.night .stat-card b[style],section.paper .stat-card b[style],section.studio .stat-card b[style],
 section.night .hot,section.paper .hot,section.studio .hot {color:var(--accent)!important}
 section.studio .dark .foot {color:#FB7185}
+section.paper .dark {box-shadow:none;background:#E8601C;color:#FFF6EC;--accent:#FFE2C2;--text_muted:#FFD3B0;--line:#FFE6D0;--track-dark:#B8470F}
+section.black {--accent:#F05A28;--bg_top:#F3F0EB;--bg_deep:#121212;--text_muted:#77726B;--line:#D6D2CB;--track-dark:#3A3734;--cta-ink:#FFFFFF;--panel:#E6E2DB}
+section.orange {--accent:#EC5B2B;--bg_top:#FFF6EC;--bg_deep:#2A1409;--text_muted:#8A5A44;--line:#F0D8C3;--track-dark:#C8441A;--cta-ink:#FFF6EC;--panel:#FBE8D6}
+section.cream {--accent:#EE5A24;--bg_top:#F1EFEB;--bg_deep:#111111;--text_muted:#77726B;--line:#D6D2CB;--track-dark:#CFCAC2;--cta-ink:#FFFFFF;--panel:#E6E2DB}
+section.orange .dark {box-shadow:none;background:#EC5B2B;color:#FFF6EC;--accent:#FFD2A8;--text_muted:#FFC9AA;--line:#FFE0CB}
+section.orange .track,section.orange .ruler {background:var(--line)!important}
+section.orange.dark .track,section.orange .dark .track,section.orange .dark .ruler {background:var(--track-dark)!important}
+section.black .track,section.black .ruler {background:var(--line)!important}
+section.black.dark .track,section.black .dark .track,section.black .dark .ruler {background:var(--track-dark)!important}
+section.cream .dark {background:var(--bg_top);color:var(--bg_deep);outline:1px solid var(--line)}
+section.cream .dark .head,section.cream .dark .foot {border-color:var(--line)}
+section.cream .dark .kicker,section.cream .dark .muted {color:var(--text_muted)}
+section.cream .track,section.cream .ruler {background:var(--track-dark)!important}
+section.black .cta-word,section.orange .cta-word,section.cream .cta-word {color:var(--cta-ink)}
+section.black .fill,section.black .ruler i,section.orange .fill,section.orange .ruler i,section.cream .fill,section.cream .ruler i {background:var(--accent)!important}
+section.black .bar-row:first-child .fill,section.orange .bar-row:first-child .fill,section.cream .bar-row:first-child .fill {background:var(--text_muted)!important}
+section.black .stat-card b[style],section.orange .stat-card b[style],section.cream .stat-card b[style],
+section.black .hot,section.orange .hot,section.cream .hot {color:var(--accent)!important}
+section.black .opt-card,section.orange .opt-card,section.cream .opt-card {background:var(--panel)}
 @font-face {
   font-family: 'Inter';
   font-style: normal;
