@@ -13,7 +13,14 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from posts_md import ROOT, cards_from_marp, count_marp_slides, extract_marp_deck, normalize_marp_deck
+from posts_md import (
+    ROOT,
+    H3_RE,
+    cards_from_marp,
+    count_marp_slides,
+    extract_marp_deck,
+    normalize_marp_deck,
+)
 
 SHEET_ID = "19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI"
 SHEET_GID = "0"
@@ -51,6 +58,7 @@ CARD_HEADER = re.compile(
 )
 SEED_JSON = ROOT / "sheet_seed.json"
 SEED_XLSX = Path("/Users/oparin/Downloads/fin_doc_10_posts-2.xlsx")
+DRAFTS_DIR = ROOT / "drafts"
 
 HEADER_KEYS = TITLE_KEYS | TEXT_KEYS | SLIDE_KEYS | STATUS_KEYS | LINK_KEYS | MARP_KEYS
 
@@ -232,6 +240,7 @@ def fetch_ideas(*, include_imported: bool = False) -> list[dict]:
         ideas = parse_gviz(table)
     else:
         ideas = parse_csv(payload)
+    ideas = enrich_ideas_from_seed(ideas)
     if include_imported:
         return ideas
     return [idea for idea in ideas if not idea.get("imported")]
@@ -301,28 +310,105 @@ def mark_imported(row: int, url: str) -> dict:
     return _call_webhook({"row": int(row), "url": url, "status": IMPORTED_STATUS})
 
 
+RICH_MARKS = (
+    "big-stat",
+    "bar-row",
+    "vline",
+    "chain",
+    "stat-card",
+    "cta-word",
+    "opt-card",
+    'class="tl"',
+)
+
+
+def _richness(marp: str) -> int:
+    text = marp or ""
+    return sum(1 for mark in RICH_MARKS if mark in text)
+
+
+def load_json_seed() -> list[dict]:
+    if not SEED_JSON.is_file():
+        return []
+    data = json.loads(SEED_JSON.read_text(encoding="utf-8"))
+    return [
+        {
+            "title": str(item.get("title") or "").strip(),
+            "marp": normalize_marp_deck(item.get("marp") or ""),
+        }
+        for item in data
+        if str(item.get("title") or "").strip() and str(item.get("marp") or "").strip()
+    ]
+
+
+def load_draft_posts() -> list[dict]:
+    posts: list[dict] = []
+    if not DRAFTS_DIR.is_dir():
+        return posts
+    for path in sorted(DRAFTS_DIR.glob("*.md")):
+        raw = path.read_text(encoding="utf-8")
+        marp = normalize_marp_deck(extract_marp_deck(raw) or raw)
+        if not marp:
+            continue
+        title = ""
+        match = re.search(r'(?im)^title:\s*"?(.+?)"?\s*$', marp)
+        if match:
+            title = match.group(1).strip().strip('"').strip("'")
+        if not title:
+            heading = H3_RE.search(marp)
+            if heading:
+                title = re.sub(r"<[^>]+>", "", heading.group(1)).strip()
+        if title:
+            posts.append({"title": title, "marp": marp})
+    return posts
+
+
+def richer_catalog() -> dict[str, str]:
+    catalog: dict[str, str] = {}
+    for item in load_json_seed() + load_draft_posts():
+        title = item["title"]
+        marp = item["marp"]
+        if _richness(marp) >= _richness(catalog.get(title, "")):
+            catalog[title] = marp
+    return catalog
+
+
+def enrich_ideas_from_seed(ideas: list[dict]) -> list[dict]:
+    by_title = richer_catalog()
+    enriched = []
+    for idea in ideas:
+        seed_marp = by_title.get(str(idea.get("title") or "").strip())
+        current = idea.get("marp") or ""
+        if seed_marp and _richness(seed_marp) > _richness(current):
+            idea = dict(idea)
+            idea["marp"] = seed_marp
+            idea["cards"] = cards_from_marp(seed_marp) or idea.get("cards") or []
+            idea["slides"] = max(int(idea.get("slides") or 1), count_marp_slides(seed_marp))
+        enriched.append(idea)
+    return enriched
+
+
+def dump_catalog(path: Path | None = None) -> Path:
+    dest = Path(path or SEED_JSON)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    posts = [{"title": title, "marp": marp} for title, marp in richer_catalog().items()]
+    dest.write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return dest
+
+
 def load_seed_posts() -> list[dict]:
+    catalog = richer_catalog()
     if SEED_XLSX.is_file():
         from openpyxl import load_workbook
 
         book = load_workbook(SEED_XLSX, data_only=True)
         sheet = book[book.sheetnames[0]]
-        posts = []
         for row in range(2, sheet.max_row + 1):
             title = str(sheet.cell(row, 1).value or "").strip()
             marp = normalize_marp_deck(sheet.cell(row, 2).value or "")
-            if title and marp:
-                posts.append({"title": title, "marp": marp})
-        if posts:
-            return posts
-    if SEED_JSON.is_file():
-        data = json.loads(SEED_JSON.read_text(encoding="utf-8"))
-        return [
-            {"title": str(item.get("title") or "").strip(), "marp": normalize_marp_deck(item.get("marp") or "")}
-            for item in data
-            if str(item.get("title") or "").strip() and str(item.get("marp") or "").strip()
-        ]
-    return []
+            if title and marp and _richness(marp) > _richness(catalog.get(title, "")):
+                catalog[title] = marp
+    return [{"title": title, "marp": marp} for title, marp in catalog.items()]
 
 
 def seed_sheet() -> dict:

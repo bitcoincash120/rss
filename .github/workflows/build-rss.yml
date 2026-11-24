@@ -51,7 +51,8 @@ jobs:
           test -s new.html
           test -s admin.html
           mkdir -p _site/images
-          cp index.html new.html new.js feed.js site.css admin.html admin.js settings.js site_settings.json _site/
+          cp index.html new.html new.js feed.js site.css admin.html admin.js settings.js site_settings.json sheet_seed.json _site/
+          python -c "from pathlib import Path; from sheet_ideas import dump_catalog; dump_catalog(Path('_site') / 'sheet_seed.json')"
           if python -c "from site_settings import rss_enabled; raise SystemExit(0 if rss_enabled() else 1)"; then
             test -s rss.xml
             cp rss.xml _site/

@@ -169,7 +169,7 @@ def main() -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Моя RSS-лента</title>
   {rss_head_html()}
-  <link rel="stylesheet" href="site.css?v=carousel-skins">
+  <link rel="stylesheet" href="site.css?v=paid-debt">
 </head>
 <body>
   <main class="wrap">

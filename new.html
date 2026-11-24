@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Новый пост</title>
-  <link rel="stylesheet" href="site.css?v=carousel-skins">
+  <link rel="stylesheet" href="site.css?v=paid-debt">
 </head>
 <body>
   <main class="wrap">
@@ -19,7 +19,7 @@
           <a class="rss" data-rss href="rss.xml" hidden>RSS</a>
         </div>
       </div>
-      <p class="lede">Случайный пост берётся только из Google Таблицы. Колонки: «Статус», «Ссылка», «Заголовок», «Полная разметка Marp (.md)». JPEG собираются из готовой разметки. Строки со статусом «импортирован» пропускаются.</p>
+      <p class="lede">JPEG собираются из колонки «Полная разметка Marp (.md)» как есть. Вставляйте туда полный Marp из ChatGPT, не короткий пересказ. Можно также положить .md в папку drafts/ — генератор подхватит более полную карусель по заголовку. Строки со статусом «импортирован» пропускаются.</p>
     </header>
 
     <form id="post-form" class="sheet" autocomplete="off">
@@ -28,10 +28,6 @@
         <tr>
           <th><label for="title">Заголовок</label></th>
           <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
-        </tr>
-        <tr>
-          <th><label for="marp">Marp</label></th>
-          <td><textarea id="marp" name="marp" rows="18" required placeholder="Полная разметка Marp (.md)"></textarea></td>
         </tr>
         <tr>
           <th>Дата и время</th>
@@ -46,12 +42,6 @@
               <option value="studio">Студия — неон и индиго</option>
               <option value="findoc" selected>Fin-doc — синяя аналитика</option>
             </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Токен GitHub</th>
-          <td>
-            <input id="token" name="token" type="password" autocomplete="off" placeholder="Нужен только на GitHub Pages, чтобы записать файл в репозиторий">
           </td>
         </tr>
         <tr>
@@ -71,14 +61,14 @@
           </td>
         </tr>
         <tr>
-          <th>Markdown</th>
-          <td><pre class="md-out" id="markdown"></pre></td>
+          <th><label for="marp">Marp</label></th>
+          <td><textarea id="marp" name="marp" rows="18" required placeholder="Полная разметка Marp (.md)"></textarea></td>
         </tr>
         </tbody>
       </table>
     </form>
   </main>
   <script src="settings.js?v=admin"></script>
-  <script src="new.js?v=marp-sheet"></script>
+  <script src="new.js?v=rich-drafts"></script>
 </body>
 </html>

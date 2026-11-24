@@ -1072,6 +1072,87 @@ button.ghost:disabled {
   color: #fb7185;
 }
 
+.mock.carousel .vline {
+  position: relative;
+}
+
+.mock.carousel .vline::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: var(--line);
+}
+
+.mock.carousel .vline .tl-item {
+  border: 0;
+  align-items: flex-start;
+}
+
+.mock.carousel .vline .dot {
+  display: block;
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.mock.carousel .chain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-block: 1px solid var(--line);
+  padding: 10px 0;
+  font: 700 13px / 1.2 var(--body);
+}
+
+.mock.carousel .chain .arrow {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.mock.carousel .fact-row .label {
+  min-width: 64px;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.mock.carousel .big-stat {
+  font: 700 36px / 1 var(--display);
+  color: var(--accent);
+}
+
+.mock.carousel.dark .big-stat {
+  color: #9bb4e8;
+}
+
+.mock.carousel .opt-card {
+  background: var(--panel, #e8eef6);
+  border-left: 4px solid var(--accent);
+  padding: 10px 12px;
+}
+
+.mock.carousel .opt-card .muted {
+  display: block;
+  margin: 0 0 4px;
+}
+
+.mock.carousel .opt-card b {
+  display: block;
+  font: 700 16px / 1.2 var(--display);
+}
+
+.mock.carousel.dark .stat-card b.hot {
+  color: #9bb4e8;
+}
+
 @media (max-width: 640px) {
   .wrap {
     width: calc(100% - 16px);

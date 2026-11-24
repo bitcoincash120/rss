@@ -39,10 +39,20 @@ h1,h2,h3 {font-family:var(--display);line-height:1.12}
 .rulerbox .pair {margin-top:7px}
 .cta-word {align-self:flex-start;font:700 var(--title) var(--display)}
 section {width:320px;height:400px;padding:0;display:block;}
+.vline {position:relative}
+.vline::before {content:"";position:absolute;left:4px;top:12px;bottom:12px;width:2px;background:var(--line)}
+.vline .tl-item {border:0;align-items:flex-start}
+.vline .dot {display:block;width:9px;height:9px;min-width:9px;border-radius:50%;background:var(--accent);margin-top:5px;position:relative;z-index:1}
+.chain {display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-block:1px solid var(--line);padding:10px 0;font:700 13px/1.2 var(--body)}
+.chain .arrow {color:var(--accent);font-weight:400}
+.fact-row .label {min-width:64px;margin:0;flex:0 0 auto}
+.opt-card {background:var(--panel,#E8EEF6);border-left:4px solid var(--accent);padding:10px 12px}
+.opt-card .muted {display:block;margin:0 0 4px}
+.opt-card b {display:block;font:700 16px/1.2 var(--display)}
 article.slide {margin:0;}
-section.night {--accent:#FF8B6A;--bg_top:#E8F3EF;--bg_deep:#132428;--text_muted:#5E7F79;--line:#B5D0C8;--track-dark:#2A4548;--cta-ink:#132428}
-section.paper {--accent:#B45309;--bg_top:#F6EDE0;--bg_deep:#2C1810;--text_muted:#7A5C46;--line:#DCC7A8;--track-dark:#4A3224;--cta-ink:#F6EDE0;--display:Palatino,"Palatino Linotype",Georgia,serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
-section.studio {--accent:#2DD4BF;--bg_top:#F4F1FF;--bg_deep:#12081F;--text_muted:#7C6A99;--line:#C9B8E6;--track-dark:#3B2A55;--cta-ink:#12081F;--display:"Avenir Next","Segoe UI",Inter,Arial,sans-serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
+section.night {--accent:#FF8B6A;--bg_top:#E8F3EF;--bg_deep:#132428;--text_muted:#5E7F79;--line:#B5D0C8;--track-dark:#2A4548;--cta-ink:#132428;--panel:#D5E8E2}
+section.paper {--accent:#B45309;--bg_top:#F6EDE0;--bg_deep:#2C1810;--text_muted:#7A5C46;--line:#DCC7A8;--track-dark:#4A3224;--cta-ink:#F6EDE0;--panel:#EADCC8;--display:Palatino,"Palatino Linotype",Georgia,serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
+section.studio {--accent:#2DD4BF;--bg_top:#F4F1FF;--bg_deep:#12081F;--text_muted:#7C6A99;--line:#C9B8E6;--track-dark:#3B2A55;--cta-ink:#12081F;--panel:#E4DCF6;--display:"Avenir Next","Segoe UI",Inter,Arial,sans-serif;--body:"Avenir Next","Segoe UI",Inter,Arial,sans-serif}
 section.paper .slide {box-shadow:inset 0 6px 0 var(--accent)}
 section.studio .slide {box-shadow:inset 6px 0 0 var(--accent)}
 section.night .cta-word,section.paper .cta-word,section.studio .cta-word {color:var(--cta-ink)}

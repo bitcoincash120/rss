@@ -26,10 +26,8 @@ let currentIdea = null;
 const form = document.getElementById("post-form");
 const title = document.getElementById("title");
 const marpEl = document.getElementById("marp");
-const token = document.getElementById("token");
 const statusEl = document.getElementById("status");
 const mocks = document.getElementById("mocks");
-const markdownEl = document.getElementById("markdown");
 const publishedAt = document.getElementById("published-at");
 const randomBtn = document.getElementById("random");
 const styleEl = document.getElementById("style");
@@ -184,7 +182,6 @@ const renderPreview = () => {
   } else {
     mocks.innerHTML = styleTag + mockCard("hero", when, heading, "Вставьте полную разметку Marp.", 1, 1);
   }
-  markdownEl.textContent = markdown();
   if (publishedAt) {
     publishedAt.dateTime = iso;
     publishedAt.textContent = when;
@@ -375,21 +372,54 @@ const loadSheetLocal = async () => {
   return data.ideas.filter((idea) => !idea.imported);
 };
 
+const richness = (marp) => {
+  const text = String(marp || "");
+  return ["big-stat", "bar-row", "vline", "chain", "stat-card", "cta-word", "opt-card"].filter((mark) =>
+    text.includes(mark)
+  ).length;
+};
+
+const enrichFromSeed = async (list) => {
+  try {
+    const res = await fetch("sheet_seed.json", { cache: "no-store" });
+    if (!res.ok) return list;
+    const seed = await res.json();
+    const byTitle = Object.fromEntries(
+      (Array.isArray(seed) ? seed : []).map((item) => [item.title, item.marp])
+    );
+    return list.map((idea) => {
+      const seedMarp = byTitle[idea.title];
+      if (seedMarp && richness(seedMarp) > richness(idea.marp)) {
+        return { ...idea, marp: seedMarp };
+      }
+      return idea;
+    });
+  } catch (_error) {
+    return list;
+  }
+};
+
 const loadIdeas = async () => {
   try {
     const fromApi = await loadSheetLocal();
-    ideas = fromApi;
+    ideas = await enrichFromSeed(fromApi);
     return;
   } catch (_error) {
     /* GitHub Pages has no local API; try the sheet directly. */
   }
   try {
-    ideas = await loadWebhookIdeas();
+    ideas = await enrichFromSeed(await loadWebhookIdeas());
     if (ideas.length) return;
   } catch (_error) {
     /* Old webhook without action=ideas. */
   }
-  ideas = await loadSheetJsonp();
+  ideas = await enrichFromSeed(await loadSheetJsonp());
+};
+
+const isPlainDeck = (marp) => {
+  const text = String(marp || "");
+  const articles = (text.match(/<article\b/gi) || []).length;
+  return articles > 0 && richness(text) === 0;
 };
 
 const applyIdea = (idea) => {
@@ -418,7 +448,14 @@ const pickRandom = () => {
   }
   currentIdea = pool[Math.floor(Math.random() * pool.length)];
   applyIdea(currentIdea);
-  setStatus(`Случайный пост из Google Таблицы, строка ${currentIdea.row} (${ideas.length} доступно).`);
+  if (isPlainDeck(currentIdea.marp)) {
+    setStatus(
+      `Строка ${currentIdea.row}: в таблице урезанная разметка без модулей карусели. Вставьте полный Marp из ChatGPT в колонку или положите .md в drafts/.`,
+      "err"
+    );
+  } else {
+    setStatus(`Случайный пост из Google Таблицы, строка ${currentIdea.row} (${ideas.length} доступно).`);
+  }
 };
 
 const fillRandom = async () => {
@@ -569,10 +606,10 @@ form.addEventListener("submit", async (event) => {
     try {
       created = await createLocal(payload);
     } catch (_localError) {
-      const secret = token.value.trim();
+      const secret = (sessionStorage.getItem("gh-token") || "").trim();
       if (!secret) {
         throw new Error(
-          "Локальный сервер недоступен. Запустите python3 serve.py или вставьте токен GitHub."
+          "Локальный сервер недоступен. Запустите python3 serve.py или сохраните токен в админке."
         );
       }
       created = await createOnGitHub(payload, secret);
@@ -610,13 +647,6 @@ form.addEventListener("submit", async (event) => {
   } finally {
     submit.disabled = false;
   }
-});
-
-token.value = sessionStorage.getItem("gh-token") || "";
-token.addEventListener("input", () => {
-  const value = token.value.trim();
-  if (value) sessionStorage.setItem("gh-token", value);
-  else sessionStorage.removeItem("gh-token");
 });
 
 renderPreview();
