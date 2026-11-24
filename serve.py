@@ -83,6 +83,11 @@ class Handler(SimpleHTTPRequestHandler):
             importlib.reload(site_settings)
             self._json(200, {"settings": site_settings.load_settings()})
             return
+        if path == "/api/hooppy/token":
+            importlib.reload(hooppy)
+            saved = hooppy.token()
+            self._json(200, {"ok": True, "saved": bool(saved), "token": saved})
+            return
         if path == "/api/hooppy/schedules":
             try:
                 importlib.reload(hooppy)
@@ -120,7 +125,11 @@ class Handler(SimpleHTTPRequestHandler):
         if path == "/api/hooppy/token":
             try:
                 importlib.reload(hooppy)
-                saved = hooppy.save_token(str(payload.get("token") or payload.get("hooppy_token") or ""))
+                incoming = payload.get("token") if "token" in payload else payload.get("hooppy_token")
+                if incoming is None or not str(incoming).strip():
+                    self._json(200, {"ok": True, "saved": hooppy.has_token(), "kept": True})
+                    return
+                saved = hooppy.save_token(str(incoming))
             except Exception as exc:  # noqa: BLE001
                 self._json(500, {"ok": False, "error": str(exc)})
                 return

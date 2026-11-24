@@ -44,8 +44,8 @@
         <tr>
           <th>Токен Hooppy</th>
           <td>
-            <input id="hooppy-token" name="hooppy_token" type="password" autocomplete="off" placeholder="Настройки → API в кабинете Hooppy">
-            <p class="hint">Нужен, чтобы подтянуть расписания. Хранится локально, в репозиторий не попадает.</p>
+            <input id="hooppy-token" name="hooppy_token" type="password" autocomplete="off" placeholder="Сохранённый токен подставится сам">
+            <p class="hint" id="hooppy-token-hint">Токен Hooppy пишется в .hooppy_token на диске и в браузер. Пустое сохранение его не стирает.</p>
           </td>
         </tr>
         <tr>
@@ -62,6 +62,7 @@
     </form>
   </main>
   <script src="settings.js?v=admin"></script>
-  <script src="admin.js?v=hooppy-token"></script>
+  <script src="hooppy-token.js?v=keep"></script>
+  <script src="admin.js?v=hooppy-keep"></script>
 </body>
 </html>

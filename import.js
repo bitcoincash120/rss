@@ -22,7 +22,8 @@ const escapeHtml = (value) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-const hooppyTokenValue = () => (sessionStorage.getItem("hooppy-token") || "").trim();
+const hooppyTokenValue = () =>
+  ((window.hooppyTokenStore && window.hooppyTokenStore.read()) || "").trim();
 
 const siteBase = () => {
   const dir = location.pathname.replace(/[^/]+$/, "") || "/";
@@ -436,8 +437,11 @@ if (previewDialog) {
 }
 
 setStatus("Загружаю Google Таблицу…");
-loadSchedules();
-loadIdeas().catch((error) => {
-  fillTable([]);
-  setStatus(error.message || "Не удалось прочитать Google Таблицу.", "err");
+const ready = window.hooppyTokenStore ? window.hooppyTokenStore.hydrate() : Promise.resolve("");
+ready.finally(() => {
+  loadSchedules();
+  loadIdeas().catch((error) => {
+    fillTable([]);
+    setStatus(error.message || "Не удалось прочитать Google Таблицу.", "err");
+  });
 });

@@ -112,11 +112,19 @@ form.addEventListener("submit", async (event) => {
     try {
       applySettings(await saveLocal(settings));
       if (isLocal()) {
-        await fetch("api/hooppy/token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: (hooppyToken && hooppyToken.value.trim()) || "" }),
-        }).catch(() => ({}));
+        const hoop =
+          (hooppyToken && hooppyToken.value.trim()) ||
+          (window.hooppyTokenStore && window.hooppyTokenStore.read()) ||
+          "";
+        if (hoop) {
+          if (window.hooppyTokenStore) window.hooppyTokenStore.write(hoop);
+          await fetch("api/hooppy/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: hoop }),
+          }).catch(() => ({}));
+          markHooppySaved(true);
+        }
       }
       setStatus(
         settings.generate_rss
@@ -160,13 +168,27 @@ token.addEventListener("input", () => {
   else sessionStorage.removeItem("gh-token");
 });
 
+const hooppyHint = document.getElementById("hooppy-token-hint");
+const markHooppySaved = (saved) => {
+  if (!hooppyHint) return;
+  hooppyHint.textContent = saved
+    ? "Токен Hooppy сохранён в .hooppy_token и в браузере. Он не слетает при закрытии вкладки. В репозиторий не попадает."
+    : "Вставьте токен Hooppy и нажмите «Сохранить». Он запишется локально и останется по умолчанию.";
+};
+
 if (hooppyToken) {
-  hooppyToken.value = sessionStorage.getItem("hooppy-token") || "";
   hooppyToken.addEventListener("input", () => {
     const value = hooppyToken.value.trim();
-    if (value) sessionStorage.setItem("hooppy-token", value);
-    else sessionStorage.removeItem("hooppy-token");
+    if (value && window.hooppyTokenStore) window.hooppyTokenStore.write(value);
   });
 }
+
+const restoreHooppyToken = async () => {
+  const stored = window.hooppyTokenStore ? await window.hooppyTokenStore.hydrate() : "";
+  if (hooppyToken && stored && !hooppyToken.value.trim()) hooppyToken.value = stored;
+  markHooppySaved(Boolean(stored || (hooppyToken && hooppyToken.value.trim())));
+};
+
+restoreHooppyToken();
 
 loadSettings();

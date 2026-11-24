@@ -676,7 +676,8 @@ const postsCountLabel = (count) => {
   return `${n} постов`;
 };
 
-const hooppyTokenValue = () => (sessionStorage.getItem("hooppy-token") || "").trim();
+const hooppyTokenValue = () =>
+  ((window.hooppyTokenStore && window.hooppyTokenStore.read()) || "").trim();
 
 const setScheduleHint = (text, kind) => {
   if (!scheduleHint) return;
@@ -766,4 +767,5 @@ if (scheduleEl) {
 
 renderPreview();
 fillRandom();
-loadSchedules();
+const readyToken = window.hooppyTokenStore ? window.hooppyTokenStore.hydrate() : Promise.resolve("");
+readyToken.finally(() => loadSchedules());

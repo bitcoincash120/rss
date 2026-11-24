@@ -43,12 +43,14 @@ def save_token(value: str) -> bool:
     text = str(value or "").strip()
     if text.lower().startswith("bearer "):
         text = text[7:].strip()
-    if text:
-        TOKEN_PATH.write_text(text + "\n", encoding="utf-8")
-        return True
-    if TOKEN_PATH.is_file():
-        TOKEN_PATH.unlink()
-    return False
+    if not text:
+        return TOKEN_PATH.is_file()
+    TOKEN_PATH.write_text(text + "\n", encoding="utf-8")
+    try:
+        TOKEN_PATH.chmod(0o600)
+    except OSError:
+        pass
+    return True
 
 
 def has_token(explicit: str | None = None) -> bool:
