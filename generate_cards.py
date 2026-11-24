@@ -99,6 +99,8 @@ def render_deck(md_path: Path) -> None:
     chrome = chrome_path()
     if chrome:
         env["CHROME_PATH"] = chrome
+    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"):
+        env["CHROME_NO_SANDBOX"] = "1"
     marp = marp_bin()
     if not marp.exists():
         raise FileNotFoundError("Marp CLI is not installed. Run npm install.")
@@ -118,8 +120,6 @@ def render_deck(md_path: Path) -> None:
         "-o",
         str(OUT_DIR / f"{md_path.stem}.jpg"),
     ]
-    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"):
-        cmd.append("--no-sandbox")
     subprocess.run(cmd, cwd=ROOT, env=env, check=True)
 
 

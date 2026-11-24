@@ -40,6 +40,7 @@ jobs:
       - name: Generate RSS
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME_NO_SANDBOX: "1"
         run: |
           python -m pip install feedgen
           npm ci
