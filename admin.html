@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Админка</title>
-  <link rel="stylesheet" href="site.css?v=paid-debt">
+  <link rel="stylesheet" href="site.css?v=import">
 </head>
 <body>
   <main class="wrap">
@@ -13,7 +13,8 @@
       <div class="hero-row">
         <h1>Настройки сайта</h1>
         <div class="hero-actions">
-          <a class="ghost" href="./">К ленте</a>
+          <a class="ghost" href="./">Импорт</a>
+          <a class="ghost" href="feed.html">Лента</a>
           <a class="ghost" href="new.html">Новый пост</a>
           <a class="rss" data-rss href="rss.xml" hidden>RSS</a>
         </div>
@@ -41,6 +42,13 @@
           </td>
         </tr>
         <tr>
+          <th>Токен Hooppy</th>
+          <td>
+            <input id="hooppy-token" name="hooppy_token" type="password" autocomplete="off" placeholder="Настройки → API в кабинете Hooppy">
+            <p class="hint">Нужен, чтобы подтянуть расписания. Хранится локально, в репозиторий не попадает.</p>
+          </td>
+        </tr>
+        <tr>
           <th>Действия</th>
           <td>
             <div class="actions">
@@ -54,6 +62,6 @@
     </form>
   </main>
   <script src="settings.js?v=admin"></script>
-  <script src="admin.js?v=admin"></script>
+  <script src="admin.js?v=hooppy-token"></script>
 </body>
 </html>

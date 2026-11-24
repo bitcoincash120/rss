@@ -24,6 +24,7 @@ from posts_md import (
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
 IMAGES_DIR = ROOT / "images"
+PREVIEWS_DIR = ROOT / "previews"
 THEME_PATH = CARDS_DIR / "theme.css"
 FINDOC_THEME = CARDS_DIR / "fin-doc.css"
 def esc(text: str) -> str:
@@ -215,6 +216,41 @@ def publish_images(post_id: str, count: int) -> list[Path]:
         if suffix.isdigit() and path.name not in keep:
             path.unlink()
     return targets
+
+
+def render_preview(idea: dict, *, force: bool = False) -> list[str]:
+    row = int(idea.get("row") or 0)
+    if row <= 0:
+        raise ValueError("Нет номера строки таблицы")
+    dest = PREVIEWS_DIR / f"row-{row}"
+    dest.mkdir(parents=True, exist_ok=True)
+    post = {
+        "id": f"draft-row-{row}",
+        "title": idea.get("title") or "",
+        "description": idea.get("description") or "",
+        "cards": idea.get("cards") or [],
+        "marp": idea.get("marp") or "",
+        "slides": idea.get("slides") or 1,
+        "style": "findoc",
+    }
+    count = slide_count(post)
+    names = [f"{index}.jpg" for index in range(1, count + 1)]
+    paths = [dest / name for name in names]
+    if not force and paths and all(path.is_file() for path in paths):
+        return [f"previews/row-{row}/{name}" for name in names]
+    CARDS_DIR.mkdir(exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    md_path = OUT_DIR / f"{post['id']}.md"
+    md_path.write_text(deck_markdown(post), encoding="utf-8")
+    render_deck(md_path, image_scale="1")
+    produced = sorted(OUT_DIR.glob(f"{post['id']}.*.jpg")) + sorted(
+        OUT_DIR.glob(f"{post['id']}.*.jpeg")
+    )
+    if len(produced) < count:
+        raise RuntimeError(f"Строка {row}: ожидалось {count} карточек, собрано {len(produced)}")
+    for index, src in enumerate(produced[:count], 1):
+        shutil.copyfile(src, dest / f"{index}.jpg")
+    return [f"previews/row-{row}/{name}" for name in names]
 
 
 def render_one(post: dict, *, force: bool = False) -> list[Path]:

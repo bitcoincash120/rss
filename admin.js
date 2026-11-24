@@ -1,6 +1,7 @@
 const form = document.getElementById("admin-form");
 const generateRss = document.getElementById("generate-rss");
 const token = document.getElementById("token");
+const hooppyToken = document.getElementById("hooppy-token");
 const statusEl = document.getElementById("status");
 
 const isLocal = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
@@ -110,6 +111,13 @@ form.addEventListener("submit", async (event) => {
   try {
     try {
       applySettings(await saveLocal(settings));
+      if (isLocal()) {
+        await fetch("api/hooppy/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: (hooppyToken && hooppyToken.value.trim()) || "" }),
+        }).catch(() => ({}));
+      }
       setStatus(
         settings.generate_rss
           ? "RSS включён. Файл будет собираться при публикации и создании постов."
@@ -151,5 +159,14 @@ token.addEventListener("input", () => {
   if (value) sessionStorage.setItem("gh-token", value);
   else sessionStorage.removeItem("gh-token");
 });
+
+if (hooppyToken) {
+  hooppyToken.value = sessionStorage.getItem("hooppy-token") || "";
+  hooppyToken.addEventListener("input", () => {
+    const value = hooppyToken.value.trim();
+    if (value) sessionStorage.setItem("hooppy-token", value);
+    else sessionStorage.removeItem("hooppy-token");
+  });
+}
 
 loadSettings();

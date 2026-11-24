@@ -220,6 +220,9 @@ def parse_post(path: Path) -> dict:
         "marp": marp,
         "date": date,
         "parsed_date": parsed_date,
+        "planned_date": str(meta.get("planned_date") or "").strip(),
+        "hooppy_schedule": str(meta.get("hooppy_schedule") or "").strip(),
+        "hooppy_schedule_id": str(meta.get("hooppy_schedule_id") or "").strip(),
         "link": meta.get("link") or f"{SITE_URL}/#{post_id}",
         "images": [f"{SITE_URL}/images/{name}" for name in image_names(post_id)],
         "image_files": image_names(post_id),
@@ -268,3 +271,30 @@ def format_datetime_ru(post: dict) -> str:
     if day and clock:
         return f"{day}, {clock}"
     return day or clock
+
+
+def format_short_dmy(day: int, month: int, year: int) -> str:
+    return f"{int(day):02d}.{int(month):02d}.{int(year) % 100:02d}"
+
+
+def format_added_short(post: dict) -> str:
+    parsed = display_date(post)
+    if not parsed:
+        return ""
+    date = format_short_dmy(parsed.day, parsed.month, parsed.year)
+    clock = f"{parsed.hour:02d}:{parsed.minute:02d}"
+    return f"{date}, {clock}"
+
+
+SHORT_DATE_RE = re.compile(r"^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})")
+
+
+def format_planned_short(raw: str | None) -> str:
+    text = str(raw or "").strip()
+    match = SHORT_DATE_RE.match(text)
+    if not match:
+        return text
+    year = int(match.group(3))
+    if year < 100:
+        year += 2000
+    return format_short_dmy(int(match.group(1)), int(match.group(2)), year)

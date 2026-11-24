@@ -42,6 +42,14 @@ TEXT_KEYS = {"текст", "text", "описание", "анонс", "descriptio
 SLIDE_KEYS = {"карточки", "slides", "фото", "photos", "slide"}
 STATUS_KEYS = {"статус", "status", "state"}
 LINK_KEYS = {"ссылка", "link", "url", "пост"}
+DATE_KEYS = {
+    "дата публикации",
+    "плановая дата",
+    "дата в расписание",
+    "дата расписания",
+    "planned date",
+    "publication date",
+}
 MARP_KEYS = {
     "полная разметка marp (.md)",
     "полная разметка marp",
@@ -60,7 +68,7 @@ SEED_JSON = ROOT / "sheet_seed.json"
 SEED_XLSX = Path("/Users/oparin/Downloads/fin_doc_10_posts-2.xlsx")
 DRAFTS_DIR = ROOT / "drafts"
 
-HEADER_KEYS = TITLE_KEYS | TEXT_KEYS | SLIDE_KEYS | STATUS_KEYS | LINK_KEYS | MARP_KEYS
+HEADER_KEYS = TITLE_KEYS | TEXT_KEYS | SLIDE_KEYS | STATUS_KEYS | LINK_KEYS | MARP_KEYS | DATE_KEYS
 
 
 def _norm(header: str) -> str:
@@ -114,6 +122,17 @@ def _marp_index(headers: list[str], values_hint: list[str] | None = None) -> int
     return -1
 
 
+def _date_index(headers: list[str]) -> int:
+    found = _index(headers, DATE_KEYS, -1)
+    if found >= 0:
+        return found
+    for i, header in enumerate(headers):
+        name = _norm(header)
+        if "дата" in name and any(part in name for part in ("публик", "план", "расписан")):
+            return i
+    return -1
+
+
 def _colmap(headers: list[str]) -> dict:
     return {
         "title": _index(headers, TITLE_KEYS, 2 if len(headers) > 2 else 0),
@@ -121,6 +140,7 @@ def _colmap(headers: list[str]) -> dict:
         "slide": _index(headers, SLIDE_KEYS, -1),
         "status": _index(headers, STATUS_KEYS, 0),
         "link": _index(headers, LINK_KEYS, 1),
+        "date": _date_index(headers),
         "marp": _marp_index(headers),
         "cards": _card_columns(headers),
     }
@@ -250,7 +270,7 @@ def post_url(post_id: str, origin: str | None = None) -> str:
     base = str(origin or "").strip().rstrip("/")
     if not base:
         base = SITE_URL
-    return f"{base}/#{post_id}"
+    return f"{base}/feed.html#{post_id}"
 
 
 def webhook_url() -> str:

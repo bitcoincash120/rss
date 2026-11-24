@@ -31,6 +31,8 @@ const mocks = document.getElementById("mocks");
 const publishedAt = document.getElementById("published-at");
 const randomBtn = document.getElementById("random");
 const styleEl = document.getElementById("style");
+const scheduleEl = document.getElementById("schedule");
+const scheduleHint = document.getElementById("schedule-hint");
 
 const repoFromLocation = () => {
   const host = location.hostname;
@@ -50,21 +52,6 @@ const styleValue = () => {
   return STYLES.includes(value) ? value : "findoc";
 };
 
-const MONTHS_RU = [
-  "января",
-  "февраля",
-  "марта",
-  "апреля",
-  "мая",
-  "июня",
-  "июля",
-  "августа",
-  "сентября",
-  "октября",
-  "ноября",
-  "декабря",
-];
-
 const nowIso = () => new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");
 
 const formatDatetimeRu = (iso) => {
@@ -73,7 +60,10 @@ const formatDatetimeRu = (iso) => {
   const local = new Date(parsed.getTime() + 4 * 60 * 60 * 1000);
   const hours = String(local.getUTCHours()).padStart(2, "0");
   const minutes = String(local.getUTCMinutes()).padStart(2, "0");
-  return `${local.getUTCDate()} ${MONTHS_RU[local.getUTCMonth()]} ${local.getUTCFullYear()}, ${hours}:${minutes}`;
+  const day = String(local.getUTCDate()).padStart(2, "0");
+  const month = String(local.getUTCMonth() + 1).padStart(2, "0");
+  const year = String(local.getUTCFullYear() % 100).padStart(2, "0");
+  return `${day}.${month}.${year}, ${hours}:${minutes}`;
 };
 
 const marpValue = () => (marpEl && marpEl.value ? marpEl.value.trim() : "");
@@ -91,6 +81,12 @@ const descriptionValue = () => {
   const heading = first.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i);
   const pick = para || heading;
   return pick ? stripTags(pick[1]) : title.value.trim();
+};
+
+const selectedScheduleName = () => {
+  if (!scheduleEl || !scheduleEl.value) return "";
+  const label = (scheduleEl.selectedOptions[0] && scheduleEl.selectedOptions[0].textContent) || "";
+  return label.replace(/\s+[—–-].*$/, "").trim();
 };
 
 const markdown = () => {
@@ -267,7 +263,13 @@ const rowIdea = (values, cols, row) => {
   if (!heading || !(body || marp)) return null;
   if (TITLE_KEYS.includes(heading.toLowerCase())) return null;
   if (isImported(valueAt(values, cols.status))) return null;
-  const idea = { title: heading, description: body, cards, marp, row };
+  const idea = {
+    title: heading,
+    description: body,
+    cards,
+    marp,
+    row,
+  };
   const raw = valueAt(values, cols.slide);
   const listedSlides = Number(raw);
   const articleN = (marp.match(/<article\b/gi) || []).length;
@@ -528,9 +530,12 @@ const markSheetRow = async (row, url) => {
 };
 
 const createLocal = async (payload) => {
+  const headers = { "Content-Type": "application/json" };
+  const secret = hooppyTokenValue();
+  if (secret) headers["X-Hooppy-Token"] = secret;
   const res = await fetch("api/posts", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(payload),
   });
   const data = await res.json().catch(() => ({}));
@@ -593,6 +598,8 @@ form.addEventListener("submit", async (event) => {
     row: currentIdea && currentIdea.row,
     origin: siteBase(),
     style: styleValue(),
+    schedule_id: scheduleEl && scheduleEl.value ? Number(scheduleEl.value) : "",
+    schedule_name: selectedScheduleName(),
   };
   if (!payload.title || !payload.marp) {
     setStatus("Заполните заголовок и разметку Marp.", "err");
@@ -638,7 +645,18 @@ form.addEventListener("submit", async (event) => {
       : created.sheet_error
         ? ` Пост создан, но таблица не обновилась: ${created.sheet_error}`
         : " Пост создан, но статус в таблице не обновился.";
-    setStatus(`Готово: ${created.id}. Карточки уже в ленте.${sheetNote}`, created.sheet_marked ? "ok" : "err");
+    let hooppyNote = "";
+    if (payload.schedule_id && created.hooppy && created.hooppy.id) {
+      hooppyNote = ` В Hooppy: ${created.hooppy.schedule_name || "расписание"}.`;
+    } else if (payload.schedule_id) {
+      hooppyNote = created.hooppy_error
+        ? ` Hooppy не принял пост: ${created.hooppy_error}`
+        : " Пост создан, но в Hooppy не ушёл.";
+    }
+    setStatus(
+      `Готово: ${created.id}. Карточки уже в ленте.${sheetNote}${hooppyNote}`,
+      created.sheet_marked && (!payload.schedule_id || created.hooppy) ? "ok" : "err"
+    );
     if (created.sheet_marked) {
       location.href = created.url || "./";
     }
@@ -649,5 +667,103 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+const postsCountLabel = (count) => {
+  const n = Number(count) || 0;
+  const n10 = n % 10;
+  const n100 = n % 100;
+  if (n10 === 1 && n100 !== 11) return `${n} пост`;
+  if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return `${n} поста`;
+  return `${n} постов`;
+};
+
+const hooppyTokenValue = () => (sessionStorage.getItem("hooppy-token") || "").trim();
+
+const setScheduleHint = (text, kind) => {
+  if (!scheduleHint) return;
+  scheduleHint.textContent = text;
+  scheduleHint.classList.toggle("err", kind === "err");
+};
+
+const fillSchedules = (list) => {
+  if (!scheduleEl) return;
+  const previous = scheduleEl.value || sessionStorage.getItem("hooppy-schedule-id") || "";
+  scheduleEl.innerHTML = "";
+  const empty = document.createElement("option");
+  empty.value = "";
+  empty.textContent = list.length ? "Не отправлять в Hooppy" : "Нет расписаний";
+  scheduleEl.appendChild(empty);
+  list.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = String(item.id);
+    option.textContent = `${item.name} — ${item.state_label} · ${postsCountLabel(item.posts_count)}`;
+    scheduleEl.appendChild(option);
+  });
+  if ([...scheduleEl.options].some((option) => option.value === previous)) {
+    scheduleEl.value = previous;
+  }
+};
+
+const loadHooppyJson = async (secret) => {
+  const res = await fetch("https://api.hooppy.ru/api/posts/schedules/json", {
+    headers: { Authorization: `Bearer ${secret}`, Accept: "application/json" },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || data.error || "Hooppy не отдал расписания");
+  }
+  return data.schedules || data.list || [];
+};
+
+const loadSchedules = async () => {
+  if (!scheduleEl) return;
+  const secret = hooppyTokenValue();
+  try {
+    const res = await fetch("api/hooppy/schedules", {
+      cache: "no-store",
+      headers: secret ? { "X-Hooppy-Token": secret } : {},
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Не удалось загрузить расписания");
+    fillSchedules(data.schedules || []);
+    setScheduleHint(
+      (data.schedules || []).length
+        ? `Подтянуто расписаний: ${(data.schedules || []).length}.`
+        : "В кабинете Hooppy пока нет расписаний."
+    );
+    return;
+  } catch (localError) {
+    if (!secret) {
+      fillSchedules([]);
+      setScheduleHint("Сохраните токен Hooppy в админке, чтобы подтянуть расписания.", "err");
+      return;
+    }
+    try {
+      const rows = await loadHooppyJson(secret);
+      fillSchedules(
+        rows.map((item) => ({
+          id: item.id,
+          name: item.name,
+          state: item.state,
+          state_label: { 1: "активно", 2: "ожидает запуска", 3: "остановлено" }[item.state] || "неизвестно",
+          posts_count: item.posts_count || 0,
+        }))
+      );
+      setScheduleHint(`Подтянуто расписаний: ${rows.length}.`);
+    } catch (_remoteError) {
+      fillSchedules([]);
+      setScheduleHint(localError.message || "Не удалось прочитать расписания Hooppy.", "err");
+    }
+  }
+};
+
+if (scheduleEl) {
+  scheduleEl.addEventListener("change", () => {
+    const value = scheduleEl.value;
+    if (value) sessionStorage.setItem("hooppy-schedule-id", value);
+    else sessionStorage.removeItem("hooppy-schedule-id");
+  });
+}
+
 renderPreview();
 fillRandom();
+loadSchedules();

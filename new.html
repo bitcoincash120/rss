@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Новый пост</title>
-  <link rel="stylesheet" href="site.css?v=paid-debt">
+  <link rel="stylesheet" href="site.css?v=import">
 </head>
 <body>
   <main class="wrap">
@@ -13,7 +13,8 @@
       <div class="hero-row">
         <h1>Новый пост</h1>
         <div class="hero-actions">
-          <a class="ghost" href="./">К ленте</a>
+          <a class="ghost" href="./">Импорт</a>
+          <a class="ghost" href="feed.html">Лента</a>
           <a class="ghost" href="admin.html">Админка</a>
           <a class="ghost" href="https://docs.google.com/spreadsheets/d/19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI/edit?gid=0#gid=0" target="_blank" rel="noreferrer">Таблица</a>
           <a class="rss" data-rss href="rss.xml" hidden>RSS</a>
@@ -30,7 +31,7 @@
           <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
         </tr>
         <tr>
-          <th>Дата и время</th>
+          <th>Дата добавления</th>
           <td><time id="published-at"></time></td>
         </tr>
         <tr>
@@ -42,6 +43,15 @@
               <option value="studio">Студия — неон и индиго</option>
               <option value="findoc" selected>Fin-doc — синяя аналитика</option>
             </select>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="schedule">Hooppy</label></th>
+          <td>
+            <select id="schedule" name="schedule">
+              <option value="">Загружаю расписания…</option>
+            </select>
+            <p class="hint" id="schedule-hint">Список расписаний из кабинета Hooppy. Токен задаётся в админке.</p>
           </td>
         </tr>
         <tr>
@@ -69,6 +79,6 @@
     </form>
   </main>
   <script src="settings.js?v=admin"></script>
-  <script src="new.js?v=rich-drafts"></script>
+  <script src="new.js?v=hide-plan"></script>
 </body>
 </html>

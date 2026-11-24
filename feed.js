@@ -135,8 +135,12 @@ const closePreview = (dialog) => {
 
 document.querySelectorAll("[data-open]").forEach((row) => {
   const open = () => openPreview(row.dataset.open);
-  row.addEventListener("click", open);
+  row.addEventListener("click", (event) => {
+    if (event.target.closest("[data-stop], input, button, a, label.check")) return;
+    open();
+  });
   row.addEventListener("keydown", (event) => {
+    if (event.target.closest("input, button, a")) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       open();
@@ -227,3 +231,168 @@ document.querySelectorAll("[data-zip]").forEach((button) => {
     setBusy(button, false, idle);
   });
 });
+
+const POST_ID_RE = /^post-\d+$/;
+const deleteBtn = document.getElementById("delete-selected");
+const deleteStatus = document.getElementById("delete-status");
+const selectAll = document.getElementById("select-all");
+const postChecks = () => [...document.querySelectorAll('.feed tbody input[name="post"]')];
+
+const isLocalHost = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
+
+const repoFromLocation = () => {
+  const host = location.hostname;
+  if (host.endsWith(".github.io")) {
+    const parts = location.pathname.split("/").filter(Boolean);
+    return { owner: host.split(".")[0], repo: parts[0] || "rss" };
+  }
+  return { owner: "bitcoincash120", repo: "rss" };
+};
+
+const selectedPosts = () =>
+  postChecks()
+    .filter((box) => box.checked)
+    .map((box) => {
+      const row = box.closest("tr");
+      return {
+        id: box.value,
+        images: String(row && row.dataset.images ? row.dataset.images : "")
+          .split(",")
+          .map((name) => name.trim())
+          .filter(Boolean),
+      };
+    })
+    .filter((item) => POST_ID_RE.test(item.id));
+
+const syncDeleteUi = () => {
+  const selected = selectedPosts();
+  const boxes = postChecks();
+  if (deleteBtn) deleteBtn.disabled = !selected.length;
+  if (selectAll) {
+    selectAll.checked = Boolean(boxes.length) && boxes.every((box) => box.checked);
+    selectAll.indeterminate = boxes.some((box) => box.checked) && !selectAll.checked;
+  }
+};
+
+const setDeleteStatus = (text, kind) => {
+  if (!deleteStatus) return;
+  deleteStatus.textContent = text;
+  deleteStatus.classList.toggle("ok", kind === "ok");
+  deleteStatus.classList.toggle("err", kind === "err");
+};
+
+const deleteLocal = async (ids) => {
+  const res = await fetch("api/posts/delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || "Локальный сервер не удалил посты");
+  }
+  return data;
+};
+
+const githubHeaders = (secret) => ({
+  Accept: "application/vnd.github+json",
+  Authorization: `Bearer ${secret}`,
+});
+
+const deleteGitHubFile = async (headers, path) => {
+  const { owner, repo } = repoFromLocation();
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const existing = await fetch(url, { headers });
+  if (existing.status === 404) return;
+  if (!existing.ok) {
+    const data = await existing.json().catch(() => ({}));
+    throw new Error(data.message || `Не удалось прочитать ${path}`);
+  }
+  const current = await existing.json();
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: `Delete ${path} from the feed.`,
+      sha: current.sha,
+      branch: "main",
+    }),
+  });
+  if (res.status === 404) return;
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || `GitHub не удалил ${path}`);
+  }
+};
+
+const deleteOnGitHub = async (posts, secret) => {
+  const headers = githubHeaders(secret);
+  for (const post of posts) {
+    await deleteGitHubFile(headers, `posts/${post.id}.md`);
+    const names = post.images.length ? post.images : [`${post.id}.jpg`];
+    for (const name of names) {
+      const file = name.startsWith("images/") ? name : `images/${name}`;
+      await deleteGitHubFile(headers, file);
+    }
+  }
+};
+
+if (selectAll) {
+  selectAll.addEventListener("click", (event) => event.stopPropagation());
+  selectAll.addEventListener("change", () => {
+    postChecks().forEach((box) => {
+      box.checked = selectAll.checked;
+    });
+    syncDeleteUi();
+  });
+}
+
+postChecks().forEach((box) => {
+  box.addEventListener("click", (event) => event.stopPropagation());
+  box.addEventListener("change", syncDeleteUi);
+});
+
+if (deleteBtn) {
+  deleteBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const posts = selectedPosts();
+    if (!posts.length) return;
+    const confirmed = window.confirm(
+      `Удалить выбранные посты и их картинки? Строки в Google Таблице не изменятся.`
+    );
+    if (!confirmed) return;
+    deleteBtn.disabled = true;
+    setDeleteStatus("Удаляю посты и картинки…");
+    const ids = posts.map((post) => post.id);
+    try {
+      try {
+        await deleteLocal(ids);
+        setDeleteStatus("Посты и картинки удалены. Таблица не менялась.", "ok");
+        location.reload();
+        return;
+      } catch (localError) {
+        if (isLocalHost()) throw localError;
+        const secret = (sessionStorage.getItem("gh-token") || "").trim();
+        if (!secret) {
+          throw new Error(
+            "Локальный сервер недоступен. Запустите python3 serve.py или сохраните токен в админке."
+          );
+        }
+        await deleteOnGitHub(posts, secret);
+        posts.forEach((post) => {
+          document.querySelector(`tr[data-open="${post.id}"]`)?.remove();
+        });
+        syncDeleteUi();
+        setDeleteStatus(
+          "Посты и картинки удалены из репозитория. Лента обновится после сборки GitHub Pages. Таблица не менялась.",
+          "ok"
+        );
+      }
+    } catch (error) {
+      setDeleteStatus(error.message || "Не получилось удалить посты.", "err");
+      syncDeleteUi();
+    }
+  });
+}
+
+syncDeleteUi();

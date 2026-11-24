@@ -5,16 +5,15 @@ from __future__ import annotations
 
 import html
 
-from posts_md import ROOT, format_datetime_ru, load_posts
+from posts_md import ROOT, format_added_short, load_posts
 from site_settings import rss_enabled
 
-OUT = ROOT / "index.html"
 
+def cell_or_dash(value: str | None) -> str:
+    text = str(value or "").strip()
+    return html.escape(text) if text else "—"
 
-def excerpt(text: str, limit: int = 88) -> str:
-    if len(text) <= limit:
-        return text
-    return text[: limit - 1].rsplit(" ", 1)[0] + "…"
+OUT = ROOT / "feed.html"
 
 
 def carousel_html(post: dict) -> str:
@@ -44,19 +43,26 @@ def carousel_html(post: dict) -> str:
 
 
 def row_html(post: dict, index: int) -> str:
-    when = format_datetime_ru(post) or "—"
+    when = format_added_short(post) or "—"
     thumb = ""
     if post["image_files"]:
         src = html.escape(post["image_files"][0], quote=True)
         thumb = f'<img src="images/{src}" alt="">'
     post_id = html.escape(post["id"], quote=True)
+    images = html.escape(",".join(post.get("image_files") or []), quote=True)
+    title = html.escape(post["title"], quote=True)
     return f"""
-    <tr class="row" data-open="{post_id}" tabindex="0" role="button">
+    <tr class="row" data-open="{post_id}" data-images="{images}" tabindex="0" role="button">
+      <td class="col-check" data-stop>
+        <label class="check">
+          <input type="checkbox" name="post" value="{post_id}" aria-label="Выбрать {title}">
+        </label>
+      </td>
       <td class="col-num">{index}</td>
       <td class="col-thumb">{thumb}</td>
       <td class="col-date"><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
-      <td class="col-title">{html.escape(post["title"])}</td>
-      <td class="col-excerpt">{html.escape(excerpt(post["description"]))}</td>
+      <td class="col-schedule">{cell_or_dash(post.get("hooppy_schedule"))}</td>
+      <td class="col-title">{title}</td>
       <td class="col-count">{len(post["image_files"])}</td>
     </tr>
     """
@@ -99,15 +105,19 @@ def download_button_html(post: dict) -> str:
 
 
 def preview_html(post: dict) -> str:
-    when = format_datetime_ru(post) or "—"
+    when = format_added_short(post) or "—"
     return f"""
     <dialog class="preview" id="{html.escape(post["id"], quote=True)}">
       <div class="sheet">
         <button type="button" class="close" data-close aria-label="Закрыть">×</button>
         <table>
           <tr>
-            <th>Дата и время</th>
+            <th>Дата добавления</th>
             <td><time datetime="{html.escape(post["date"], quote=True)}">{html.escape(when)}</time></td>
+          </tr>
+          <tr>
+            <th>Расписание</th>
+            <td>{cell_or_dash(post.get("hooppy_schedule"))}</td>
           </tr>
           <tr>
             <th>Заголовок</th>
@@ -145,11 +155,12 @@ def main() -> None:
       <table class="feed">
         <thead>
           <tr>
+            <th class="col-check"><input type="checkbox" id="select-all" aria-label="Выбрать все"></th>
             <th>№</th>
             <th>Карточка</th>
-            <th>Дата и время</th>
+            <th>Дата добавления</th>
+            <th>Расписание</th>
             <th>Заголовок</th>
-            <th>Анонс</th>
             <th>Фото</th>
           </tr>
         </thead>
@@ -169,7 +180,7 @@ def main() -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Моя RSS-лента</title>
   {rss_head_html()}
-  <link rel="stylesheet" href="site.css?v=paid-debt">
+  <link rel="stylesheet" href="site.css?v=import">
 </head>
 <body>
   <main class="wrap">
@@ -178,18 +189,21 @@ def main() -> None:
       <div class="hero-row">
         <h1>Свежие публикации</h1>
         <div class="hero-actions">
+          <a class="ghost" href="./">Импорт</a>
           <a class="ghost" href="new.html">Новый пост</a>
           <a class="ghost" href="admin.html">Админка</a>
           <button type="button" class="ghost" id="download-all">Скачать все картинки</button>
+          <button type="button" class="ghost" id="delete-selected" disabled>Удалить</button>
           {rss_action_html()}
         </div>
       </div>
-      <p class="lede">Все посты в таблице. Нажмите строку, чтобы открыть полный пост.</p>
+      <p class="lede">Все посты в таблице. Нажмите строку, чтобы открыть полный пост. Чтобы убрать публикацию с сайта, отметьте галочку и нажмите «Удалить» — строка в Google Таблице не изменится.</p>
+      <p class="status" id="delete-status" role="status"></p>
     </header>
     {table}
   </main>
   {previews}
-  <script src="feed.js"></script>
+  <script src="feed.js?v=delete-posts"></script>
   <script src="settings.js?v=admin"></script>
 </body>
 </html>
