@@ -18,37 +18,22 @@
           <a class="rss" href="rss.xml">RSS</a>
         </div>
       </div>
-      <p class="lede">Случайный пост берётся только из Google Таблицы. Колонки «Карточка 1», «Карточка 2» и «Карточка 3» задают текст каждой JPEG-карточки отдельно. Строки со статусом «импортирован» пропускаются; после создания поста в таблицу пишутся статус и ссылка.</p>
+      <p class="lede">Случайный пост берётся только из Google Таблицы. В начале листа — «Статус» и «Ссылка», затем заголовок и колонки «Карточка 1» … «Карточка 10» (можно добавить ещё). Число JPEG не ограничено: заполненные колонки становятся отдельными карточками. Строки со статусом «импортирован» пропускаются.</p>
     </header>
 
     <form id="post-form" class="sheet" autocomplete="off">
       <table>
+        <tbody>
         <tr>
           <th><label for="title">Заголовок</label></th>
           <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
         </tr>
-        <tr>
-          <th><label for="card1">Карточка 1</label></th>
-          <td><textarea id="card1" name="card1" rows="3" maxlength="280" placeholder="Текст первой карточки — под заголовком"></textarea></td>
-        </tr>
-        <tr>
-          <th><label for="card2">Карточка 2</label></th>
-          <td><textarea id="card2" name="card2" rows="3" maxlength="280" required placeholder="Текст второй карточки — цитата"></textarea></td>
-        </tr>
-        <tr id="card3-row">
-          <th><label for="card3">Карточка 3</label></th>
-          <td><textarea id="card3" name="card3" rows="3" maxlength="280" placeholder="Текст третьей карточки"></textarea></td>
-        </tr>
+        </tbody>
+        <tbody id="card-rows"></tbody>
+        <tbody>
         <tr>
           <th>Дата и время</th>
           <td><time id="published-at"></time></td>
-        </tr>
-        <tr>
-          <th>Карточки</th>
-          <td class="choice">
-            <label><input type="radio" name="slides" value="2"> 2</label>
-            <label><input type="radio" name="slides" value="3" checked> 3</label>
-          </td>
         </tr>
         <tr>
           <th><label for="style">Стиль</label></th>
@@ -86,9 +71,10 @@
           <th>Markdown</th>
           <td><pre class="md-out" id="markdown"></pre></td>
         </tr>
+        </tbody>
       </table>
     </form>
   </main>
-  <script src="new.js?v=when"></script>
+  <script src="new.js?v=cards-n"></script>
 </body>
 </html>

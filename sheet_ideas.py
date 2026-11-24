@@ -26,22 +26,27 @@ DEFAULT_WEBHOOK = (
     "https://script.google.com/macros/s/"
     "AKfycbz4rHUVVCe3imLSysN1EaQAxT5bm-WEVr9wwR6B9rN926tLP07wrCj8dKMFyxJ_UbDb/exec"
 )
-
 TITLE_KEYS = {"заголовок", "title", "headline", "тема", "name"}
 TEXT_KEYS = {"текст", "text", "описание", "анонс", "description", "body"}
 SLIDE_KEYS = {"карточки", "slides", "фото", "photos", "slide"}
 STATUS_KEYS = {"статус", "status", "state"}
 LINK_KEYS = {"ссылка", "link", "url", "пост"}
-CARD1_KEYS = {"карточка 1", "карточка1", "card 1", "card1", "текст 1", "slide 1"}
-CARD2_KEYS = {"карточка 2", "карточка2", "card 2", "card2", "текст 2", "slide 2"}
-CARD3_KEYS = {"карточка 3", "карточка3", "card 3", "card3", "текст 3", "slide 3"}
-HEADER_KEYS = TITLE_KEYS | TEXT_KEYS | SLIDE_KEYS | STATUS_KEYS | LINK_KEYS | CARD1_KEYS | CARD2_KEYS | CARD3_KEYS
 IMPORTED_MARKS = {"импортирован", "imported", "готово", "published", "опубликован"}
+CARD_HEADER = re.compile(
+    r"^(?:карточка|card|текст|slide)\s*(\d+)$",
+    re.IGNORECASE,
+)
+
+HEADER_KEYS = TITLE_KEYS | TEXT_KEYS | SLIDE_KEYS | STATUS_KEYS | LINK_KEYS
+
+
+def _norm(header: str) -> str:
+    return re.sub(r"\s+", " ", str(header or "").strip().lower())
 
 
 def _index(headers: list[str], keys: set[str], default: int) -> int:
     for i, header in enumerate(headers):
-        name = header.strip().lower()
+        name = _norm(header)
         if name in keys:
             return i
         for key in keys:
@@ -50,15 +55,27 @@ def _index(headers: list[str], keys: set[str], default: int) -> int:
     return default
 
 
-def _colmap(headers: list[str]) -> dict[str, int]:
+def _card_columns(headers: list[str]) -> list[tuple[int, int]]:
+    found: list[tuple[int, int]] = []
+    for i, header in enumerate(headers):
+        name = _norm(header)
+        match = re.match(r"^(карточка|card|текст|slide)\s*(\d+)$", name)
+        if not match:
+            match = re.match(r"^(карточка|card|текст|slide)(\d+)$", name.replace(" ", ""))
+        if match:
+            found.append((int(match.group(2)), i))
+    found.sort()
+    return found
+
+
+def _colmap(headers: list[str]) -> dict:
     return {
-        "title": _index(headers, TITLE_KEYS, 0),
+        "title": _index(headers, TITLE_KEYS, 2 if len(headers) > 2 else 0),
         "text": _index(headers, TEXT_KEYS, -1),
         "slide": _index(headers, SLIDE_KEYS, -1),
-        "status": _index(headers, STATUS_KEYS, 3),
-        "card1": _index(headers, CARD1_KEYS, -1),
-        "card2": _index(headers, CARD2_KEYS, -1),
-        "card3": _index(headers, CARD3_KEYS, -1),
+        "status": _index(headers, STATUS_KEYS, 0),
+        "link": _index(headers, LINK_KEYS, 1),
+        "cards": _card_columns(headers),
     }
 
 
@@ -72,17 +89,20 @@ def _is_imported(status: str) -> bool:
     return status.strip().lower() in IMPORTED_MARKS
 
 
-def _idea(values: list[str], cols: dict[str, int], row: int) -> dict | None:
+def _idea(values: list[str], cols: dict, row: int) -> dict | None:
     title = _cell(values, cols["title"])
     legacy = _cell(values, cols["text"])
-    cards = [
-        _cell(values, cols["card1"]),
-        _cell(values, cols["card2"]),
-        _cell(values, cols["card3"]),
-    ]
-    if not cards[1]:
-        cards[1] = legacy
-    description = cards[1] or cards[0] or cards[2] or legacy
+    cards: list[str] = []
+    if cols["cards"]:
+        by_number = {number: _cell(values, index) for number, index in cols["cards"]}
+        highest = max(by_number)
+        cards = [by_number.get(index, "") for index in range(1, highest + 1)]
+        while cards and not cards[-1]:
+            cards.pop()
+    cards = [text for text in cards if text]
+    if not cards and legacy:
+        cards = [legacy]
+    description = next(iter(cards), "") or legacy
     if not title or not description:
         return None
     if title.lower() in TITLE_KEYS:
@@ -93,14 +113,14 @@ def _idea(values: list[str], cols: dict[str, int], row: int) -> dict | None:
         "cards": cards,
         "row": row,
         "imported": _is_imported(_cell(values, cols["status"])),
+        "link": _cell(values, cols["link"]),
     }
     raw = _cell(values, cols["slide"])
-    if raw in {"2", "3"}:
-        idea["slides"] = int(raw)
-    elif cards[2]:
-        idea["slides"] = 3
-    else:
-        idea["slides"] = 2
+    try:
+        listed = int(raw) if raw else 0
+    except ValueError:
+        listed = 0
+    idea["slides"] = max(1, len(cards) or listed or 1)
     return idea
 
 
@@ -108,8 +128,11 @@ def parse_csv(text: str) -> list[dict]:
     rows = list(csv.reader(io.StringIO(text)))
     if not rows:
         return []
-    headers = [cell.strip().lower() for cell in rows[0]]
-    named = any(header in HEADER_KEYS for header in headers)
+    headers = [_norm(cell) for cell in rows[0]]
+    named = any(
+        header in HEADER_KEYS or CARD_HEADER.match(header) or CARD_HEADER.match(header.replace(" ", ""))
+        for header in headers
+    )
     start = 1 if named else 0
     cols = _colmap(headers)
     ideas = []
@@ -121,8 +144,8 @@ def parse_csv(text: str) -> list[dict]:
 
 
 def parse_gviz(table: dict) -> list[dict]:
-    cols = table.get("cols") or []
-    headers = [str(col.get("label") or "").strip().lower() for col in cols]
+    cols_meta = table.get("cols") or []
+    headers = [_norm(col.get("label") or "") for col in cols_meta]
     colmap = _colmap(headers)
     ideas = []
     for index, row in enumerate(table.get("rows") or []):

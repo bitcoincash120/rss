@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from posts_md import ROOT, clamp_style, format_datetime_ru, load_posts
+from posts_md import ROOT, card_image_name, clamp_style, format_datetime_ru, load_posts
 
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
@@ -29,48 +29,45 @@ def esc(text: str) -> str:
 
 def card_copy(post: dict) -> list[str]:
     cards = [str(text or "").strip() for text in list(post.get("cards") or [])]
-    while len(cards) < 3:
-        cards.append("")
+    filled = [text for text in cards if text]
+    if filled:
+        return filled
     fallback = str(post.get("description") or "").strip()
-    if not cards[1]:
-        cards[1] = fallback
-    if not cards[2]:
-        cards[2] = fallback
-    return cards[:3]
+    return [fallback] if fallback else [""]
+
+
+def slide_kind(index: int) -> str:
+    if index == 1:
+        return "hero"
+    if index == 2:
+        return "quote"
+    return "compact"
 
 
 def deck_markdown(post: dict) -> str:
     title = esc(post["title"])
     copy = [esc(text) for text in card_copy(post)]
     when = esc(format_datetime_ru(post) or "Черновик")
-    total = post.get("slides") or 3
+    total = max(1, int(post.get("slides") or len(copy) or 1))
+    copy = copy[:total] or [""]
+    total = len(copy)
     style = clamp_style(post.get("style"))
-    hero_body = f"\n\n{copy[0]}" if copy[0] else ""
-    slides = [
-        f"""<!-- _class: hero {style} -->
-
-<div class="when">{when}</div>
-
-# {title}{hero_body}
-
-<div class="num">Карточка 1 из {total}</div>""",
-        f"""<!-- _class: quote {style} -->
-
-<div class="when">{when}</div>
-
-{copy[1]}
-
-<div class="num">Карточка 2 из {total}</div>""",
-    ]
-    if total >= 3:
+    slides = []
+    for index, text in enumerate(copy, 1):
+        kind = slide_kind(index)
+        if kind == "hero":
+            body = f"\n\n{text}" if text else ""
+            content = f"# {title}{body}"
+        else:
+            content = text or title
         slides.append(
-            f"""<!-- _class: compact {style} -->
+            f"""<!-- _class: {kind} {style} -->
 
 <div class="when">{when}</div>
 
-{copy[2]}
+{content}
 
-<div class="num">Карточка 3 из {total}</div>"""
+<div class="num">Карточка {index} из {total}</div>"""
         )
     return "---\nmarp: true\ntheme: cards\npaginate: false\n---\n\n" + "\n\n---\n\n".join(slides) + "\n"
 
@@ -124,9 +121,8 @@ def render_deck(md_path: Path) -> None:
 
 
 def expected_images(post: dict) -> list[Path]:
-    count = post.get("slides") or 3
-    names = [f"{post['id']}.jpg", f"{post['id']}-2.jpg", f"{post['id']}-3.jpg"]
-    return [IMAGES_DIR / name for name in names[:count]]
+    count = max(1, int(post.get("slides") or len(card_copy(post)) or 1))
+    return [IMAGES_DIR / card_image_name(post["id"], index) for index in range(1, count + 1)]
 
 
 def already_rendered(post: dict) -> list[Path] | None:
@@ -143,15 +139,20 @@ def publish_images(post_id: str, count: int) -> list[Path]:
     if len(produced) < count:
         raise RuntimeError(f"{post_id}: expected {count} cards, got {len(produced)}")
     IMAGES_DIR.mkdir(exist_ok=True)
-    names = [f"{post_id}.jpg", f"{post_id}-2.jpg", f"{post_id}-3.jpg"]
     targets = []
-    for src, name in zip(produced[:count], names[:count]):
-        dest = IMAGES_DIR / name
+    for index, src in enumerate(produced[:count], 1):
+        dest = IMAGES_DIR / card_image_name(post_id, index)
         shutil.copyfile(src, dest)
         targets.append(dest)
-    leftover = IMAGES_DIR / f"{post_id}-3.jpg"
-    if count < 3 and leftover.exists():
-        leftover.unlink()
+    keep = {path.name for path in targets}
+    first = IMAGES_DIR / f"{post_id}.jpg"
+    if first.name not in keep and first.exists():
+        first.unlink()
+    prefix = f"{post_id}-"
+    for path in IMAGES_DIR.glob(f"{post_id}-*.jpg"):
+        suffix = path.stem[len(prefix) :]
+        if suffix.isdigit() and path.name not in keep:
+            path.unlink()
     return targets
 
 
@@ -165,7 +166,7 @@ def render_one(post: dict, *, force: bool = False) -> list[Path]:
     md_path = OUT_DIR / f"{post['id']}.md"
     md_path.write_text(deck_markdown(post), encoding="utf-8")
     render_deck(md_path)
-    return publish_images(post["id"], post.get("slides") or 3)
+    return publish_images(post["id"], max(1, int(post.get("slides") or len(card_copy(post)) or 1)))
 
 
 def main() -> int:

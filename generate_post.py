@@ -21,19 +21,21 @@ def next_post_id() -> str:
     return f"post-{max(numbers, default=0) + 1:02d}"
 
 
-def clamp_slides(value: int | str | None) -> int:
+def clamp_slides(value: int | str | None, cards: list[str] | None = None) -> int:
+    filled = [str(text or "").strip() for text in list(cards or []) if str(text or "").strip()]
     try:
-        return max(2, min(3, int(value or 3)))
+        listed = int(value or 0)
     except (TypeError, ValueError):
-        return 3
+        listed = 0
+    return max(1, len(filled) or listed or 1)
 
 
 def normalize_cards(cards: list[str] | None, description: str) -> list[str]:
-    out = [""] * 3
-    for index, text in enumerate(list(cards or [])[:3]):
-        out[index] = str(text or "").strip()
-    if not any(out) and description:
-        out[1] = description
+    out = [str(text or "").strip() for text in list(cards or [])]
+    while out and not out[-1]:
+        out.pop()
+    if not any(out) and description.strip():
+        out = [description.strip()]
     return out
 
 
@@ -54,8 +56,8 @@ def write_markdown(
     ]
     copy = normalize_cards(cards, description)
     if any(copy):
-        for index, text in enumerate(copy, 1):
-            if text and (index <= slides):
+        for index, text in enumerate((item for item in copy if item), 1):
+            if index <= slides:
                 parts.append(f"\n## {index}\n\n{text}\n")
     elif description.strip():
         parts.append(f"\n{description.strip()}\n")
@@ -74,12 +76,12 @@ def create_post(
 ) -> dict:
     title = (title or "").strip()
     copy = normalize_cards(cards, (description or "").strip())
-    description = (description or "").strip() or next((text for text in (copy[1], copy[0], copy[2]) if text), "")
+    description = (description or "").strip() or next((text for text in copy if text), "")
     if not title:
         raise ValueError("Нужен заголовок")
     if not description:
         raise ValueError("Нужен текст")
-    slides_n = clamp_slides(slides)
+    slides_n = clamp_slides(slides, copy)
     post_id = next_post_id()
     path = write_markdown(post_id, title, description, slides_n, date, copy, style)
     post = parse_post(path)
@@ -98,17 +100,15 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--title", required=True)
     parser.add_argument("--description", default="")
-    parser.add_argument("--slides", type=int, default=3)
-    parser.add_argument("--card1", default="")
-    parser.add_argument("--card2", default="")
-    parser.add_argument("--card3", default="")
+    parser.add_argument("--slides", type=int, default=0)
+    parser.add_argument("--card", action="append", default=[], dest="cards")
     parser.add_argument("--style", default="night")
     args = parser.parse_args()
     post = create_post(
         args.title,
         args.description,
-        args.slides,
-        cards=[args.card1, args.card2, args.card3],
+        args.slides or None,
+        cards=args.cards,
         style=args.style,
     )
     print(f"wrote {post['path'].name}")

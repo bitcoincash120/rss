@@ -4,14 +4,14 @@ const SHEET = {
   url: "https://docs.google.com/spreadsheets/d/19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI/edit?gid=0#gid=0",
 };
 
+const DEFAULT_CARD_COUNT = 10;
 const TITLE_KEYS = ["заголовок", "title", "headline", "тема", "name"];
 const TEXT_KEYS = ["текст", "text", "описание", "анонс", "description", "body"];
 const SLIDE_KEYS = ["карточки", "slides", "фото", "photos", "slide"];
 const STATUS_KEYS = ["статус", "status", "state"];
-const CARD1_KEYS = ["карточка 1", "карточка1", "card 1", "card1", "текст 1", "slide 1"];
-const CARD2_KEYS = ["карточка 2", "карточка2", "card 2", "card2", "текст 2", "slide 2"];
-const CARD3_KEYS = ["карточка 3", "карточка3", "card 3", "card3", "текст 3", "slide 3"];
 const IMPORTED_MARKS = new Set(["импортирован", "imported", "готово", "published", "опубликован"]);
+const CARD_HEADER = /^(карточка|card|текст|slide)\s*(\d+)$/i;
+
 const siteBase = () => {
   const dir = location.pathname.replace(/[^/]+$/, "") || "/";
   return `${location.origin}${dir}`.replace(/\/$/, "");
@@ -22,12 +22,11 @@ window.SHEET_WEBHOOK =
 
 let ideas = [];
 let currentIdea = null;
+let cardCount = DEFAULT_CARD_COUNT;
 
 const form = document.getElementById("post-form");
 const title = document.getElementById("title");
-const card1 = document.getElementById("card1");
-const card2 = document.getElementById("card2");
-const card3 = document.getElementById("card3");
+const cardRows = document.getElementById("card-rows");
 const token = document.getElementById("token");
 const statusEl = document.getElementById("status");
 const mocks = document.getElementById("mocks");
@@ -46,11 +45,6 @@ const repoFromLocation = () => {
 };
 
 const isLocal = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
-
-const slidesValue = () => {
-  const checked = form.querySelector('input[name="slides"]:checked');
-  return Number(checked ? checked.value : 3);
-};
 
 const styleValue = () => {
   const value = styleEl && styleEl.value;
@@ -83,22 +77,30 @@ const formatDatetimeRu = (iso) => {
   return `${local.getUTCDate()} ${MONTHS_RU[local.getUTCMonth()]} ${local.getUTCFullYear()}, ${hours}:${minutes}`;
 };
 
-const cardValues = () => [card1.value.trim(), card2.value.trim(), card3.value.trim()];
+const cardInputs = () => [...cardRows.querySelectorAll("textarea[data-card]")];
 
-const descriptionValue = () => {
-  const [first, second, third] = cardValues();
-  return second || first || third;
-};
+const cardValues = () => cardInputs().map((input) => input.value.trim());
+
+const filledCards = () => cardValues().filter(Boolean);
+
+const slidesValue = () => Math.max(1, filledCards().length);
+
+const descriptionValue = () => filledCards()[0] || "";
 
 const markdown = () => {
-  const slides = slidesValue();
+  const cards = filledCards();
+  const slides = cards.length;
   const parts = [`---\ndate: ${nowIso()}\nslides: ${slides}\nstyle: ${styleValue()}\n---\n\n# ${title.value.trim()}\n`];
-  cardValues().forEach((text, index) => {
-    if (text && index < slides) {
-      parts.push(`\n## ${index + 1}\n\n${text}\n`);
-    }
+  cards.forEach((text, index) => {
+    parts.push(`\n## ${index + 1}\n\n${text}\n`);
   });
   return parts.join("");
+};
+
+const mockKind = (index) => {
+  if (index === 1) return "hero";
+  if (index === 2) return "quote";
+  return "compact";
 };
 
 const mockCard = (kind, kicker, heading, body, index, total) => {
@@ -119,22 +121,36 @@ const escapeHtml = (value) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 
+const renderCardRows = (count, values = []) => {
+  cardCount = Math.max(DEFAULT_CARD_COUNT, Number(count) || DEFAULT_CARD_COUNT);
+  const current = cardValues();
+  const copy = values.length ? values : current;
+  cardRows.innerHTML = Array.from({ length: cardCount }, (_, index) => {
+    const n = index + 1;
+    const text = escapeHtml(copy[index] || "");
+    return `<tr>
+      <th><label for="card${n}">Карточка ${n}</label></th>
+      <td><textarea id="card${n}" name="card${n}" data-card="${n}" rows="3" maxlength="280" placeholder="Текст карточки ${n}"${n === 1 ? " required" : ""}>${text}</textarea></td>
+    </tr>`;
+  }).join("");
+};
+
 const renderPreview = () => {
   const heading = title.value.trim() || "Заголовок появится здесь";
-  const [first, second, third] = cardValues();
-  const total = slidesValue();
+  const cards = cardValues();
+  const filled = cards.filter(Boolean);
+  const total = Math.max(1, filled.length);
   const iso = nowIso();
   const when = formatDatetimeRu(iso);
-  const cards = [
-    mockCard("hero", when, heading, first, 1, total),
-    mockCard("quote", when, heading, second || "Текст второй карточки появится здесь.", 2, total),
-  ];
-  if (total >= 3) {
-    cards.push(
-      mockCard("compact", when, heading, third || second || "Текст третьей карточки появится здесь.", 3, total)
-    );
-  }
-  mocks.innerHTML = cards.join("");
+  const shown = filled.length ? filled : [""];
+  mocks.innerHTML = shown
+    .map((text, index) => {
+      const n = index + 1;
+      const kind = mockKind(n);
+      const body = text || (n === 1 ? "" : `Текст карточки ${n} появится здесь.`);
+      return mockCard(kind, when, heading, body, n, total);
+    })
+    .join("");
   markdownEl.textContent = markdown();
   if (publishedAt) {
     publishedAt.dateTime = iso;
@@ -161,6 +177,17 @@ const colIndex = (labels, keys, fallback) => {
   return index >= 0 ? index : fallback;
 };
 
+const cardColumns = (labels) => {
+  const found = [];
+  labels.forEach((label, index) => {
+    const name = String(label || "").trim().toLowerCase();
+    const match = name.match(CARD_HEADER) || name.replace(/\s+/g, "").match(/^(карточка|card|текст|slide)(\d+)$/i);
+    if (match) found.push({ number: Number(match[2]), index });
+  });
+  found.sort((a, b) => a.number - b.number);
+  return found;
+};
+
 const isImported = (status) => IMPORTED_MARKS.has(String(status || "").trim().toLowerCase());
 
 const valueAt = (values, index) =>
@@ -169,32 +196,35 @@ const valueAt = (values, index) =>
 const rowIdea = (values, cols, row) => {
   const heading = valueAt(values, cols.title);
   const legacy = valueAt(values, cols.text);
-  const cards = [
-    valueAt(values, cols.card1),
-    valueAt(values, cols.card2) || legacy,
-    valueAt(values, cols.card3),
-  ];
-  const body = cards[1] || cards[0] || cards[2] || legacy;
+  const byNumber = {};
+  cols.cards.forEach(({ number, index }) => {
+    byNumber[number] = valueAt(values, index);
+  });
+  const highest = cols.cards.reduce((max, item) => Math.max(max, item.number), 0);
+  const listed = [];
+  for (let n = 1; n <= highest; n += 1) listed.push(byNumber[n] || "");
+  while (listed.length && !listed[listed.length - 1]) listed.pop();
+  const cards = listed.filter(Boolean);
+  if (!cards.length && legacy) cards.push(legacy);
+  const body = cards[0] || legacy;
   if (!heading || !body) return null;
   if (TITLE_KEYS.includes(heading.toLowerCase())) return null;
   if (isImported(valueAt(values, cols.status))) return null;
   const idea = { title: heading, description: body, cards, row };
   const raw = valueAt(values, cols.slide);
-  if (raw === "2" || raw === "3") idea.slides = Number(raw);
-  else idea.slides = cards[2] ? 3 : 2;
+  const listedSlides = Number(raw);
+  idea.slides = Math.max(1, cards.length || (Number.isFinite(listedSlides) ? listedSlides : 1));
   return idea;
 };
 
 const parseGvizTable = (table) => {
   const labels = (table.cols || []).map((col) => String(col.label || "").trim().toLowerCase());
   const cols = {
-    title: colIndex(labels, TITLE_KEYS, 0),
+    title: colIndex(labels, TITLE_KEYS, 2),
     text: colIndex(labels, TEXT_KEYS, -1),
     slide: colIndex(labels, SLIDE_KEYS, -1),
-    status: colIndex(labels, STATUS_KEYS, 3),
-    card1: colIndex(labels, CARD1_KEYS, -1),
-    card2: colIndex(labels, CARD2_KEYS, -1),
-    card3: colIndex(labels, CARD3_KEYS, -1),
+    status: colIndex(labels, STATUS_KEYS, 0),
+    cards: cardColumns(labels),
   };
   return (table.rows || [])
     .map((row, index) => rowIdea((row.c || []).map(cellText), cols, index + 2))
@@ -250,25 +280,16 @@ const loadIdeas = async () => {
 };
 
 const applyIdea = (idea) => {
-  const copy = idea.cards || ["", idea.description || "", ""];
+  const copy = (idea.cards || []).filter(Boolean);
   title.value = idea.title;
-  card1.value = copy[0] || "";
-  card2.value = copy[1] || idea.description || "";
-  card3.value = copy[2] || "";
-  const two = form.querySelector('input[name="slides"][value="2"]');
-  const three = form.querySelector('input[name="slides"][value="3"]');
-  if (idea.slides === 2) two.checked = true;
-  else if (idea.slides === 3) three.checked = true;
-  else (copy[2] ? three : two).checked = true;
+  renderCardRows(Math.max(DEFAULT_CARD_COUNT, copy.length), copy);
   renderPreview();
 };
 
 const clearIdea = () => {
   currentIdea = null;
   title.value = "";
-  card1.value = "";
-  card2.value = "";
-  card3.value = "";
+  renderCardRows(DEFAULT_CARD_COUNT, []);
   renderPreview();
 };
 
@@ -417,7 +438,7 @@ form.addEventListener("submit", async (event) => {
   const payload = {
     title: title.value.trim(),
     description: descriptionValue(),
-    cards: cardValues(),
+    cards: filledCards(),
     slides: slidesValue(),
     date: nowIso(),
     row: currentIdea && currentIdea.row,
@@ -486,4 +507,5 @@ token.addEventListener("input", () => {
   else sessionStorage.removeItem("gh-token");
 });
 
+renderCardRows(DEFAULT_CARD_COUNT);
 fillRandom();

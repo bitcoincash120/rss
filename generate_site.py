@@ -63,8 +63,6 @@ def row_html(post: dict, index: int) -> str:
 
 def card_rows_html(post: dict) -> str:
     cards = list(post.get("cards") or [])
-    while len(cards) < 3:
-        cards.append("")
     rows = []
     for index, text in enumerate(cards, 1):
         if not text:

@@ -49,9 +49,26 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
     return meta, parts[2].strip()
 
 
+def card_image_name(post_id: str, index: int) -> str:
+    if index <= 1:
+        return f"{post_id}.jpg"
+    return f"{post_id}-{index}.jpg"
+
+
 def image_names(post_id: str) -> list[str]:
-    names = [f"{post_id}.jpg", f"{post_id}-2.jpg", f"{post_id}-3.jpg"]
-    return [name for name in names if (IMAGES_DIR / name).is_file()]
+    names: list[str] = []
+    first = IMAGES_DIR / f"{post_id}.jpg"
+    if first.is_file():
+        names.append(first.name)
+    numbered: list[tuple[int, str]] = []
+    prefix = f"{post_id}-"
+    for path in IMAGES_DIR.glob(f"{post_id}-*.jpg"):
+        suffix = path.stem[len(prefix) :]
+        if suffix.isdigit():
+            numbered.append((int(suffix), path.name))
+    numbered.sort()
+    names.extend(name for _, name in numbered)
+    return names
 
 
 CARD_HEADING = re.compile(r"^#{2,3}\s*(\d+)\s*$")
@@ -81,10 +98,16 @@ def split_body(body: str, fallback_title: str = "") -> tuple[str, str, list[str]
             buckets[current].append(stripped)
         else:
             lead.append(stripped)
-    cards = [" ".join(buckets.get(index, [])).strip() for index in (1, 2, 3)]
+    if buckets:
+        highest = max(buckets)
+        cards = [" ".join(buckets.get(index, [])).strip() for index in range(1, highest + 1)]
+        while cards and not cards[-1]:
+            cards.pop()
+    else:
+        cards = []
     description = " ".join(lead).strip()
     if not description:
-        description = next((text for text in (cards[1], cards[0], cards[2]) if text), "")
+        description = next((text for text in cards if text), "")
     return title, description, cards
 
 
@@ -93,10 +116,12 @@ def parse_post(path: Path) -> dict:
     title, description, cards = split_body(body, path.stem)
     post_id = meta.get("id") or path.stem
     date = meta.get("date") or ""
+    filled = [text for text in cards if text]
     try:
-        slides = max(2, min(3, int(meta.get("slides") or 3)))
+        slides = max(1, int(meta.get("slides") or len(filled) or 1))
     except ValueError:
-        slides = 3
+        slides = max(1, len(filled) or 1)
+    slides = max(slides, len(filled) or 1)
     parsed_date = None
     if date:
         parsed_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
