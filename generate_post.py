@@ -9,7 +9,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from generate_cards import render_one
-from posts_md import POSTS_DIR, clamp_style, parse_post
+from posts_md import (
+    DEFAULT_STYLE,
+    POSTS_DIR,
+    cards_from_marp,
+    clamp_style,
+    count_marp_slides,
+    normalize_marp_deck,
+    parse_post,
+)
 
 
 def next_post_id() -> str:
@@ -47,20 +55,26 @@ def write_markdown(
     date: str | None = None,
     cards: list[str] | None = None,
     style: str | None = None,
+    marp: str | None = None,
 ) -> Path:
     POSTS_DIR.mkdir(exist_ok=True)
     when = date or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     path = POSTS_DIR / f"{post_id}.md"
+    deck = normalize_marp_deck(marp or "")
+    style_name = clamp_style(style or ("findoc" if deck else None))
     parts = [
-        f"---\ndate: {when}\nslides: {slides}\nstyle: {clamp_style(style)}\n---\n\n# {title.strip()}\n"
+        f"---\ndate: {when}\nslides: {slides}\nstyle: {style_name}\n---\n\n# {title.strip()}\n"
     ]
-    copy = normalize_cards(cards, description)
-    if any(copy):
-        for index, text in enumerate((item for item in copy if item), 1):
-            if index <= slides:
-                parts.append(f"\n## {index}\n\n{text}\n")
-    elif description.strip():
-        parts.append(f"\n{description.strip()}\n")
+    if deck:
+        parts.append("\n" + deck)
+    else:
+        copy = normalize_cards(cards, description)
+        if any(copy):
+            for index, text in enumerate((item for item in copy if item), 1):
+                if index <= slides:
+                    parts.append(f"\n## {index}\n\n{text}\n")
+        elif description.strip():
+            parts.append(f"\n{description.strip()}\n")
     path.write_text("".join(parts), encoding="utf-8")
     return path
 
@@ -73,17 +87,23 @@ def create_post(
     render: bool = True,
     cards: list[str] | None = None,
     style: str | None = None,
+    marp: str | None = None,
 ) -> dict:
     title = (title or "").strip()
-    copy = normalize_cards(cards, (description or "").strip())
-    description = (description or "").strip() or next((text for text in copy if text), "")
+    deck = normalize_marp_deck(marp or "")
+    copy = cards_from_marp(deck) if deck else normalize_cards(cards, (description or "").strip())
+    description = (
+        (description or "").strip()
+        or next((text for text in copy if text), "")
+        or (title if deck else "")
+    )
     if not title:
         raise ValueError("Нужен заголовок")
-    if not description:
-        raise ValueError("Нужен текст")
-    slides_n = clamp_slides(slides, copy)
+    if not description and not deck:
+        raise ValueError("Нужна разметка Marp или текст карточек")
+    slides_n = max(clamp_slides(slides, copy), count_marp_slides(deck), 1)
     post_id = next_post_id()
-    path = write_markdown(post_id, title, description, slides_n, date, copy, style)
+    path = write_markdown(post_id, title, description, slides_n, date, copy, style, deck)
     post = parse_post(path)
     if render:
         try:
@@ -102,14 +122,20 @@ def main() -> None:
     parser.add_argument("--description", default="")
     parser.add_argument("--slides", type=int, default=0)
     parser.add_argument("--card", action="append", default=[], dest="cards")
-    parser.add_argument("--style", default="night")
+    parser.add_argument("--style", default=DEFAULT_STYLE)
+    parser.add_argument("--marp", default="", help="Полная разметка Marp")
+    parser.add_argument("--marp-file", default="", help="Файл с разметкой Marp")
     args = parser.parse_args()
+    marp = args.marp
+    if args.marp_file:
+        marp = Path(args.marp_file).read_text(encoding="utf-8")
     post = create_post(
         args.title,
         args.description,
         args.slides or None,
         cards=args.cards,
         style=args.style,
+        marp=marp,
     )
     print(f"wrote {post['path'].name}")
 

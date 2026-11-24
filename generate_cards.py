@@ -5,19 +5,27 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from posts_md import ROOT, card_image_name, clamp_style, format_datetime_ru, load_posts
+from posts_md import (
+    ROOT,
+    card_image_name,
+    clamp_style,
+    count_marp_slides,
+    format_datetime_ru,
+    load_posts,
+    normalize_marp_deck,
+)
 
 CARDS_DIR = ROOT / "cards"
 OUT_DIR = CARDS_DIR / "out"
 IMAGES_DIR = ROOT / "images"
 THEME_PATH = CARDS_DIR / "theme.css"
-
-
+FINDOC_THEME = CARDS_DIR / "fin-doc.css"
 def esc(text: str) -> str:
     return (
         text.replace("&", "&amp;")
@@ -36,12 +44,65 @@ def card_copy(post: dict) -> list[str]:
     return [fallback] if fallback else [""]
 
 
-def slide_kind(index: int) -> str:
+def findoc_kind(index: int, total: int) -> str:
     if index == 1:
         return "hero"
-    if index == 2:
-        return "quote"
-    return "compact"
+    if index == total and total > 1:
+        return "cta"
+    return ("list", "facts", "body")[(index - 2) % 3]
+
+
+def retarget_marp(marp: str, style: str) -> str:
+    skin = clamp_style(style)
+    text = normalize_marp_deck(marp)
+    if not text:
+        return ""
+    if re.search(r"(?im)^theme:\s*\S+", text):
+        text = re.sub(r"(?im)^theme:\s*\S+", "theme: fin-doc", text, count=1)
+    else:
+        text = re.sub(r"(?im)^(marp:\s*true)\s*$", r"\1\ntheme: fin-doc", text, count=1)
+    if not re.search(r"(?im)^size:\s*", text):
+        text = re.sub(r"(?im)^(theme:\s*\S+)", r"\1\nsize: carousel", text, count=1)
+    if re.search(r"(?im)^class:\s*", text):
+        text = re.sub(r"(?im)^class:\s*.*$", f"class: {skin}", text, count=1)
+    else:
+        text = re.sub(r"(?im)^(theme:\s*\S+)", rf"\1\nclass: {skin}", text, count=1)
+    return text
+
+
+def findoc_slide(index: int, total: int, title: str, text: str, when: str) -> str:
+    kind = findoc_kind(index, total)
+    num = f"{index:02d}/{total:02d}"
+    foot_right = "Сохраните" if index == total else "Листай →"
+    dark = " dark" if kind == "hero" else ""
+    body = text or title
+    if kind == "hero":
+        inner = f'<div class="kicker">Обзор</div>\n<h3 class="hero">{title}</h3>'
+        if text:
+            inner += f"\n<p>{text}</p>"
+    elif kind == "list":
+        inner = (
+            f'<div class="kicker">Разбор</div>\n'
+            f'<div class="list-item"><span class="idx">{index:02d}</span><div>{body}</div></div>'
+        )
+    elif kind == "facts":
+        inner = (
+            f'<div class="kicker">Факты</div>\n'
+            f'<div class="fact-row"><span class="idx">{index:02d}</span><div>{body}</div></div>'
+        )
+    elif kind == "cta":
+        inner = f'<div class="kicker">Следующий шаг</div>\n<div class="cta-word">Дальше</div>'
+        if body:
+            inner += f"\n<p>{body}</p>"
+    else:
+        inner = f'<div class="kicker">Карточка</div>\n<p>{body}</p>'
+    return f"""<article class="slide{dark}">
+<div class="head"><span>{when}</span><span>{num}</span></div>
+<div class="content">
+{inner}
+</div>
+<div class="foot"><span>Карточка {index} из {total}</span><span>{foot_right}</span></div>
+</article>"""
 
 
 def deck_markdown(post: dict) -> str:
@@ -52,24 +113,17 @@ def deck_markdown(post: dict) -> str:
     copy = copy[:total] or [""]
     total = len(copy)
     style = clamp_style(post.get("style"))
-    slides = []
-    for index, text in enumerate(copy, 1):
-        kind = slide_kind(index)
-        if kind == "hero":
-            body = f"\n\n{text}" if text else ""
-            content = f"# {title}{body}"
-        else:
-            content = text or title
-        slides.append(
-            f"""<!-- _class: {kind} {style} -->
-
-<div class="when">{when}</div>
-
-{content}
-
-<div class="num">Карточка {index} из {total}</div>"""
-        )
-    return "---\nmarp: true\ntheme: cards\npaginate: false\n---\n\n" + "\n\n---\n\n".join(slides) + "\n"
+    marp = normalize_marp_deck(post.get("marp") or "")
+    if marp:
+        return retarget_marp(marp, style)
+    slides = [
+        findoc_slide(index, total, title, text, when) for index, text in enumerate(copy, 1)
+    ]
+    return (
+        f"---\nmarp: true\ntheme: fin-doc\nclass: {style}\nsize: carousel\npaginate: false\n---\n\n"
+        + "\n\n---\n\n".join(slides)
+        + "\n"
+    )
 
 
 def chrome_path() -> str | None:
@@ -91,7 +145,7 @@ def marp_bin() -> Path:
     return ROOT / "node_modules" / ".bin" / "marp"
 
 
-def render_deck(md_path: Path) -> None:
+def render_deck(md_path: Path, *, image_scale: str = "1") -> None:
     env = os.environ.copy()
     chrome = chrome_path()
     if chrome:
@@ -106,12 +160,14 @@ def render_deck(md_path: Path) -> None:
         str(md_path),
         "--theme-set",
         str(THEME_PATH),
+        "--theme-set",
+        str(FINDOC_THEME),
         "--images",
         "jpeg",
         "--jpeg-quality",
         "88",
         "--image-scale",
-        "1",
+        image_scale,
         "--html",
         "--allow-local-files",
         "-o",
@@ -120,8 +176,13 @@ def render_deck(md_path: Path) -> None:
     subprocess.run(cmd, cwd=ROOT, env=env, check=True)
 
 
+def slide_count(post: dict) -> int:
+    marp_n = count_marp_slides(post.get("marp") or "")
+    return max(1, int(post.get("slides") or marp_n or len(card_copy(post)) or 1), marp_n)
+
+
 def expected_images(post: dict) -> list[Path]:
-    count = max(1, int(post.get("slides") or len(card_copy(post)) or 1))
+    count = slide_count(post)
     return [IMAGES_DIR / card_image_name(post["id"], index) for index in range(1, count + 1)]
 
 
@@ -165,8 +226,9 @@ def render_one(post: dict, *, force: bool = False) -> list[Path]:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     md_path = OUT_DIR / f"{post['id']}.md"
     md_path.write_text(deck_markdown(post), encoding="utf-8")
-    render_deck(md_path)
-    return publish_images(post["id"], max(1, int(post.get("slides") or len(card_copy(post)) or 1)))
+    scale = "3"
+    render_deck(md_path, image_scale=scale)
+    return publish_images(post["id"], slide_count(post))
 
 
 def main() -> int:

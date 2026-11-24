@@ -45,13 +45,17 @@ jobs:
           python -m pip install feedgen
           npm ci
           python generate_cards.py
-          python generate_rss.py
           python generate_site.py
-          test -s rss.xml
+          python generate_rss.py
           test -s index.html
           test -s new.html
+          test -s admin.html
           mkdir -p _site/images
-          cp rss.xml index.html new.html new.js feed.js site.css _site/
+          cp index.html new.html new.js feed.js site.css admin.html admin.js settings.js site_settings.json _site/
+          if python -c "from site_settings import rss_enabled; raise SystemExit(0 if rss_enabled() else 1)"; then
+            test -s rss.xml
+            cp rss.xml _site/
+          fi
           cp images/* _site/images/
 
       - uses: actions/upload-pages-artifact@v4

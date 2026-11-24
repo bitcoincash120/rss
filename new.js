@@ -4,13 +4,13 @@ const SHEET = {
   url: "https://docs.google.com/spreadsheets/d/19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI/edit?gid=0#gid=0",
 };
 
-const DEFAULT_CARD_COUNT = 10;
 const TITLE_KEYS = ["заголовок", "title", "headline", "тема", "name"];
 const TEXT_KEYS = ["текст", "text", "описание", "анонс", "description", "body"];
 const SLIDE_KEYS = ["карточки", "slides", "фото", "photos", "slide"];
 const STATUS_KEYS = ["статус", "status", "state"];
 const IMPORTED_MARKS = new Set(["импортирован", "imported", "готово", "published", "опубликован"]);
 const CARD_HEADER = /^(карточка|card|текст|slide)\s*(\d+)$/i;
+const ARTICLE_RE = /<article\b[\s\S]*?<\/article>/gi;
 
 const siteBase = () => {
   const dir = location.pathname.replace(/[^/]+$/, "") || "/";
@@ -22,11 +22,10 @@ window.SHEET_WEBHOOK =
 
 let ideas = [];
 let currentIdea = null;
-let cardCount = DEFAULT_CARD_COUNT;
 
 const form = document.getElementById("post-form");
 const title = document.getElementById("title");
-const cardRows = document.getElementById("card-rows");
+const marpEl = document.getElementById("marp");
 const token = document.getElementById("token");
 const statusEl = document.getElementById("status");
 const mocks = document.getElementById("mocks");
@@ -46,9 +45,11 @@ const repoFromLocation = () => {
 
 const isLocal = () => location.hostname === "127.0.0.1" || location.hostname === "localhost";
 
+const STYLES = ["night", "paper", "studio", "findoc"];
+
 const styleValue = () => {
   const value = styleEl && styleEl.value;
-  return value === "paper" || value === "studio" ? value : "night";
+  return STYLES.includes(value) ? value : "findoc";
 };
 
 const MONTHS_RU = [
@@ -77,80 +78,112 @@ const formatDatetimeRu = (iso) => {
   return `${local.getUTCDate()} ${MONTHS_RU[local.getUTCMonth()]} ${local.getUTCFullYear()}, ${hours}:${minutes}`;
 };
 
-const cardInputs = () => [...cardRows.querySelectorAll("textarea[data-card]")];
+const marpValue = () => (marpEl && marpEl.value ? marpEl.value.trim() : "");
 
-const cardValues = () => cardInputs().map((input) => input.value.trim());
+const marpArticles = (text) => {
+  const source = text || marpValue();
+  return source.match(ARTICLE_RE) || [];
+};
 
-const filledCards = () => cardValues().filter(Boolean);
+const slidesValue = () => Math.max(1, marpArticles().length);
 
-const slidesValue = () => Math.max(1, filledCards().length);
-
-const descriptionValue = () => filledCards()[0] || "";
+const descriptionValue = () => {
+  const first = marpArticles()[0] || "";
+  const para = first.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i);
+  const heading = first.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i);
+  const pick = para || heading;
+  return pick ? stripTags(pick[1]) : title.value.trim();
+};
 
 const markdown = () => {
-  const cards = filledCards();
-  const slides = cards.length;
-  const parts = [`---\ndate: ${nowIso()}\nslides: ${slides}\nstyle: ${styleValue()}\n---\n\n# ${title.value.trim()}\n`];
-  cards.forEach((text, index) => {
-    parts.push(`\n## ${index + 1}\n\n${text}\n`);
-  });
-  return parts.join("");
+  const deck = marpValue();
+  const slides = slidesValue();
+  return `---\ndate: ${nowIso()}\nslides: ${slides}\nstyle: ${styleValue()}\n---\n\n# ${title.value.trim()}\n\n${deck}\n`;
 };
 
-const mockKind = (index) => {
+const findocKind = (index, total) => {
   if (index === 1) return "hero";
-  if (index === 2) return "quote";
-  return "compact";
+  if (index === total && total > 1) return "cta";
+  return ["list", "facts", "body"][(index - 2) % 3];
 };
 
-const mockCard = (kind, kicker, heading, body, index, total) => {
-  const headingTag = kind === "hero" ? `<h1>${escapeHtml(heading)}</h1>` : "";
-  const bodyTag = body ? `<p>${escapeHtml(body)}</p>` : "";
-  return `<div class="mock-wrap"><article class="mock ${kind} ${styleValue()}">
-    <div class="when">${escapeHtml(kicker)}</div>
-    ${headingTag}
-    ${bodyTag}
-    <div class="num">Карточка ${index} из ${total}</div>
+const mockFindoc = (kicker, heading, body, index, total) => {
+  const n = String(index).padStart(2, "0") + "/" + String(total).padStart(2, "0");
+  const footRight = index === total ? "Сохраните" : "Листай →";
+  const kind = findocKind(index, total);
+  const dark = kind === "hero" ? " dark" : "";
+  const skin = styleValue();
+  let inner = "";
+  if (kind === "hero") {
+    inner = `<div class="kicker">Обзор</div><h3 class="hero">${escapeHtml(heading)}</h3>${body ? `<p>${escapeHtml(body)}</p>` : ""}`;
+  } else if (kind === "list") {
+    inner = `<div class="kicker">Разбор</div><div class="list-item"><span class="idx">${String(index).padStart(2, "0")}</span><div>${escapeHtml(body || heading)}</div></div>`;
+  } else if (kind === "facts") {
+    inner = `<div class="kicker">Факты</div><div class="fact-row"><span class="idx">${String(index).padStart(2, "0")}</span><div>${escapeHtml(body || heading)}</div></div>`;
+  } else if (kind === "cta") {
+    inner = `<div class="kicker">Следующий шаг</div><div class="cta-word">Дальше</div>${body || heading ? `<p>${escapeHtml(body || heading)}</p>` : ""}`;
+  } else {
+    inner = `<div class="kicker">Карточка</div><p>${escapeHtml(body || heading)}</p>`;
+  }
+  return `<div class="mock-wrap findoc-wrap"><article class="mock carousel ${skin} slide${dark}">
+    <div class="head"><span>${escapeHtml(kicker)}</span><span>${n}</span></div>
+    <div class="content">${inner}</div>
+    <div class="foot"><span>Карточка ${index} из ${total}</span><span>${footRight}</span></div>
   </article></div>`;
 };
 
+const mockCard = (_kind, kicker, heading, body, index, total) =>
+  mockFindoc(kicker, heading, body, index, total);
+
 const escapeHtml = (value) =>
-  value
+  String(value || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 
-const renderCardRows = (count, values = []) => {
-  cardCount = Math.max(DEFAULT_CARD_COUNT, Number(count) || DEFAULT_CARD_COUNT);
-  const current = cardValues();
-  const copy = values.length ? values : current;
-  cardRows.innerHTML = Array.from({ length: cardCount }, (_, index) => {
-    const n = index + 1;
-    const text = escapeHtml(copy[index] || "");
-    return `<tr>
-      <th><label for="card${n}">Карточка ${n}</label></th>
-      <td><textarea id="card${n}" name="card${n}" data-card="${n}" rows="3" maxlength="280" placeholder="Текст карточки ${n}"${n === 1 ? " required" : ""}>${text}</textarea></td>
-    </tr>`;
-  }).join("");
+const stripTags = (value) =>
+  String(value || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const marpLocalCss = (text) => {
+  const source = text || marpValue();
+  const match = source.match(/^---[\s\S]*?\nstyle:\s*\|\s*\n([\s\S]*?)\n---/);
+  if (!match) return "";
+  const skin = styleValue();
+  return match[1]
+    .replace(/^\s{2}/gm, "")
+    .replaceAll("section .slide.dark", `.mock.${skin}.dark`)
+    .replaceAll("section .slide", `.mock.${skin}`)
+    .replaceAll("font-family:Georgia,'Liberation Serif',serif", "font-family:'Times New Roman','Liberation Serif',Georgia,serif")
+    .trim();
+};
+
+const mockFromArticles = (articles) => {
+  const skin = styleValue();
+  return articles
+    .map((html) => {
+      const dark = /class="[^"]*\bdark\b/i.test(html) ? " dark" : "";
+      const inner = html.replace(/^<article\b[^>]*>/i, "").replace(/<\/article>$/i, "");
+      return `<div class="mock-wrap findoc-wrap"><article class="mock carousel ${skin} slide${dark}">${inner}</article></div>`;
+    })
+    .join("");
 };
 
 const renderPreview = () => {
   const heading = title.value.trim() || "Заголовок появится здесь";
-  const cards = cardValues();
-  const filled = cards.filter(Boolean);
-  const total = Math.max(1, filled.length);
+  const articles = marpArticles();
   const iso = nowIso();
   const when = formatDatetimeRu(iso);
-  const shown = filled.length ? filled : [""];
-  mocks.innerHTML = shown
-    .map((text, index) => {
-      const n = index + 1;
-      const kind = mockKind(n);
-      const body = text || (n === 1 ? "" : `Текст карточки ${n} появится здесь.`);
-      return mockCard(kind, when, heading, body, n, total);
-    })
-    .join("");
+  const extraCss = marpLocalCss();
+  const styleTag = extraCss ? `<style data-marp-local>${extraCss}</style>` : "";
+  if (articles.length) {
+    mocks.innerHTML = styleTag + mockFromArticles(articles);
+  } else {
+    mocks.innerHTML = styleTag + mockCard("hero", when, heading, "Вставьте полную разметку Marp.", 1, 1);
+  }
   markdownEl.textContent = markdown();
   if (publishedAt) {
     publishedAt.dateTime = iso;
@@ -177,6 +210,18 @@ const colIndex = (labels, keys, fallback) => {
   return index >= 0 ? index : fallback;
 };
 
+const marpIndex = (labels, values) => {
+  const index = labels.findIndex((label) => {
+    const name = String(label || "").trim().toLowerCase();
+    return name.includes("marp") || name.startsWith("полная разметка") || name === "markdown" || name === "md" || name.includes("размет");
+  });
+  if (index >= 0) return index;
+  if (values) {
+    return values.findIndex((value) => /marp:\s*true/i.test(value) || /<article\b/i.test(value));
+  }
+  return -1;
+};
+
 const cardColumns = (labels) => {
   const found = [];
   labels.forEach((label, index) => {
@@ -193,9 +238,24 @@ const isImported = (status) => IMPORTED_MARKS.has(String(status || "").trim().to
 const valueAt = (values, index) =>
   index >= 0 && index < values.length ? String(values[index] || "").trim() : "";
 
+const extractMarp = (text) => {
+  const raw = String(text || "");
+  const match = raw.match(/(?:^|\n)(---[ \t]*\nmarp:[ \t]*true\b[\s\S]*)/i);
+  if (match) return match[1].trim();
+  const start = raw.toLowerCase().indexOf("<article");
+  return start >= 0 ? raw.slice(start).trim() : "";
+};
+
 const rowIdea = (values, cols, row) => {
   const heading = valueAt(values, cols.title);
   const legacy = valueAt(values, cols.text);
+  let marp = extractMarp(valueAt(values, cols.marp));
+  if (!marp) {
+    for (const value of values) {
+      marp = extractMarp(value);
+      if (marp) break;
+    }
+  }
   const byNumber = {};
   cols.cards.forEach(({ number, index }) => {
     byNumber[number] = valueAt(values, index);
@@ -205,28 +265,40 @@ const rowIdea = (values, cols, row) => {
   for (let n = 1; n <= highest; n += 1) listed.push(byNumber[n] || "");
   while (listed.length && !listed[listed.length - 1]) listed.pop();
   const cards = listed.filter(Boolean);
-  if (!cards.length && legacy) cards.push(legacy);
-  const body = cards[0] || legacy;
-  if (!heading || !body) return null;
+  if (legacy && !cards.length) cards.push(legacy);
+  const body = descriptionFromMarp(marp) || cards[0] || legacy;
+  if (!heading || !(body || marp)) return null;
   if (TITLE_KEYS.includes(heading.toLowerCase())) return null;
   if (isImported(valueAt(values, cols.status))) return null;
-  const idea = { title: heading, description: body, cards, row };
+  const idea = { title: heading, description: body, cards, marp, row };
   const raw = valueAt(values, cols.slide);
   const listedSlides = Number(raw);
-  idea.slides = Math.max(1, cards.length || (Number.isFinite(listedSlides) ? listedSlides : 1));
+  const articleN = (marp.match(/<article\b/gi) || []).length;
+  idea.slides = Math.max(1, articleN, cards.length || (Number.isFinite(listedSlides) ? listedSlides : 1));
   return idea;
+};
+
+const descriptionFromMarp = (marp) => {
+  const first = (String(marp || "").match(ARTICLE_RE) || [])[0] || "";
+  const para = first.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i);
+  const heading = first.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i);
+  const pick = para || heading;
+  return pick ? stripTags(pick[1]) : "";
 };
 
 const parseGvizTable = (table) => {
   const labels = (table.cols || []).map((col) => String(col.label || "").trim().toLowerCase());
+  const rows = table.rows || [];
+  const firstValues = rows[0] ? (rows[0].c || []).map(cellText) : [];
   const cols = {
     title: colIndex(labels, TITLE_KEYS, 2),
     text: colIndex(labels, TEXT_KEYS, -1),
     slide: colIndex(labels, SLIDE_KEYS, -1),
     status: colIndex(labels, STATUS_KEYS, 0),
+    marp: marpIndex(labels, firstValues),
     cards: cardColumns(labels),
   };
-  return (table.rows || [])
+  return rows
     .map((row, index) => rowIdea((row.c || []).map(cellText), cols, index + 2))
     .filter(Boolean);
 };
@@ -260,6 +332,41 @@ const loadSheetJsonp = () =>
     document.head.appendChild(script);
   });
 
+const loadWebhookIdeas = () =>
+  new Promise((resolve, reject) => {
+    const webhook = window.SHEET_WEBHOOK;
+    if (!webhook) {
+      reject(new Error("no webhook"));
+      return;
+    }
+    const name = `__ideas${Date.now()}`;
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error("Таблица не ответила"));
+    }, 10000);
+    const cleanup = () => {
+      clearTimeout(timer);
+      delete window[name];
+      script.remove();
+    };
+    window[name] = (payload) => {
+      cleanup();
+      if (!payload || payload.ok === false || !Array.isArray(payload.ideas)) {
+        reject(new Error("Не удалось прочитать таблицу"));
+        return;
+      }
+      resolve(payload.ideas.filter((idea) => !idea.imported));
+    };
+    const script = document.createElement("script");
+    const params = new URLSearchParams({ action: "ideas", callback: name, _: String(Date.now()) });
+    script.src = `${webhook}${webhook.includes("?") ? "&" : "?"}${params}`;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Нет доступа к Google Таблице"));
+    };
+    document.head.appendChild(script);
+  });
+
 const loadSheetLocal = async () => {
   const res = await fetch("api/ideas", { cache: "no-store" });
   if (!res.ok) throw new Error("local sheet");
@@ -276,20 +383,25 @@ const loadIdeas = async () => {
   } catch (_error) {
     /* GitHub Pages has no local API; try the sheet directly. */
   }
+  try {
+    ideas = await loadWebhookIdeas();
+    if (ideas.length) return;
+  } catch (_error) {
+    /* Old webhook without action=ideas. */
+  }
   ideas = await loadSheetJsonp();
 };
 
 const applyIdea = (idea) => {
-  const copy = (idea.cards || []).filter(Boolean);
-  title.value = idea.title;
-  renderCardRows(Math.max(DEFAULT_CARD_COUNT, copy.length), copy);
+  title.value = idea.title || "";
+  marpEl.value = idea.marp || "";
   renderPreview();
 };
 
 const clearIdea = () => {
   currentIdea = null;
   title.value = "";
-  renderCardRows(DEFAULT_CARD_COUNT, []);
+  marpEl.value = "";
   renderPreview();
 };
 
@@ -438,15 +550,15 @@ form.addEventListener("submit", async (event) => {
   const payload = {
     title: title.value.trim(),
     description: descriptionValue(),
-    cards: filledCards(),
+    marp: marpValue(),
     slides: slidesValue(),
     date: nowIso(),
     row: currentIdea && currentIdea.row,
     origin: siteBase(),
     style: styleValue(),
   };
-  if (!payload.title || !payload.description) {
-    setStatus("Заполните заголовок и текст карточек.", "err");
+  if (!payload.title || !payload.marp) {
+    setStatus("Заполните заголовок и разметку Marp.", "err");
     return;
   }
   const submit = form.querySelector('button[type="submit"]');
@@ -507,5 +619,5 @@ token.addEventListener("input", () => {
   else sessionStorage.removeItem("gh-token");
 });
 
-renderCardRows(DEFAULT_CARD_COUNT);
+renderPreview();
 fillRandom();

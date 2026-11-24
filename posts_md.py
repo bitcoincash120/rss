@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timedelta, timezone
+from html import unescape
 
 DISPLAY_TZ = timezone(timedelta(hours=4))
 from pathlib import Path
@@ -10,8 +11,8 @@ ROOT = Path(__file__).resolve().parent
 POSTS_DIR = ROOT / "posts"
 IMAGES_DIR = ROOT / "images"
 SITE_URL = "https://bitcoincash120.github.io/rss"
-STYLES = ("night", "paper", "studio")
-DEFAULT_STYLE = "night"
+STYLES = ("night", "paper", "studio", "findoc")
+DEFAULT_STYLE = "findoc"
 
 
 def clamp_style(value: str | None) -> str:
@@ -72,6 +73,73 @@ def image_names(post_id: str) -> list[str]:
 
 
 CARD_HEADING = re.compile(r"^#{2,3}\s*(\d+)\s*$")
+ARTICLE_RE = re.compile(r"<article\b[\s\S]*?</article>", re.I)
+MARP_DECK_RE = re.compile(r"(?:^|\n)(---[ \t]*\nmarp:[ \t]*true\b[\s\S]*)", re.I)
+TAG_RE = re.compile(r"<[^>]+>")
+H3_RE = re.compile(r"<h3\b[^>]*>([\s\S]*?)</h3>", re.I)
+P_RE = re.compile(r"<p\b[^>]*>([\s\S]*?)</p>", re.I)
+KICKER_RE = re.compile(r'<div class="kicker">([\s\S]*?)</div>', re.I)
+
+
+def html_to_text(fragment: str) -> str:
+    text = re.sub(r"<div[^>]*aria-hidden[^>]*>[\s\S]*?</div>", " ", fragment or "", flags=re.I)
+    text = TAG_RE.sub(" ", text)
+    text = unescape(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def extract_marp_deck(text: str) -> str:
+    raw = str(text or "")
+    match = MARP_DECK_RE.search(raw)
+    if match:
+        return match.group(1).strip()
+    start = raw.lower().find("<article")
+    if start >= 0:
+        return raw[start:].strip()
+    return ""
+
+
+def count_marp_slides(marp: str) -> int:
+    return len(ARTICLE_RE.findall(marp or ""))
+
+
+def cards_from_marp(marp: str) -> list[str]:
+    cards: list[str] = []
+    for article in ARTICLE_RE.findall(marp or ""):
+        heading = html_to_text(H3_RE.search(article).group(1) if H3_RE.search(article) else "")
+        para = html_to_text(P_RE.search(article).group(1) if P_RE.search(article) else "")
+        piece = "\n\n".join(part for part in (heading, para) if part)
+        if not piece:
+            piece = html_to_text(article)
+            for noise in ("Листай →", "Сохраните", "@fin_doc_"):
+                piece = piece.replace(noise, " ")
+            piece = re.sub(r"\b\d{2}/\d{2}\b", " ", piece)
+            piece = re.sub(r"\s+", " ", piece).strip()
+        if piece:
+            cards.append(piece)
+    return cards
+
+
+def normalize_marp_deck(marp: str) -> str:
+    text = str(marp or "").strip()
+    if not text:
+        return ""
+    if not MARP_DECK_RE.search("\n" + text) and ARTICLE_RE.search(text):
+        text = (
+            "---\nmarp: true\ntheme: fin-doc\nsize: carousel\nlang: ru\n"
+            "paginate: false\n---\n\n" + text
+        )
+    # ChatGPT PNGs were rendered with Liberation Serif (Times metrics).
+    # Georgia-first stacks wrap headlines differently on macOS.
+    text = text.replace(
+        "font-family:Georgia,'Liberation Serif',serif",
+        "font-family:'Times New Roman','Liberation Serif',Georgia,serif",
+    )
+    text = text.replace(
+        'font-family:Georgia,"Liberation Serif",serif',
+        "font-family:'Times New Roman','Liberation Serif',Georgia,serif",
+    )
+    return text if text.endswith("\n") else text + "\n"
 
 
 def split_body(body: str, fallback_title: str = "") -> tuple[str, str, list[str]]:
@@ -112,33 +180,51 @@ def split_body(body: str, fallback_title: str = "") -> tuple[str, str, list[str]
 
 
 def parse_post(path: Path) -> dict:
-    meta, body = parse_frontmatter(path.read_text(encoding="utf-8"))
-    title, description, cards = split_body(body, path.stem)
+    raw = path.read_text(encoding="utf-8")
+    meta, body = parse_frontmatter(raw)
+    marp = extract_marp_deck(body) or (
+        raw.strip() if str(meta.get("marp")).lower() in {"true", "yes"} else ""
+    )
+    prefix = body
+    if marp and marp in body:
+        prefix = body[: body.index(marp)]
+    title, description, cards = split_body(prefix, meta.get("title") or path.stem)
+    if marp:
+        cards = cards_from_marp(marp) or cards
+        if not description:
+            description = next((text for text in cards if text), "")
+        if (not title or title == path.stem) and meta.get("title"):
+            title = meta.get("title") or title
     post_id = meta.get("id") or path.stem
     date = meta.get("date") or ""
     filled = [text for text in cards if text]
+    article_n = count_marp_slides(marp)
     try:
-        slides = max(1, int(meta.get("slides") or len(filled) or 1))
+        slides = max(1, int(meta.get("slides") or article_n or len(filled) or 1))
     except ValueError:
-        slides = max(1, len(filled) or 1)
-    slides = max(slides, len(filled) or 1)
+        slides = max(1, article_n or len(filled) or 1)
+    slides = max(slides, article_n, len(filled) or 1)
     parsed_date = None
     if date:
         parsed_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
         if parsed_date.tzinfo is None:
             parsed_date = parsed_date.replace(tzinfo=timezone.utc)
+    style_raw = meta.get("style") or meta.get("theme")
+    if marp and not style_raw:
+        style_raw = "findoc"
     return {
         "id": post_id,
         "title": title,
         "description": description,
         "cards": cards,
+        "marp": marp,
         "date": date,
         "parsed_date": parsed_date,
         "link": meta.get("link") or f"{SITE_URL}/#{post_id}",
         "images": [f"{SITE_URL}/images/{name}" for name in image_names(post_id)],
         "image_files": image_names(post_id),
         "slides": slides,
-        "style": clamp_style(meta.get("style") or meta.get("theme")),
+        "style": clamp_style(style_raw),
         "path": path,
     }
 

@@ -13,15 +13,22 @@ import generate_rss
 import generate_site
 import posts_md
 import sheet_ideas
+import site_settings
 from posts_md import ROOT
 
 
 def reload_builders() -> None:
     importlib.reload(posts_md)
+    importlib.reload(site_settings)
     importlib.reload(generate_cards)
     importlib.reload(generate_post)
     importlib.reload(generate_site)
     importlib.reload(generate_rss)
+
+
+def rebuild_public() -> None:
+    generate_site.main()
+    generate_rss.main()
 
 
 def request_origin(handler: SimpleHTTPRequestHandler, payload: dict) -> str:
@@ -44,13 +51,18 @@ class Handler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self) -> None:
-        if self.path.split("?", 1)[0].rstrip("/") == "/api/ideas":
+        path = self.path.split("?", 1)[0].rstrip("/")
+        if path == "/api/ideas":
             try:
                 importlib.reload(sheet_ideas)
                 ideas = sheet_ideas.fetch_ideas()
                 self._json(200, {"ideas": ideas, "source": "sheet", "url": sheet_ideas.SHEET_URL})
             except Exception as exc:  # noqa: BLE001
                 self._json(502, {"error": str(exc), "ideas": [], "url": sheet_ideas.SHEET_URL})
+            return
+        if path == "/api/settings":
+            importlib.reload(site_settings)
+            self._json(200, {"settings": site_settings.load_settings()})
             return
         super().do_GET()
 
@@ -74,6 +86,16 @@ class Handler(SimpleHTTPRequestHandler):
                 return
             self._json(200 if marked.get("ok") else 502, marked)
             return
+        if path == "/api/settings":
+            try:
+                reload_builders()
+                settings = site_settings.save_settings(payload)
+                rebuild_public()
+            except Exception as exc:  # noqa: BLE001
+                self._json(500, {"ok": False, "error": str(exc)})
+                return
+            self._json(200, {"ok": True, "settings": settings})
+            return
         if path != "/api/posts":
             self.send_error(404)
             return
@@ -86,9 +108,9 @@ class Handler(SimpleHTTPRequestHandler):
                 payload.get("date"),
                 cards=payload.get("cards"),
                 style=payload.get("style"),
+                marp=payload.get("marp"),
             )
-            generate_site.main()
-            generate_rss.main()
+            rebuild_public()
             sheet_marked = None
             row = payload.get("row")
             if row:
@@ -130,8 +152,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main() -> None:
     reload_builders()
-    generate_site.main()
-    generate_rss.main()
+    rebuild_public()
     server = ThreadingHTTPServer(("127.0.0.1", 3000), Handler)
     print("http://127.0.0.1:3000/")
     server.serve_forever()

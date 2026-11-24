@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 from feedgen.feed import FeedGenerator
 
 from posts_md import SITE_URL, format_datetime_ru, load_posts
+from site_settings import rss_enabled
 
 
 def image_mime(url: str) -> str:
@@ -26,7 +27,10 @@ def enclosure_length(url: str) -> str:
     return "0"
 
 
-def main() -> None:
+def main() -> bool:
+    if not rss_enabled():
+        print("rss skipped")
+        return False
     fg = FeedGenerator()
     fg.load_extension("media", atom=False)
     fg.id(f"{SITE_URL}/rss.xml")
@@ -68,6 +72,8 @@ def main() -> None:
             fe.description(f"{when + '. ' if when else ''}{description}")
 
     fg.rss_file("rss.xml", pretty=True)
+    print("wrote rss.xml")
+    return True
 
 
 if __name__ == "__main__":

@@ -86,6 +86,10 @@ h1 {
   border: 1px solid var(--gold);
 }
 
+[data-rss][hidden] {
+  display: none !important;
+}
+
 .ghost {
   color: var(--gold);
   background: transparent;
@@ -369,6 +373,14 @@ button.ghost:disabled {
   line-height: 1.4;
 }
 
+.sheet textarea#marp {
+  min-height: 320px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre;
+}
+
 .choice {
   display: flex;
   gap: 16px;
@@ -405,6 +417,28 @@ button.ghost:disabled {
 
 .status.err {
   color: #e08a7a;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.switch input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .md-out {
@@ -744,6 +778,298 @@ button.ghost:disabled {
   line-height: 0.6;
   color: #2dd4bf;
   margin-bottom: 24px;
+}
+
+.mock-wrap.findoc-wrap,
+.mock-wrap:has(.carousel) {
+  height: calc(220px * 400 / 320);
+}
+
+.mock.carousel {
+  width: 320px;
+  height: 400px;
+  padding: 18px;
+  transform: scale(calc(220 / 320));
+  --accent: #245bd6;
+  --bg_top: #f7f9fc;
+  --bg_deep: #17212e;
+  --text_muted: #526174;
+  --line: #cbd3de;
+  --track-dark: #354459;
+  --cta-ink: #f7f9fc;
+  --display: Georgia, "PT Serif", serif;
+  --body: Inter, Arial, sans-serif;
+  --hero: 28px;
+  --title: 22px;
+  --copy: 12px;
+  --cap: 10px;
+  background: var(--bg_top);
+  color: var(--bg_deep);
+  font: 400 var(--copy) / 1.45 var(--body);
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+  justify-content: stretch;
+  gap: 0;
+}
+
+.mock.findoc {
+  --accent: #245bd6;
+  --bg_top: #f7f9fc;
+  --bg_deep: #17212e;
+  --text_muted: #526174;
+  --line: #cbd3de;
+  --track-dark: #354459;
+  --cta-ink: #f7f9fc;
+  --display: Georgia, "PT Serif", serif;
+  --body: Inter, Arial, sans-serif;
+}
+
+.mock.night {
+  --accent: #ff8b6a;
+  --bg_top: #e8f3ef;
+  --bg_deep: #132428;
+  --text_muted: #5e7f79;
+  --line: #b5d0c8;
+  --track-dark: #2a4548;
+  --cta-ink: #132428;
+  --display: Georgia, "PT Serif", serif;
+  --body: Inter, Arial, sans-serif;
+}
+
+.mock.paper {
+  --accent: #b45309;
+  --bg_top: #f6ede0;
+  --bg_deep: #2c1810;
+  --text_muted: #7a5c46;
+  --line: #dcc7a8;
+  --track-dark: #4a3224;
+  --cta-ink: #f6ede0;
+  --display: Palatino, "Palatino Linotype", Georgia, serif;
+  --body: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  box-shadow: inset 0 6px 0 var(--accent);
+}
+
+.mock.studio {
+  --accent: #2dd4bf;
+  --bg_top: #f4f1ff;
+  --bg_deep: #12081f;
+  --text_muted: #7c6a99;
+  --line: #c9b8e6;
+  --track-dark: #3b2a55;
+  --cta-ink: #12081f;
+  --display: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  --body: "Avenir Next", "Segoe UI", Inter, Arial, sans-serif;
+  box-shadow: inset 6px 0 0 var(--accent);
+}
+
+.mock.carousel.dark,
+.mock.carousel.slide.dark {
+  background: var(--bg_deep);
+  color: var(--bg_top);
+  outline: 0;
+}
+
+.mock.carousel .head,
+.mock.carousel .foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font: 600 var(--cap) / 1.3 var(--body);
+}
+
+.mock.carousel .head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mock.carousel .foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.mock.carousel.dark .head,
+.mock.carousel.dark .foot {
+  border-color: var(--text_muted);
+}
+
+.mock.carousel .content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.mock.carousel h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 23px;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.mock.carousel h3.hero {
+  font-size: var(--hero);
+}
+
+.mock.carousel .kicker {
+  font-size: var(--cap);
+  font-weight: 700;
+  color: var(--text_muted);
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.mock.carousel.dark .kicker {
+  color: var(--line);
+}
+
+.mock.carousel p {
+  margin: 0;
+  font-size: 12.3px;
+  line-height: 1.22;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  max-width: none;
+  background: transparent;
+  font-weight: 400;
+}
+
+.mock.carousel .list-item,
+.mock.carousel .tl-item,
+.mock.carousel .fact-row,
+.mock.carousel .cta-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  border-top: 1px solid var(--line);
+  padding: 7px 0;
+}
+
+.mock.carousel .idx {
+  min-width: 21px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text_muted);
+}
+
+.mock.carousel .pair {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mock.carousel .bar-row {
+  margin: 8px 0;
+}
+
+.mock.carousel .track,
+.mock.carousel .ruler {
+  height: 6px;
+  background: var(--line);
+  margin-top: 4px;
+}
+
+.mock.carousel .fill,
+.mock.carousel .ruler i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.mock.carousel .bar-row:first-child .fill {
+  background: var(--text_muted);
+}
+
+.mock.carousel .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mock.carousel .stat-card {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.mock.carousel .stat-card b {
+  display: block;
+  font: 700 24px var(--display);
+}
+
+.mock.carousel .hot,
+.mock.carousel .big-stat {
+  color: var(--accent);
+}
+
+.mock.carousel .big-stat {
+  font: 700 44px/1 var(--display);
+}
+
+.mock.carousel .muted {
+  font-size: var(--cap);
+  font-weight: 600;
+  color: var(--text_muted);
+}
+
+.mock.carousel .sub {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mock.carousel .cta-word {
+  align-self: flex-start;
+  background: var(--accent);
+  color: var(--cta-ink);
+  padding: 6px 11px;
+  font: 700 17px var(--display);
+}
+
+.mock.night .track,
+.mock.night .ruler,
+.mock.paper .track,
+.mock.paper .ruler,
+.mock.studio .track,
+.mock.studio .ruler {
+  background: var(--line) !important;
+}
+
+.mock.night.dark .track,
+.mock.night.dark .ruler,
+.mock.paper.dark .track,
+.mock.paper.dark .ruler,
+.mock.studio.dark .track,
+.mock.studio.dark .ruler {
+  background: var(--track-dark) !important;
+}
+
+.mock.night .fill,
+.mock.night .ruler i,
+.mock.paper .fill,
+.mock.paper .ruler i,
+.mock.studio .fill,
+.mock.studio .ruler i {
+  background: var(--accent) !important;
+}
+
+.mock.night .bar-row:first-child .fill,
+.mock.paper .bar-row:first-child .fill,
+.mock.studio .bar-row:first-child .fill {
+  background: var(--text_muted) !important;
+}
+
+.mock.night .stat-card b[style],
+.mock.paper .stat-card b[style],
+.mock.studio .stat-card b[style] {
+  color: var(--accent) !important;
+}
+
+.mock.studio.dark .foot {
+  color: #fb7185;
 }
 
 @media (max-width: 640px) {

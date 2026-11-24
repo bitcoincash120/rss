@@ -6,6 +6,7 @@ from __future__ import annotations
 import html
 
 from posts_md import ROOT, format_datetime_ru, load_posts
+from site_settings import rss_enabled
 
 OUT = ROOT / "index.html"
 
@@ -123,6 +124,17 @@ def preview_html(post: dict) -> str:
     """
 
 
+def rss_action_html() -> str:
+    hidden = "" if rss_enabled() else " hidden"
+    return f'<a class="rss" data-rss href="rss.xml"{hidden}>RSS</a>'
+
+
+def rss_head_html() -> str:
+    if not rss_enabled():
+        return ""
+    return '<link rel="alternate" type="application/rss+xml" href="rss.xml">'
+
+
 def main() -> None:
     posts = load_posts()
     rows = "\n".join(row_html(post, i) for i, post in enumerate(posts, 1))
@@ -156,8 +168,8 @@ def main() -> None:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Моя RSS-лента</title>
-  <link rel="alternate" type="application/rss+xml" href="rss.xml">
-  <link rel="stylesheet" href="site.css">
+  {rss_head_html()}
+  <link rel="stylesheet" href="site.css?v=carousel-skins">
 </head>
 <body>
   <main class="wrap">
@@ -167,8 +179,9 @@ def main() -> None:
         <h1>Свежие публикации</h1>
         <div class="hero-actions">
           <a class="ghost" href="new.html">Новый пост</a>
+          <a class="ghost" href="admin.html">Админка</a>
           <button type="button" class="ghost" id="download-all">Скачать все картинки</button>
-          <a class="rss" href="rss.xml">RSS</a>
+          {rss_action_html()}
         </div>
       </div>
       <p class="lede">Все посты в таблице. Нажмите строку, чтобы открыть полный пост.</p>
@@ -177,6 +190,7 @@ def main() -> None:
   </main>
   {previews}
   <script src="feed.js"></script>
+  <script src="settings.js?v=admin"></script>
 </body>
 </html>
 """

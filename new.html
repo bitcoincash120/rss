@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Новый пост</title>
-  <link rel="stylesheet" href="site.css?v=when">
+  <link rel="stylesheet" href="site.css?v=carousel-skins">
 </head>
 <body>
   <main class="wrap">
@@ -14,11 +14,12 @@
         <h1>Новый пост</h1>
         <div class="hero-actions">
           <a class="ghost" href="./">К ленте</a>
+          <a class="ghost" href="admin.html">Админка</a>
           <a class="ghost" href="https://docs.google.com/spreadsheets/d/19ZlYXpbgZ8lvlkniXU-BoxVuLewfFX0xh-nX97DN2VI/edit?gid=0#gid=0" target="_blank" rel="noreferrer">Таблица</a>
-          <a class="rss" href="rss.xml">RSS</a>
+          <a class="rss" data-rss href="rss.xml" hidden>RSS</a>
         </div>
       </div>
-      <p class="lede">Случайный пост берётся только из Google Таблицы. В начале листа — «Статус» и «Ссылка», затем заголовок и колонки «Карточка 1» … «Карточка 10» (можно добавить ещё). Число JPEG не ограничено: заполненные колонки становятся отдельными карточками. Строки со статусом «импортирован» пропускаются.</p>
+      <p class="lede">Случайный пост берётся только из Google Таблицы. Колонки: «Статус», «Ссылка», «Заголовок», «Полная разметка Marp (.md)». JPEG собираются из готовой разметки. Строки со статусом «импортирован» пропускаются.</p>
     </header>
 
     <form id="post-form" class="sheet" autocomplete="off">
@@ -28,9 +29,10 @@
           <th><label for="title">Заголовок</label></th>
           <td><input id="title" name="title" type="text" maxlength="140" required placeholder="Короткий заголовок новости"></td>
         </tr>
-        </tbody>
-        <tbody id="card-rows"></tbody>
-        <tbody>
+        <tr>
+          <th><label for="marp">Marp</label></th>
+          <td><textarea id="marp" name="marp" rows="18" required placeholder="Полная разметка Marp (.md)"></textarea></td>
+        </tr>
         <tr>
           <th>Дата и время</th>
           <td><time id="published-at"></time></td>
@@ -39,9 +41,10 @@
           <th><label for="style">Стиль</label></th>
           <td>
             <select id="style" name="style">
-              <option value="night">Тема 1 — обложка, история, действие</option>
-              <option value="paper">Газета — светлая бумага и чернила</option>
-              <option value="studio">Плакат — крупный гротеск и цвет</option>
+              <option value="night">Ночь — коралл и изумруд</option>
+              <option value="paper">Бумага — охра и чернила</option>
+              <option value="studio">Студия — неон и индиго</option>
+              <option value="findoc" selected>Fin-doc — синяя аналитика</option>
             </select>
           </td>
         </tr>
@@ -75,6 +78,7 @@
       </table>
     </form>
   </main>
-  <script src="new.js?v=cards-n"></script>
+  <script src="settings.js?v=admin"></script>
+  <script src="new.js?v=marp-sheet"></script>
 </body>
 </html>

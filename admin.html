@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Админка</title>
+  <link rel="stylesheet" href="site.css?v=carousel-skins">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <p class="kicker">Админка</p>
+      <div class="hero-row">
+        <h1>Настройки сайта</h1>
+        <div class="hero-actions">
+          <a class="ghost" href="./">К ленте</a>
+          <a class="ghost" href="new.html">Новый пост</a>
+          <a class="rss" data-rss href="rss.xml" hidden>RSS</a>
+        </div>
+      </div>
+      <p class="lede">Управление сборкой. RSS по умолчанию выключен: файл не пересобирается, кнопка на страницах скрыта.</p>
+    </header>
+
+    <form id="admin-form" class="sheet" autocomplete="off">
+      <table>
+        <tbody>
+        <tr>
+          <th>RSS</th>
+          <td>
+            <label class="switch">
+              <input id="generate-rss" name="generate_rss" type="checkbox">
+              <span>Генерировать RSS</span>
+            </label>
+            <p class="hint">Если выключено, rss.xml не обновляется при новых постах и при публикации на GitHub Pages.</p>
+          </td>
+        </tr>
+        <tr>
+          <th>Токен GitHub</th>
+          <td>
+            <input id="token" name="token" type="password" autocomplete="off" placeholder="Нужен только на GitHub Pages, чтобы сохранить настройки">
+          </td>
+        </tr>
+        <tr>
+          <th>Действия</th>
+          <td>
+            <div class="actions">
+              <button type="submit" class="rss">Сохранить</button>
+            </div>
+            <p class="status" id="status" role="status"></p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </form>
+  </main>
+  <script src="settings.js?v=admin"></script>
+  <script src="admin.js?v=admin"></script>
+</body>
+</html>
